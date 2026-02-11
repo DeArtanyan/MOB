@@ -15,6 +15,18 @@ class RentalsScreen extends StatefulWidget {
 class _RentalsScreenState extends State<RentalsScreen> {
   int _selectedBottomIndex = 0;
 
+  // Моковые пункты нижней навигации (иконки заменишь на свои PNG)
+  // Что добавлено: список items, потому что новый BottomNavCarousel требует items.
+  final List<BottomNavItem> _bottomItems = const [
+    BottomNavItem(label: 'Аренды', iconAsset: 'assets/icons/nav_rentals.png'),
+    BottomNavItem(label: 'Заявки', iconAsset: 'assets/icons/nav_requests.png'),
+    BottomNavItem(label: 'Пропуск', iconAsset: 'assets/icons/nav_pass.png'),
+    BottomNavItem(label: 'Профиль', iconAsset: 'assets/icons/nav_profile.png'),
+    BottomNavItem(label: 'Отзывы', iconAsset: 'assets/icons/nav_reviews.png'),
+    BottomNavItem(label: 'Парковка', iconAsset: 'assets/icons/nav_parking.png'),
+    BottomNavItem(label: 'Архив', iconAsset: 'assets/icons/nav_archive.png'),
+  ];
+
   void _logout() {
     Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute(builder: (_) => const AuthScreen()),
@@ -23,28 +35,28 @@ class _RentalsScreenState extends State<RentalsScreen> {
   }
 
   void _onBottomChanged(int index) {
-  setState(() => _selectedBottomIndex = index);
+    setState(() => _selectedBottomIndex = index);
 
-  if (index == 3) {
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (_) => const ProfileScreen()),
-    );
-    return;
+    if (index == 3) {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (_) => const ProfileScreen()),
+      );
+      return;
+    }
+
+    if (index == 1 || index == 2) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Раздел в разработке')),
+      );
+    }
   }
-
-  if (index == 1 || index == 2) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Раздел в разработке')),
-    );
-  }
-}
-
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: BottomNavCarousel(
-        selectedIndex: _selectedBottomIndex,
+        items: _bottomItems,
+        initialIndex: _selectedBottomIndex, // было selectedIndex
         onChanged: _onBottomChanged,
       ),
       body: SafeArea(

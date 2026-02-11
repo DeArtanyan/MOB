@@ -1,10 +1,8 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:wordpice/core/widgets/app_header.dart';
-import 'package:wordpice/features/auth/presentation/screens/auth_screen.dart';
-import 'package:wordpice/features/profile/presentation/widgets/bottom_nav_carousel.dart';
-import 'package:wordpice/features/profile/presentation/widgets/qr_modal.dart';
-import 'package:wordpice/features/profile/presentation/widgets/segment_carousel.dart';
+import 'package:wordpice/core/theme/app_colors.dart';
+import 'package:wordpice/core/widgets/app_logo_top_left.dart';
+import '../widgets/segment_carousel.dart';
+import '../widgets/bottom_nav_carousel.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -14,226 +12,87 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  int _notificationCount = 0;
-  int _selectedBottomIndex = 3;
+  // UI-only мок. Потом придёт с backend.
+  int _unreadNotifications = 1;
 
-  bool _hasActiveRentals = false;
-
-  final List<String> _segments = const [
-    'Активные аренды',
-    'Избранное',
-    'История аренды',
-    'Заявки',
-  ];
-
-  int _segmentIndex = 0;
-
-  final List<String> _historyFilters = const [
-    'Все аренды',
-    'Переговорные',
-    'Коворкинг',
-    'Офис',
-  ];
-
-  int _historyFilterIndex = 0;
-
-  Timer? _qrTimer;
-  DateTime _qrValidUntil = DateTime.now().add(const Duration(hours: 2));
-
-  @override
-  void initState() {
-    super.initState();
-    _startQrTimer();
-  }
-
-  void _startQrTimer() {
-    _qrTimer?.cancel();
-    _qrTimer = Timer.periodic(const Duration(hours: 2), (_) {
-      if (!mounted) return;
-      setState(() {
-        _qrValidUntil = DateTime.now().add(const Duration(hours: 2));
-      });
-    });
-  }
-
-  @override
-  void dispose() {
-    _qrTimer?.cancel();
-    super.dispose();
-  }
-
-  void _logout() {
-    Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(builder: (_) => const AuthScreen()),
-      (route) => false,
-    );
-  }
-
-  Future<void> _onShowQr() async {
-    if (!_hasActiveRentals) {
-      await QrModal.showNoActiveRentals(context);
-      return;
-    }
-
-    await QrModal.showQr(
-      context,
-      validUntilText: 'Ваш qr-код действует до 12.12.2026',
-    );
-  }
+  int _topCarouselIndex = 0;
+  int _bottomNavIndex = 3; // "Профиль" условно
 
   @override
   Widget build(BuildContext context) {
+    final topItems = <String>['Избранное', 'Активные аренды', 'Архив'];
+
+    final bottomItems = const <BottomNavItem>[
+      BottomNavItem(label: 'Аренды', iconAsset: 'assets/icons/nav_rentals.png'),
+      BottomNavItem(label: 'Заявки', iconAsset: 'assets/icons/nav_requests.png'),
+      BottomNavItem(label: 'Пропуск', iconAsset: 'assets/icons/nav_pass.png'),
+      BottomNavItem(label: 'Профиль', iconAsset: 'assets/icons/nav_profile.png'),
+      BottomNavItem(label: 'Отзывы', iconAsset: 'assets/icons/nav_reviews.png'),
+      BottomNavItem(label: 'Парковка', iconAsset: 'assets/icons/nav_parking.png'),
+      BottomNavItem(label: 'Архив', iconAsset: 'assets/icons/nav_archive.png'),
+    ];
+
     return Scaffold(
-      bottomNavigationBar: BottomNavCarousel(
-        selectedIndex: _selectedBottomIndex,
-        onChanged: (i) {
-          setState(() => _selectedBottomIndex = i);
-
-          if (i == 0) {
-            // Аренды
-            Navigator.of(context).pushReplacementNamed('/rentals');
-          }
-
-          if (i == 1 || i == 2) {
-            // UI-only заглушки
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Раздел в разработке')),
-            );
-          }
-        },
-      ),
+      backgroundColor: AppColors.background,
       body: SafeArea(
         child: Column(
           children: [
-            AppHeader(
-              notificationCount: _notificationCount,
-              onLogout: _logout,
-              onNotifications: () {},
+            _Header(
+              unreadCount: _unreadNotifications,
+              onExit: () {
+                // UI-only: позже будет логика выхода
+              },
+              onNotificationsTap: () {
+                // UI-only: позже экран уведомлений
+                setState(() => _unreadNotifications = 0); // чтобы увидеть, что бейдж исчезает
+              },
             ),
 
             Expanded(
-              child: Center(
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 360),
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.fromLTRB(16, 24, 16, 24),
-                    child: Column(
-                      children: [
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
+                child: Column(
+                  children: [
+                    _UserCard(),
+                    const SizedBox(height: 14),
+                    _EmailCompanyCard(),
+                    const SizedBox(height: 14),
+                    _PassCard(),
+                    const SizedBox(height: 18),
 
-                        /// ===== ФИО =====
-                        _ProfileCard(
-                          height: 76,
-                          child: Row(
-                            children: const [
-                              CircleAvatar(radius: 23),
-                              SizedBox(width: 12),
-                              Expanded(
-                                child: Text(
-                                  'Фамилия Имя Отчество\nДолжность',
-                                  style: TextStyle(fontSize: 14),
-                                ),
-                              ),
-                              Icon(Icons.edit, size: 18),
-                            ],
-                          ),
-                        ),
-
-                        const SizedBox(height: 14),
-
-                        /// ===== Контакты =====
-                        _ProfileCard(
-                          height: 100,
-                          child: const Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text('Почта\npochta@mail.ru'),
-                              SizedBox(height: 8),
-                              Text('Компания\nООО "Офис"'),
-                            ],
-                          ),
-                        ),
-
-                        const SizedBox(height: 14),
-
-                        /// ===== QR блок =====
-                        _ProfileCard(
-                          height: 80,
-                          child: Row(
-                            children: [
-                              const Icon(Icons.qr_code_2, size: 28),
-                              const SizedBox(width: 12),
-                              const Expanded(
-                                child: Text('Пропуск для сотрудника\nПарковка №31'),
-                              ),
-                              OutlinedButton(
-                                onPressed: _onShowQr,
-                                child: const Text('Показать'),
-                              ),
-                            ],
-                          ),
-                        ),
-
-                        const SizedBox(height: 20),
-
-                        /// ===== Верхняя фильтрация =====
-                        SegmentCarousel(
-                          items: _segments,
-                          initialIndex: _segmentIndex,
-                          onChanged: (i) => setState(() => _segmentIndex = i),
-                        ),
-
-                        const SizedBox(height: 16),
-
-                        /// ===== История фильтры =====
-                        Column(
-                          children: [
-                            Row(
-                              children: [
-                                _HistoryFilterButton(
-                                  text: 'Все аренды',
-                                  isSelected: _historyFilterIndex == 0,
-                                  onTap: () => setState(() => _historyFilterIndex = 0),
-                                ),
-                                const SizedBox(width: 12),
-                                _HistoryFilterButton(
-                                  text: 'Переговорные',
-                                  isSelected: _historyFilterIndex == 1,
-                                  onTap: () => setState(() => _historyFilterIndex = 1),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 10),
-                            Row(
-                              children: [
-                                _HistoryFilterButton(
-                                  text: 'Коворкинг',
-                                  isSelected: _historyFilterIndex == 2,
-                                  onTap: () => setState(() => _historyFilterIndex = 2),
-                                ),
-                                const SizedBox(width: 12),
-                                _HistoryFilterButton(
-                                  text: 'Офис',
-                                  isSelected: _historyFilterIndex == 3,
-                                  onTap: () => setState(() => _historyFilterIndex = 3),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-
-                        const SizedBox(height: 24),
-
-                        /// ===== Заглушка истории =====
-                        const Text(
-                          'У вас нет истории аренд',
-                          style: TextStyle(fontSize: 14),
-                        ),
-
-                        const SizedBox(height: 30),
-                      ],
+                    SegmentCarousel(
+                      items: topItems,
+                      initialIndex: _topCarouselIndex,
+                      onChanged: (i) => setState(() => _topCarouselIndex = i),
                     ),
-                  ),
+
+                    const SizedBox(height: 14),
+
+                    // Фильтры (как в макете кнопки-пилюли)
+                    _FiltersGrid(),
+
+                    const SizedBox(height: 18),
+
+                    const Text(
+                      'У вас нет истории аренд',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w400,
+                        color: Colors.black54,
+                      ),
+                    ),
+                    const SizedBox(height: 80),
+                  ],
                 ),
+              ),
+            ),
+
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+              child: BottomNavCarousel(
+                items: bottomItems,
+                initialIndex: _bottomNavIndex,
+                onChanged: (i) => setState(() => _bottomNavIndex = i),
               ),
             ),
           ],
@@ -243,56 +102,257 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 }
 
-/// Карточка профиля
-class _ProfileCard extends StatelessWidget {
-  final double height;
-  final Widget child;
-
-  const _ProfileCard({
-    required this.height,
-    required this.child,
+class _Header extends StatelessWidget {
+  const _Header({
+    required this.unreadCount,
+    required this.onExit,
+    required this.onNotificationsTap,
   });
+
+  final int unreadCount;
+  final VoidCallback onExit;
+  final VoidCallback onNotificationsTap;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: height,
-      padding: const EdgeInsets.all(14),
+      height: 64,
+      padding: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
-        color: Colors.grey.shade300,
-        borderRadius: BorderRadius.circular(20),
+        color: AppColors.controlGrey,
+        border: Border(bottom: BorderSide(color: AppColors.border, width: 0.5)),
       ),
-      child: child,
+      child: Row(
+        children: [
+          const AppLogoTopLeft(useHero: false),
+
+          const Spacer(),
+
+          SizedBox(
+            height: 36,
+            child: OutlinedButton(
+              onPressed: onExit,
+              style: OutlinedButton.styleFrom(
+                side: BorderSide(color: AppColors.border, width: 1),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              ),
+              child: const Text(
+                'Выход',
+                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w400, color: Colors.black87),
+              ),
+            ),
+          ),
+
+          const SizedBox(width: 12),
+
+          // Колокольчик + бейдж
+          SizedBox(
+            width: 40,
+            height: 40,
+            child: InkResponse(
+              onTap: onNotificationsTap,
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  const Icon(Icons.notifications_none, color: Colors.black87),
+                  if (unreadCount > 0)
+                    Positioned(
+                      right: 6,
+                      top: 6,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: Colors.black,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Text(
+                          unreadCount.toString(),
+                          style: const TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
 
-/// Кнопка фильтра истории
-class _HistoryFilterButton extends StatelessWidget {
-  final String text;
-  final bool isSelected;
-  final VoidCallback onTap;
-
-  const _HistoryFilterButton({
-    required this.text,
-    required this.isSelected,
-    required this.onTap,
-  });
-
+class _UserCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: SizedBox(
-        height: 38,
-        child: OutlinedButton(
-          onPressed: onTap,
-          style: OutlinedButton.styleFrom(
-            backgroundColor:
-                isSelected ? Colors.grey.shade200 : Colors.transparent,
-          ),
-          child: Text(text),
-        ),
+    return Container(
+      height: 86,
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: AppColors.surfaceGrey,
+        borderRadius: BorderRadius.circular(18),
       ),
+      child: Row(
+        children: [
+          Container(
+            width: 44,
+            height: 44,
+            decoration: const BoxDecoration(
+              color: Color(0xFFE6D9FF),
+              shape: BoxShape.circle,
+            ),
+          ),
+          const SizedBox(width: 12),
+          const Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Фамилия Имя Отчество', style: TextStyle(fontSize: 14, color: Colors.black87)),
+                SizedBox(height: 4),
+                Text('Должность', style: TextStyle(fontSize: 12, color: Colors.black54)),
+              ],
+            ),
+          ),
+          IconButton(
+            onPressed: () {
+              // UI-only: редактирование аватара/ФИО позже
+            },
+            icon: const Icon(Icons.edit, size: 20),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _EmailCompanyCard extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: AppColors.surfaceGrey,
+        borderRadius: BorderRadius.circular(18),
+      ),
+      child: Row(
+        children: [
+          const Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Почта', style: TextStyle(fontSize: 12, color: Colors.black87)),
+                SizedBox(height: 2),
+                Text('pochta@mail.ru', style: TextStyle(fontSize: 12, color: Colors.black54)),
+                SizedBox(height: 10),
+                Text('Компания', style: TextStyle(fontSize: 12, color: Colors.black87)),
+                SizedBox(height: 2),
+                Text('ООО “Офис”', style: TextStyle(fontSize: 12, color: Colors.black54)),
+              ],
+            ),
+          ),
+          IconButton(
+            onPressed: () {
+              // UI-only: редактирование данных позже
+            },
+            icon: const Icon(Icons.edit, size: 20),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _PassCard extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 86,
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: AppColors.surfaceGrey,
+        borderRadius: BorderRadius.circular(18),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 54,
+            height: 54,
+            decoration: BoxDecoration(
+              color: AppColors.controlGrey,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: const Icon(Icons.qr_code, color: Colors.black87),
+          ),
+          const SizedBox(width: 12),
+          const Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Пропуск для\nсотрудника', style: TextStyle(fontSize: 14, color: Colors.black87)),
+                SizedBox(height: 6),
+                Text('Парковочное место: №31', style: TextStyle(fontSize: 12, color: Colors.black54)),
+              ],
+            ),
+          ),
+          SizedBox(
+            height: 36,
+            child: OutlinedButton(
+              onPressed: () {
+                // UI-only: открыть модалку QR позже
+              },
+              style: OutlinedButton.styleFrom(
+                side: BorderSide(color: AppColors.border, width: 1),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              ),
+              child: const Text('Показать', style: TextStyle(color: Colors.black87)),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _FiltersGrid extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    Widget pill(String text) {
+      return SizedBox(
+        height: 34,
+        child: OutlinedButton(
+          onPressed: () {},
+          style: OutlinedButton.styleFrom(
+            side: BorderSide(color: AppColors.border, width: 1),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          ),
+          child: Text(text, style: const TextStyle(fontSize: 12, color: Colors.black87)),
+        ),
+      );
+    }
+
+    return Column(
+      children: [
+        Row(
+          children: [
+            Expanded(child: pill('Все аренды')),
+            const SizedBox(width: 12),
+            Expanded(child: pill('Переговорные')),
+          ],
+        ),
+        const SizedBox(height: 10),
+        Row(
+          children: [
+            Expanded(child: pill('Коворкинг')),
+            const SizedBox(width: 12),
+            Expanded(child: pill('Офис')),
+          ],
+        ),
+      ],
     );
   }
 }

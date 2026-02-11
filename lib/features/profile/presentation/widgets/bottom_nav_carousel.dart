@@ -1,51 +1,40 @@
 import 'package:flutter/material.dart';
+import 'package:wordpice/core/theme/app_colors.dart';
+
+class BottomNavItem {
+  final String label;
+  final String iconAsset; // PNG из assets
+  const BottomNavItem({required this.label, required this.iconAsset});
+}
 
 class BottomNavCarousel extends StatefulWidget {
-  final int selectedIndex; // 0..3
-  final ValueChanged<int> onChanged;
-
   const BottomNavCarousel({
     super.key,
-    required this.selectedIndex,
+    required this.items,
     required this.onChanged,
+    this.initialIndex = 0,
   });
+
+  final List<BottomNavItem> items;
+  final ValueChanged<int> onChanged;
+  final int initialIndex;
 
   @override
   State<BottomNavCarousel> createState() => _BottomNavCarouselState();
 }
 
 class _BottomNavCarouselState extends State<BottomNavCarousel> {
-  static const _items = <String>[
-    'Аренды',
-    'Заявки',
-    'Пропуск',
-    'Профиль',
-  ];
-
   late final PageController _controller;
-  late int _page; // большой индекс для бесконечности
-
-  int get _count => _items.length;
+  late int _index;
 
   @override
   void initState() {
     super.initState();
-
-    // делаем “бесконечный” диапазон страниц
-    _page = 1000 + widget.selectedIndex;
-    _controller = PageController(viewportFraction: 0.62, initialPage: _page);
-  }
-
-  @override
-  void didUpdateWidget(covariant BottomNavCarousel oldWidget) {
-    super.didUpdateWidget(oldWidget);
-
-    // если снаружи сменили selectedIndex — аккуратно перелистнём
-    if (oldWidget.selectedIndex != widget.selectedIndex) {
-      final target = (_page - (_page % _count)) + widget.selectedIndex;
-      _page = target;
-      _controller.jumpToPage(_page);
-    }
+    _index = widget.initialIndex.clamp(0, widget.items.length - 1);
+    _controller = PageController(
+      initialPage: _index,
+      viewportFraction: 1.0, // важно: без “выпирания”
+    );
   }
 
   @override
@@ -54,112 +43,110 @@ class _BottomNavCarouselState extends State<BottomNavCarousel> {
     super.dispose();
   }
 
-  int _realIndex(int page) => page % _count;
-
-  void _goLeft() => _controller.previousPage(
-        duration: const Duration(milliseconds: 220),
-        curve: Curves.easeOut,
-      );
-
-  void _goRight() => _controller.nextPage(
-        duration: const Duration(milliseconds: 220),
-        curve: Curves.easeOut,
-      );
-
-  @override
-  Widget build(BuildContext context) {
-    return SafeArea(
-      top: false,
-      child: Container(
-        height: 74,
-        padding: const EdgeInsets.symmetric(horizontal: 10),
-        decoration: BoxDecoration(
-          color: Colors.grey.shade300,
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(12),
-            topRight: Radius.circular(12),
-          ),
-        ),
-        child: Row(
-          children: [
-            _ArrowButton(isLeft: true, onTap: _goLeft),
-
-            Expanded(
-              child: PageView.builder(
-                controller: _controller,
-                onPageChanged: (p) {
-                  _page = p;
-                  widget.onChanged(_realIndex(p));
-                },
-                itemBuilder: (_, p) {
-                  final idx = _realIndex(p);
-                  final selected = idx == widget.selectedIndex;
-
-                  return Center(
-                    child: _NavPill(
-                      text: _items[idx],
-                      selected: selected,
-                    ),
-                  );
-                },
-              ),
-            ),
-
-            _ArrowButton(isLeft: false, onTap: _goRight),
-          ],
-        ),
-      ),
+  void _prev() {
+    if (_index <= 0) return;
+    _controller.previousPage(
+      duration: const Duration(milliseconds: 250),
+      curve: Curves.easeOut,
     );
   }
-}
 
-class _NavPill extends StatelessWidget {
-  final String text;
-  final bool selected;
-
-  const _NavPill({
-    required this.text,
-    required this.selected,
-  });
+  void _next() {
+    if (_index >= widget.items.length - 1) return;
+    _controller.nextPage(
+      duration: const Duration(milliseconds: 250),
+      curve: Curves.easeOut,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 42,
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      alignment: Alignment.center,
+      padding: const EdgeInsets.fromLTRB(12, 10, 12, 10),
       decoration: BoxDecoration(
-        color: selected ? Colors.grey.shade200 : Colors.transparent,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Colors.black87),
+        color: AppColors.controlGrey,
+        borderRadius: BorderRadius.circular(18),
       ),
-      child: Text(
-        text,
-        style: const TextStyle(fontSize: 14, color: Colors.black87),
+      child: Row(
+        children: [
+          _Arrow(icon: Icons.chevron_left, onTap: _prev),
+          const SizedBox(width: 10),
+
+          Expanded(
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(14),
+              child: SizedBox(
+                height: 56,
+                child: PageView.builder(
+                  controller: _controller,
+                  onPageChanged: (i) {
+                    setState(() => _index = i);
+                    widget.onChanged(i);
+                  },
+                  itemCount: widget.items.length,
+                  itemBuilder: (_, i) {
+                    final item = widget.items[i];
+                    return Container(
+                      decoration: BoxDecoration(
+                        color: AppColors.background,
+                        borderRadius: BorderRadius.circular(14),
+                        border: Border.all(color: AppColors.border, width: 1),
+                      ),
+                      child: Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Image.asset(
+                              item.iconAsset,
+                              width: 22,
+                              height: 22,
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              item.label,
+                              style: const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w400,
+                                color: Colors.black87,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
+          ),
+
+          const SizedBox(width: 10),
+          _Arrow(icon: Icons.chevron_right, onTap: _next),
+        ],
       ),
     );
   }
 }
 
-class _ArrowButton extends StatelessWidget {
-  final bool isLeft;
-  final VoidCallback onTap;
+class _Arrow extends StatelessWidget {
+  const _Arrow({required this.icon, required this.onTap});
 
-  const _ArrowButton({required this.isLeft, required this.onTap});
+  final IconData icon;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    return OutlinedButton(
-      onPressed: onTap,
-      style: OutlinedButton.styleFrom(
-        padding: const EdgeInsets.all(8),
-        minimumSize: const Size(38, 38),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      ),
-      child: Icon(
-        isLeft ? Icons.chevron_left : Icons.chevron_right,
-        size: 20,
-        color: Colors.black87,
+    return SizedBox(
+      width: 44,
+      height: 56,
+      child: OutlinedButton(
+        onPressed: onTap,
+        style: OutlinedButton.styleFrom(
+          padding: EdgeInsets.zero,
+          side: BorderSide(color: AppColors.border, width: 1),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+        ),
+        child: Icon(icon, color: Colors.black87),
       ),
     );
   }

@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:wordpice/core/theme/app_colors.dart';
 
 class SegmentCarousel extends StatefulWidget {
-  final List<String> items;
-  final int initialIndex;
-  final ValueChanged<int> onChanged;
-
   const SegmentCarousel({
     super.key,
     required this.items,
-    required this.initialIndex,
     required this.onChanged,
+    this.initialIndex = 0,
   });
+
+  final List<String> items;
+  final ValueChanged<int> onChanged;
+  final int initialIndex;
 
   @override
   State<SegmentCarousel> createState() => _SegmentCarouselState();
@@ -18,101 +19,108 @@ class SegmentCarousel extends StatefulWidget {
 
 class _SegmentCarouselState extends State<SegmentCarousel> {
   late final PageController _controller;
-  late int _page;
-  late int _selected;
-
-  int get _count => widget.items.length;
+  late int _index;
 
   @override
   void initState() {
     super.initState();
-    _selected = widget.initialIndex.clamp(0, _count - 1);
-    _page = 1000 + _selected;
-    _controller = PageController(viewportFraction: 0.78, initialPage: _page);
+    _index = widget.initialIndex.clamp(0, widget.items.length - 1);
+    _controller = PageController(
+      initialPage: _index,
+      viewportFraction: 1.0, // важно: соседи не должны быть видны
+    );
   }
 
-  int _realIndex(int page) => page % _count;
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
-  void _goLeft() => _controller.previousPage(
-        duration: const Duration(milliseconds: 220),
-        curve: Curves.easeOut,
-      );
+  void _prev() {
+    if (_index <= 0) return;
+    _controller.previousPage(
+      duration: const Duration(milliseconds: 250),
+      curve: Curves.easeOut,
+    );
+  }
 
-  void _goRight() => _controller.nextPage(
-        duration: const Duration(milliseconds: 220),
-        curve: Curves.easeOut,
-      );
+  void _next() {
+    if (_index >= widget.items.length - 1) return;
+    _controller.nextPage(
+      duration: const Duration(milliseconds: 250),
+      curve: Curves.easeOut,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 52,
-      child: Row(
-        children: [
-          _Arrow(isLeft: true, onTap: _goLeft),
-          const SizedBox(width: 10),
+    return Row(
+      children: [
+        _ArrowButton(icon: Icons.chevron_left, onTap: _prev),
+        const SizedBox(width: 10),
 
-          Expanded(
-            child: PageView.builder(
-              controller: _controller,
-              onPageChanged: (p) {
-                _page = p;
-                final idx = _realIndex(p);
-                setState(() => _selected = idx);
-                widget.onChanged(idx);
-              },
-              itemBuilder: (_, p) {
-                final idx = _realIndex(p);
-                final selected = idx == _selected;
-
-                return Center(
-                  child: Container(
-                    height: 42,
-                    padding: const EdgeInsets.symmetric(horizontal: 18),
+        Expanded(
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(14),
+            child: SizedBox(
+              height: 44,
+              child: PageView.builder(
+                controller: _controller,
+                onPageChanged: (i) {
+                  setState(() => _index = i);
+                  widget.onChanged(i);
+                },
+                itemCount: widget.items.length,
+                itemBuilder: (_, i) {
+                  return Container(
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
-                      color: selected ? Colors.grey.shade200 : Colors.transparent,
+                      color: AppColors.background,
                       borderRadius: BorderRadius.circular(14),
-                      border: Border.all(color: Colors.black87),
+                      border: Border.all(color: AppColors.border, width: 1),
                     ),
                     child: Text(
-                      widget.items[idx],
-                      style: const TextStyle(fontSize: 14, color: Colors.black87),
-                      textAlign: TextAlign.center,
+                      widget.items[i],
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w400,
+                        color: Colors.black87,
+                      ),
                     ),
-                  ),
-                );
-              },
+                  );
+                },
+              ),
             ),
           ),
+        ),
 
-          const SizedBox(width: 10),
-          _Arrow(isLeft: false, onTap: _goRight),
-        ],
-      ),
+        const SizedBox(width: 10),
+        _ArrowButton(icon: Icons.chevron_right, onTap: _next),
+      ],
     );
   }
 }
 
-class _Arrow extends StatelessWidget {
-  final bool isLeft;
-  final VoidCallback onTap;
+class _ArrowButton extends StatelessWidget {
+  const _ArrowButton({required this.icon, required this.onTap});
 
-  const _Arrow({required this.isLeft, required this.onTap});
+  final IconData icon;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    return OutlinedButton(
-      onPressed: onTap,
-      style: OutlinedButton.styleFrom(
-        padding: const EdgeInsets.all(8),
-        minimumSize: const Size(38, 38),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      ),
-      child: Icon(
-        isLeft ? Icons.chevron_left : Icons.chevron_right,
-        size: 20,
-        color: Colors.black87,
+    return SizedBox(
+      width: 44,
+      height: 44,
+      child: OutlinedButton(
+        onPressed: onTap,
+        style: OutlinedButton.styleFrom(
+          padding: EdgeInsets.zero,
+          side: BorderSide(color: AppColors.border, width: 1),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+        ),
+        child: Icon(icon, color: Colors.black87),
       ),
     );
   }

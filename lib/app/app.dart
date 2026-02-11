@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:wordpice/app/app_dependencies.dart';
+import 'package:wordpice/app/app_scope.dart';
 import 'package:wordpice/core/theme/app_theme.dart';
 import 'package:wordpice/features/splash/presentation/screens/splash_screen.dart';
 import 'package:wordpice/features/profile/presentation/screens/profile_screen.dart';
@@ -9,14 +11,21 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: AppTheme.light,
-      home: const SplashScreen(),
-      routes: {
-        '/profile': (_) => const ProfileScreen(),
-        '/rentals': (_) => const RentalsScreen(),
-      },
+    // ИЗМЕНЕНО: добавили "сборку" зависимостей и AppScope.
+    // Сейчас используются моковые реализации (backend отсутствует).
+    final deps = AppDependencies.mock();
+
+    return AppScope(
+      dependencies: deps,
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: AppTheme.light,
+        home: const SplashScreen(),
+        routes: {
+          '/profile': (_) => const ProfileScreen(),
+          '/rentals': (_) => const RentalsScreen(),
+        },
+      ),
     );
   }
 }
