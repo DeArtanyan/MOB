@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:wordpice/core/theme/app_text_styles.dart';
-import 'package:wordpice/core/widgets/app_header.dart';
+import 'package:wordpice/app/navigation/app_tab_navigator.dart';
+import 'package:wordpice/core/widgets/app_shell.dart';
 import 'package:wordpice/features/auth/presentation/screens/auth_screen.dart';
-import 'package:wordpice/features/profile/presentation/screens/profile_screen.dart';
-import 'package:wordpice/features/profile/presentation/widgets/bottom_nav_carousel.dart';
 
+/// Экран "Аренды" (UI-only).
+///
+/// Вёрстка приведена к прототипу:
+/// - Заголовок "Аренды"
+/// - 3 кнопки: переговорная / офис / коворкинг
 class RentalsScreen extends StatefulWidget {
   const RentalsScreen({super.key});
 
@@ -13,103 +16,81 @@ class RentalsScreen extends StatefulWidget {
 }
 
 class _RentalsScreenState extends State<RentalsScreen> {
-  int _selectedBottomIndex = 0;
-
-  // Моковые пункты нижней навигации (иконки заменишь на свои PNG)
-  // Что добавлено: список items, потому что новый BottomNavCarousel требует items.
-  final List<BottomNavItem> _bottomItems = const [
-    BottomNavItem(label: 'Аренды', iconAsset: 'assets/icons/nav_rentals.png'),
-    BottomNavItem(label: 'Заявки', iconAsset: 'assets/icons/nav_requests.png'),
-    BottomNavItem(label: 'Пропуск', iconAsset: 'assets/icons/nav_pass.png'),
-    BottomNavItem(label: 'Профиль', iconAsset: 'assets/icons/nav_profile.png'),
-    BottomNavItem(label: 'Отзывы', iconAsset: 'assets/icons/nav_reviews.png'),
-    BottomNavItem(label: 'Парковка', iconAsset: 'assets/icons/nav_parking.png'),
-    BottomNavItem(label: 'Архив', iconAsset: 'assets/icons/nav_archive.png'),
-  ];
+  static const int _tabIndex = 0; // Аренды
+  int _selectedBottomIndex = _tabIndex;
 
   void _logout() {
-    Navigator.of(context).pushAndRemoveUntil(
+    Navigator.pushAndRemoveUntil(
+      context,
       MaterialPageRoute(builder: (_) => const AuthScreen()),
-      (route) => false,
+      (_) => false,
     );
   }
 
   void _onBottomChanged(int index) {
+    if (index == _tabIndex) return;
     setState(() => _selectedBottomIndex = index);
-
-    if (index == 3) {
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => const ProfileScreen()),
-      );
-      return;
-    }
-
-    if (index == 1 || index == 2) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Раздел в разработке')),
-      );
-    }
+    AppTabNavigator.goToTab(context, index);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      bottomNavigationBar: BottomNavCarousel(
-        items: _bottomItems,
-        initialIndex: _selectedBottomIndex, // было selectedIndex
-        onChanged: _onBottomChanged,
-      ),
-      body: SafeArea(
-        child: Column(
-          children: [
-            AppHeader(
-              onLogout: _logout,
-              onNotifications: () {},
-              notificationCount: 0,
-            ),
-            Expanded(
-              child: Center(
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 360),
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 24, 16, 16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text('Аренды', style: AppTextStyles.title26),
-                        const SizedBox(height: 26),
-                        _RentalsButton(text: 'Аренда переговорной', onTap: () {}),
-                        const SizedBox(height: 18),
-                        _RentalsButton(text: 'Аренда офиса', onTap: () {}),
-                        const SizedBox(height: 18),
-                        _RentalsButton(text: 'Аренда коворкинга', onTap: () {}),
-                      ],
-                    ),
-                  ),
+    return AppShell(
+      selectedBottomIndex: _selectedBottomIndex,
+      onBottomChanged: _onBottomChanged,
+      onLogout: _logout,
+      onNotifications: () {},
+      notificationCount: 0,
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 40, 16, 24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const Text(
+                'Аренды',
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
-            ),
-          ],
+              const SizedBox(height: 24),
+              _ActionButton(text: 'Аренда переговорной', onPressed: () {}),
+              const SizedBox(height: 16),
+              _ActionButton(text: 'Аренда офиса', onPressed: () {}),
+              const SizedBox(height: 16),
+              _ActionButton(text: 'Аренда коворкинга', onPressed: () {}),
+            ],
+          ),
         ),
       ),
     );
   }
 }
 
-class _RentalsButton extends StatelessWidget {
-  final String text;
-  final VoidCallback onTap;
+class _ActionButton extends StatelessWidget {
+  const _ActionButton({
+    required this.text,
+    required this.onPressed,
+  });
 
-  const _RentalsButton({required this.text, required this.onTap});
+  final String text;
+  final VoidCallback onPressed;
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: double.infinity,
-      height: 54,
+      width: 260,
+      height: 44,
       child: OutlinedButton(
-        onPressed: onTap,
-        child: Text(text, style: const TextStyle(fontSize: 16)),
+        onPressed: onPressed,
+        style: OutlinedButton.styleFrom(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+        child: Text(text),
       ),
     );
   }

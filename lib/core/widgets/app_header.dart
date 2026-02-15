@@ -1,6 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:wordpice/core/theme/app_colors.dart';
 import 'package:wordpice/core/theme/app_text_styles.dart';
+import 'package:wordpice/features/splash/presentation/widgets/splash_logo.dart';
 
+/// Общий хедер приложения.
+///
+/// Что изменено:
+/// - Привёл выравнивание к макету: серый фон, ровные отступы, без "кривых" Positioned.
+/// - Логотип берём из SplashLogo (единый вид во всём приложении).
+/// - Кнопка "Выход" сделана компактной (как в прототипе).
+/// - Иконка уведомлений поддерживает бейдж: если notificationCount == 0, бейджа нет.
 class AppHeader extends StatelessWidget {
   final VoidCallback onLogout;
   final VoidCallback onNotifications;
@@ -17,61 +26,93 @@ class AppHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 64,
-      padding: const EdgeInsets.symmetric(horizontal: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
-        color: Colors.grey.shade300,
-        borderRadius: const BorderRadius.only(
-          bottomLeft: Radius.circular(8),
-          bottomRight: Radius.circular(8),
+        color: AppColors.controlGrey,
+        border: Border(
+          bottom: BorderSide(color: AppColors.border.withOpacity(0.25), width: 1),
         ),
       ),
       child: Row(
         children: [
-          Container(
-            width: 44,
-            height: 44,
-            decoration: BoxDecoration(
-              color: Colors.grey.shade200,
-              borderRadius: BorderRadius.circular(6),
-              border: Border.all(color: Colors.black26),
-            ),
-            child: const Icon(Icons.image_outlined, color: Colors.black45),
-          ),
-          const SizedBox(width: 10),
-          const Text('LOGOTYPE', style: AppTextStyles.header20),
+          // Логотип слева
+          const SplashLogo(),
+
           const Spacer(),
-          OutlinedButton(
-            onPressed: onLogout,
-            child: const Text('Выход'),
-          ),
-          const SizedBox(width: 10),
-          Stack(
-            clipBehavior: Clip.none,
-            children: [
-              IconButton(
-                onPressed: onNotifications,
-                icon: const Icon(Icons.notifications_none),
+
+          // Кнопка "Выход"
+          SizedBox(
+            height: 34,
+            child: OutlinedButton(
+              onPressed: onLogout,
+              style: OutlinedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                side: BorderSide(color: AppColors.border, width: 1),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
-              if (notificationCount > 0)
-                Positioned(
-                  top: 6,
-                  right: 8,
-                  child: Container(
-                    width: 16,
-                    height: 16,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      border: Border.all(color: Colors.black87),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Text(
-                      '$notificationCount',
-                      style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w600),
+              child: const Text(
+                'Выход',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w400,
+                  color: AppColors.textPrimary,
+                ),
+              ),
+            ),
+          ),
+
+          const SizedBox(width: 12),
+
+          // Уведомления (иконка + бейдж)
+          SizedBox(
+            width: 40,
+            height: 40,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(12),
+              onTap: onNotifications,
+              child: Stack(
+                clipBehavior: Clip.none,
+                alignment: Alignment.center,
+                children: [
+                  // Если у тебя есть PNG иконка - используем её.
+                  // Если файла нет (например в будущем), покажется стандартная иконка.
+                  Image.asset(
+                    'assets/icons/notification.png',
+                    width: 22,
+                    height: 22,
+                    errorBuilder: (_, __, ___) => const Icon(
+                      Icons.notifications_none,
+                      color: AppColors.textPrimary,
                     ),
                   ),
-                ),
-            ],
+                  if (notificationCount > 0)
+                    Positioned(
+                      top: 4,
+                      right: 4,
+                      child: Container(
+                        width: 18,
+                        height: 18,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: AppColors.background,
+                          shape: BoxShape.circle,
+                          border: Border.all(color: AppColors.border, width: 1),
+                        ),
+                        child: Text(
+                          '$notificationCount',
+                          style: const TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.textPrimary,
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
           ),
         ],
       ),
