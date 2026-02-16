@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:wordpice/features/parking/presentation/screens/parking_screen.dart';
+import 'package:wordpice/features/passes/presentation/screens/passes_screen.dart';
 import 'package:wordpice/features/profile/presentation/screens/profile_screen.dart';
+import 'package:wordpice/features/requests/presentation/screens/requests_screen.dart';
 import 'package:wordpice/features/rentals/presentation/screens/rentals_screen.dart';
 
 /// Простая навигация между вкладками нижнего меню.
@@ -14,13 +17,14 @@ class AppTabNavigator {
     switch (index) {
       case 0:
         return const RentalsScreen();
+      case 2:
+        return const PassesScreen();
       case 3:
         return const ProfileScreen();
-      // Пока экранов нет — показываем заглушку.
       case 1:
-        return const _PlaceholderScreen(title: 'Заявки (UI-only)');
-      case 2:
-        return const _PlaceholderScreen(title: 'Пропуск (UI-only)');
+        return const RequestsScreen();
+      case 5:
+        return const ParkingScreen();
       default:
         return const _PlaceholderScreen(title: 'Раздел (UI-only)');
     }
