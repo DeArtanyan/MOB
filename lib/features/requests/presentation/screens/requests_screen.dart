@@ -14,6 +14,11 @@ class RequestsScreen extends StatefulWidget {
 class _RequestsScreenState extends State<RequestsScreen> {
   static const int _tabIndex = 1; // Заявки
   int _selectedBottomIndex = _tabIndex;
+  DateTime? _selectedDate;
+  String? _selectedRequestType;
+  String? _selectedTime;
+  bool _isRequestTypeMenuOpen = false;
+  bool _isTimeMenuOpen = false;
 
   void _logout() {
     Navigator.pushAndRemoveUntil(
@@ -29,6 +34,68 @@ class _RequestsScreenState extends State<RequestsScreen> {
     AppTabNavigator.goToTab(context, index);
   }
 
+  Future<void> _pickDate() async {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: _selectedDate ?? today,
+      firstDate: today,
+      lastDate: DateTime(today.year + 5),
+      locale: const Locale('ru', 'RU'),
+    );
+    if (picked == null) return;
+    setState(() => _selectedDate = picked);
+  }
+
+  List<String> get _timeSlots => List<String>.generate(12, (index) {
+        final start = 9 + index;
+        final end = start + 1;
+        final startText = start.toString().padLeft(2, '0');
+        final endText = end.toString().padLeft(2, '0');
+        return '$startText:00 - $endText:00';
+      });
+  List<String> get _requestTypes => const ['Клининг', 'Техобслуживание'];
+
+  String get _dateText {
+    final value = _selectedDate;
+    if (value == null) return 'Выберите дату';
+    final day = value.day.toString().padLeft(2, '0');
+    final month = value.month.toString().padLeft(2, '0');
+    return '$day.$month.${value.year}';
+  }
+
+  String get _timeText => _selectedTime ?? 'Выберите желаемое время';
+  String get _requestTypeText => _selectedRequestType ?? 'Выберите тип заявки';
+
+  void _toggleRequestTypeMenu() {
+    setState(() {
+      _isRequestTypeMenuOpen = !_isRequestTypeMenuOpen;
+      if (_isRequestTypeMenuOpen) _isTimeMenuOpen = false;
+    });
+  }
+
+  void _selectRequestType(String type) {
+    setState(() {
+      _selectedRequestType = type;
+      _isRequestTypeMenuOpen = false;
+    });
+  }
+
+  void _toggleTimeMenu() {
+    setState(() {
+      _isTimeMenuOpen = !_isTimeMenuOpen;
+      if (_isTimeMenuOpen) _isRequestTypeMenuOpen = false;
+    });
+  }
+
+  void _selectTime(String slot) {
+    setState(() {
+      _selectedTime = slot;
+      _isTimeMenuOpen = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return AppShell(
@@ -41,55 +108,154 @@ class _RequestsScreenState extends State<RequestsScreen> {
         padding: const EdgeInsets.fromLTRB(36, 16, 36, 24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: const [
-            Text(
+          children: [
+            const Text(
               'Заявки',
               style: TextStyle(
                 fontSize: 44 / 2,
                 fontWeight: FontWeight.w600,
               ),
             ),
-            SizedBox(height: 18),
-            _FieldLabel('Дата*'),
-            SizedBox(height: 8),
+            const SizedBox(height: 18),
+            const _FieldLabel('Дата*'),
+            const SizedBox(height: 8),
             _InputField(
-              hint: 'Выберите дату',
-              trailing: Icon(Icons.calendar_month_outlined, size: 26),
+              hint: _dateText,
+              trailing: const Icon(Icons.calendar_month_outlined, size: 26),
+              onTap: _pickDate,
             ),
-            SizedBox(height: 18),
-            _FieldLabel('Тип заявки*'),
-            SizedBox(height: 8),
+            const SizedBox(height: 18),
+            const _FieldLabel('Тип заявки*'),
+            const SizedBox(height: 8),
             _InputField(
-              hint: 'Выберите тип заявки',
-              trailing: Icon(Icons.keyboard_arrow_down_rounded, size: 26),
+              hint: _requestTypeText,
+              trailing: Icon(
+                _isRequestTypeMenuOpen
+                    ? Icons.keyboard_arrow_up_rounded
+                    : Icons.keyboard_arrow_down_rounded,
+                size: 26,
+              ),
+              onTap: _toggleRequestTypeMenu,
+              borderRadius: _isRequestTypeMenuOpen
+                  ? const BorderRadius.only(
+                      topLeft: Radius.circular(12),
+                      topRight: Radius.circular(12),
+                    )
+                  : BorderRadius.circular(12),
             ),
-            SizedBox(height: 18),
-            _FieldLabel('Время*'),
-            SizedBox(height: 8),
+            if (_isRequestTypeMenuOpen)
+              Container(
+                transform: Matrix4.translationValues(0, -1, 0),
+                height: 74,
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.black87, width: 1),
+                  borderRadius: const BorderRadius.only(
+                    bottomLeft: Radius.circular(12),
+                    bottomRight: Radius.circular(12),
+                  ),
+                ),
+                child: ListView.separated(
+                  padding: const EdgeInsets.all(8),
+                  itemCount: _requestTypes.length,
+                  separatorBuilder: (_, __) => const SizedBox(height: 6),
+                  itemBuilder: (context, index) {
+                    final type = _requestTypes[index];
+                    return InkWell(
+                      onTap: () => _selectRequestType(type),
+                      borderRadius: BorderRadius.circular(6),
+                      child: Container(
+                        height: 30,
+                        alignment: Alignment.centerLeft,
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        child: Text(
+                          type,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.black87,
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            const SizedBox(height: 18),
+            const _FieldLabel('Время*'),
+            const SizedBox(height: 8),
             _InputField(
-              hint: 'Выберите желаемое время',
-              trailing: Icon(Icons.keyboard_arrow_down_rounded, size: 26),
+              hint: _timeText,
+              trailing: Icon(
+                _isTimeMenuOpen
+                    ? Icons.keyboard_arrow_up_rounded
+                    : Icons.keyboard_arrow_down_rounded,
+                size: 26,
+              ),
+              onTap: _toggleTimeMenu,
+              borderRadius: _isTimeMenuOpen
+                  ? const BorderRadius.only(
+                      topLeft: Radius.circular(12),
+                      topRight: Radius.circular(12),
+                    )
+                  : BorderRadius.circular(12),
             ),
-            SizedBox(height: 18),
-            _FieldLabel('Тип помещения*'),
-            SizedBox(height: 8),
+            if (_isTimeMenuOpen)
+              Container(
+                transform: Matrix4.translationValues(0, -1, 0),
+                height: 86,
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.black87, width: 1),
+                  borderRadius: const BorderRadius.only(
+                    bottomLeft: Radius.circular(12),
+                    bottomRight: Radius.circular(12),
+                  ),
+                ),
+                child: ListView.separated(
+                  padding: const EdgeInsets.all(8),
+                  itemCount: _timeSlots.length,
+                  separatorBuilder: (_, __) => const SizedBox(height: 6),
+                  itemBuilder: (context, index) {
+                    final slot = _timeSlots[index];
+                    return InkWell(
+                      onTap: () => _selectTime(slot),
+                      borderRadius: BorderRadius.circular(6),
+                      child: Container(
+                        height: 30,
+                        alignment: Alignment.centerLeft,
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        child: Text(
+                          slot,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.black87,
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            const SizedBox(height: 18),
+            const _FieldLabel('Тип помещения*'),
+            const SizedBox(height: 8),
             _InputField(
               hint: 'Выберите помещение',
-              trailing: Icon(Icons.keyboard_arrow_down_rounded, size: 26),
+              trailing: const Icon(Icons.keyboard_arrow_down_rounded, size: 26),
             ),
-            SizedBox(height: 18),
-            _FieldLabel('Кабинет №*'),
-            SizedBox(height: 8),
+            const SizedBox(height: 18),
+            const _FieldLabel('Кабинет №*'),
+            const SizedBox(height: 8),
             _InputField(
               hint: 'Выберите номер кабинета',
-              trailing: Icon(Icons.keyboard_arrow_down_rounded, size: 26),
+              trailing: const Icon(Icons.keyboard_arrow_down_rounded, size: 26),
             ),
-            SizedBox(height: 18),
-            _FieldLabel('Комментарий (необязательно)'),
-            SizedBox(height: 8),
-            _CommentField(hint: 'Введите комментарий'),
-            SizedBox(height: 20),
-            Center(
+            const SizedBox(height: 18),
+            const _FieldLabel('Комментарий (необязательно)'),
+            const SizedBox(height: 8),
+            const _CommentField(hint: 'Введите комментарий'),
+            const SizedBox(height: 20),
+            const Center(
               child: _SubmitButton(text: 'Создать заявку'),
             ),
           ],
@@ -120,38 +286,46 @@ class _InputField extends StatelessWidget {
   const _InputField({
     required this.hint,
     required this.trailing,
+    this.onTap,
+    this.borderRadius,
   });
 
   final String hint;
   final Widget trailing;
+  final VoidCallback? onTap;
+  final BorderRadius? borderRadius;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 48,
-      padding: const EdgeInsets.only(left: 14, right: 10),
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.black87, width: 1),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Text(
-              hint,
-              style: const TextStyle(fontSize: 33 / 2, fontWeight: FontWeight.w400),
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        height: 48,
+        padding: const EdgeInsets.only(left: 14, right: 10),
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.black87, width: 1),
+          borderRadius: borderRadius ?? BorderRadius.circular(12),
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: Text(
+                hint,
+                style: const TextStyle(fontSize: 33 / 2, fontWeight: FontWeight.w400),
+              ),
             ),
-          ),
-          Container(
-            width: 28,
-            height: 28,
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.black87, width: 1),
-              borderRadius: BorderRadius.circular(8),
+            Container(
+              width: 28,
+              height: 28,
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.black87, width: 1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Center(child: trailing),
             ),
-            child: Center(child: trailing),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

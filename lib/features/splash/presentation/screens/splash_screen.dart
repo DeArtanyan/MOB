@@ -3,8 +3,6 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:wordpice/features/auth/presentation/screens/auth_screen.dart';
-import 'package:wordpice/features/splash/presentation/widgets/splash_logo.dart';
-
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -13,8 +11,11 @@ class SplashScreen extends StatefulWidget {
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> {
+class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderStateMixin {
   static const _interval = Duration(seconds: 2);
+  static const _letterInterval = Duration(milliseconds: 300);
+  static const _startDelay = Duration(milliseconds: 900);
+  static const _logoText = 'Рабочая Точка.';
 
   final List<String> _allPhrases = const [
     'Вы красивы',
@@ -30,29 +31,44 @@ class _SplashScreenState extends State<SplashScreen> {
   late final List<String> _selected3;
   int _index = 0;
   Timer? _timer;
+  late final AnimationController _logoController;
 
   @override
   void initState() {
     super.initState();
 
     _selected3 = _pick3RandomUnique(_allPhrases);
+    _logoController = AnimationController(
+      vsync: this,
+      duration: Duration(
+        milliseconds: _logoText.length * _letterInterval.inMilliseconds,
+      ),
+    )..value = 0;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      Future.delayed(_startDelay, () {
+        if (!mounted) return;
+        _logoController.forward(from: 0);
+      });
+    });
 
     _timer = Timer.periodic(_interval, (_) {
       if (!mounted) return;
+      setState(() => _index = (_index + 1) % _selected3.length);
+    });
 
-      if (_index >= _selected3.length - 1) {
+    _logoController.addStatusListener((status) {
+      if (status == AnimationStatus.completed && mounted) {
         _timer?.cancel();
         _goToAuth();
-        return;
       }
-
-      setState(() => _index++);
     });
   }
 
   @override
   void dispose() {
     _timer?.cancel();
+    _logoController.dispose();
     super.dispose();
   }
 
@@ -83,9 +99,9 @@ class _SplashScreenState extends State<SplashScreen> {
             Center(
               child: Hero(
                 tag: 'app_logo',
-                child: const Material(
+                child: Material(
                   type: MaterialType.transparency,
-                  child: SplashLogo(),
+                  child: _AnimatedText(controller: _logoController, text: _logoText),
                 ),
               ),
             ),
@@ -107,6 +123,53 @@ class _SplashScreenState extends State<SplashScreen> {
           ],
         ),
       ),
+    );
+  }
+}
+
+class _AnimatedText extends StatelessWidget {
+  const _AnimatedText({
+    required this.controller,
+    required this.text,
+  });
+
+  final AnimationController controller;
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    final letters = text.split('');
+    final total = letters.length;
+
+    return AnimatedBuilder(
+      animation: controller,
+      builder: (_, __) {
+        return Row(
+          mainAxisSize: MainAxisSize.min,
+          children: List.generate(total, (index) {
+            final start = index / total;
+            final end = (index + 1) / total;
+            final t = ((controller.value - start) / (end - start)).clamp(0.0, 1.0);
+            final opacity = Curves.easeOut.transform(t);
+            final dy = (1 - opacity) * 6;
+
+            return Opacity(
+              opacity: opacity,
+              child: Transform.translate(
+                offset: Offset(0, dy),
+                child: Text(
+                  letters[index],
+                  style: const TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black87,
+                  ),
+                ),
+              ),
+            );
+          }),
+        );
+      },
     );
   }
 }
