@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:wordpice/app/navigation/app_tab_navigator.dart';
 import 'package:wordpice/core/widgets/app_shell.dart';
 import 'package:wordpice/features/auth/presentation/screens/auth_screen.dart';
+import 'package:wordpice/features/passes/presentation/widgets/pass_confirmation_modal.dart';
 
 /// Экран "Пропуск гостя" (UI-only).
 class GuestPassScreen extends StatefulWidget {
@@ -14,6 +15,15 @@ class GuestPassScreen extends StatefulWidget {
 class _GuestPassScreenState extends State<GuestPassScreen> {
   static const int _tabIndex = 2; // Пропуск
   int _selectedBottomIndex = _tabIndex;
+  final TextEditingController _emailController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _emailController.addListener(_onEmailChanged);
+  }
+
+  void _onEmailChanged() => setState(() {});
 
   void _logout() {
     Navigator.pushAndRemoveUntil(
@@ -24,9 +34,23 @@ class _GuestPassScreenState extends State<GuestPassScreen> {
   }
 
   void _onBottomChanged(int index) {
-    if (index == _tabIndex) return;
-    setState(() => _selectedBottomIndex = index);
     AppTabNavigator.goToTab(context, index);
+  }
+
+  bool get _canBuyPass => _emailController.text.trim().isNotEmpty;
+
+  Future<void> _showPurchaseModal() {
+    return PassConfirmationModal.show(
+      context,
+      email: _emailController.text.trim(),
+    );
+  }
+
+  @override
+  void dispose() {
+    _emailController.removeListener(_onEmailChanged);
+    _emailController.dispose();
+    super.dispose();
   }
 
   @override
@@ -71,20 +95,24 @@ class _GuestPassScreenState extends State<GuestPassScreen> {
                   child: _FieldLabel('Эл.почта*'),
                 ),
                 const SizedBox(height: 8),
-                const _InputField(hint: 'Введите электронную почту'),
+                _EditableInputField(
+                  controller: _emailController,
+                  hint: 'Введите электронную почту',
+                  keyboardType: TextInputType.emailAddress,
+                ),
                 const SizedBox(height: 20),
                 SizedBox(
                   width: 200,
                   height: 44,
                   child: OutlinedButton(
-                    onPressed: () {},
+                    onPressed: _canBuyPass ? _showPurchaseModal : null,
                     style: OutlinedButton.styleFrom(
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
                     child: const Text(
-                      'Запросить пропуск',
+                      'Купить пропуск',
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w400,
@@ -101,14 +129,6 @@ class _GuestPassScreenState extends State<GuestPassScreen> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: const Icon(Icons.qr_code_2, size: 120),
-                ),
-                const SizedBox(height: 10),
-                const Text(
-                  'Типо какой то номер??',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w400,
-                  ),
                 ),
               ],
             ),
@@ -136,29 +156,36 @@ class _FieldLabel extends StatelessWidget {
   }
 }
 
-class _InputField extends StatelessWidget {
-  const _InputField({required this.hint});
+class _EditableInputField extends StatelessWidget {
+  const _EditableInputField({
+    required this.controller,
+    required this.hint,
+    this.keyboardType,
+  });
 
+  final TextEditingController controller;
   final String hint;
+  final TextInputType? keyboardType;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       height: 48,
-      padding: const EdgeInsets.only(left: 14, right: 10),
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.black87, width: 1),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Text(
-              hint,
-              style: const TextStyle(fontSize: 33 / 2, fontWeight: FontWeight.w400),
-            ),
+      child: TextField(
+        controller: controller,
+        keyboardType: keyboardType,
+        decoration: InputDecoration(
+          hintText: hint,
+          contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: Colors.black87, width: 1),
           ),
-        ],
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: Colors.black87, width: 1),
+          ),
+        ),
       ),
     );
   }

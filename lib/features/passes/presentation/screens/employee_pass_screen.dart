@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:wordpice/app/navigation/app_tab_navigator.dart';
 import 'package:wordpice/core/widgets/app_shell.dart';
 import 'package:wordpice/features/auth/presentation/screens/auth_screen.dart';
+import 'package:wordpice/features/passes/presentation/widgets/pass_confirmation_modal.dart';
+import 'package:wordpice/features/passes/presentation/widgets/pass_form_widgets.dart';
 
 /// Экран "Пропуск сотруднику" (UI-only).
 class EmployeePassScreen extends StatefulWidget {
@@ -14,6 +16,29 @@ class EmployeePassScreen extends StatefulWidget {
 class _EmployeePassScreenState extends State<EmployeePassScreen> {
   static const int _tabIndex = 2; // Пропуск
   int _selectedBottomIndex = _tabIndex;
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _companyController = TextEditingController();
+  final TextEditingController _positionController = TextEditingController();
+  bool _isParkingMenuOpen = false;
+  int? _selectedParkingPlace;
+
+  static const List<int> _parkingPlaces = <int>[
+    21, 22, 23, 24, 25,
+    16, 17, 18, 19, 20,
+    11, 12, 13, 14, 15,
+    6, 7, 8, 9, 10,
+    1, 2, 3, 4, 5,
+  ];
+
+  void _onAnyFieldChanged() => setState(() {});
+
+  @override
+  void initState() {
+    super.initState();
+    _emailController.addListener(_onAnyFieldChanged);
+    _companyController.addListener(_onAnyFieldChanged);
+    _positionController.addListener(_onAnyFieldChanged);
+  }
 
   void _logout() {
     Navigator.pushAndRemoveUntil(
@@ -24,9 +49,51 @@ class _EmployeePassScreenState extends State<EmployeePassScreen> {
   }
 
   void _onBottomChanged(int index) {
-    if (index == _tabIndex) return;
-    setState(() => _selectedBottomIndex = index);
     AppTabNavigator.goToTab(context, index);
+  }
+
+  void _toggleParkingMenu() {
+    setState(() => _isParkingMenuOpen = !_isParkingMenuOpen);
+  }
+
+  void _selectParkingPlace(int place) {
+    setState(() {
+      _selectedParkingPlace = place;
+      _isParkingMenuOpen = false;
+    });
+  }
+
+  Future<void> _showPurchaseModal() {
+    final email = _emailController.text.trim();
+    final company = _companyController.text.trim();
+    final position = _positionController.text.trim();
+    final parking = _selectedParkingPlace == null
+        ? 'Парковочное место: нет'
+        : 'Парковочное место №$_selectedParkingPlace';
+
+    return PassConfirmationModal.show(
+      context,
+      email: email,
+      company: company,
+      position: position,
+      parking: parking,
+    );
+  }
+
+  bool get _canBuyPass =>
+      _emailController.text.trim().isNotEmpty &&
+      _companyController.text.trim().isNotEmpty &&
+      _positionController.text.trim().isNotEmpty;
+
+  @override
+  void dispose() {
+    _emailController.removeListener(_onAnyFieldChanged);
+    _companyController.removeListener(_onAnyFieldChanged);
+    _positionController.removeListener(_onAnyFieldChanged);
+    _emailController.dispose();
+    _companyController.dispose();
+    _positionController.dispose();
+    super.dispose();
   }
 
   @override
@@ -37,134 +104,135 @@ class _EmployeePassScreenState extends State<EmployeePassScreen> {
       onLogout: _logout,
       onNotifications: () {},
       notificationCount: 0,
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(36, 16, 36, 24),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: const [
-            Text(
-              'Пропуск',
-              style: TextStyle(
-                fontSize: 44 / 2,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            SizedBox(height: 18),
-            _FieldLabel('Эл.почта*'),
-            SizedBox(height: 8),
-            _InputField(hint: 'Введите электронную почту'),
-            SizedBox(height: 18),
-            _FieldLabel('Компания*'),
-            SizedBox(height: 8),
-            _InputField(hint: 'Введите компанию'),
-            SizedBox(height: 18),
-            _FieldLabel('Должность*'),
-            SizedBox(height: 8),
-            _InputField(hint: 'Введите должность'),
-            SizedBox(height: 18),
-            _FieldLabel('Парковочное место(необязательно)'),
-            SizedBox(height: 8),
-            _InputField(
-              hint: 'Парковочное место',
-              trailing: Icon(Icons.keyboard_arrow_down_rounded, size: 26),
-              hasTrailingBox: true,
-            ),
-            SizedBox(height: 26),
-            Center(
-              child: _SubmitButton(text: 'Запросить пропуск'),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _FieldLabel extends StatelessWidget {
-  const _FieldLabel(this.text);
-
-  final String text;
-
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      text,
-      style: const TextStyle(
-        fontSize: 18 * 0.9,
-        fontWeight: FontWeight.w400,
-      ),
-    );
-  }
-}
-
-class _InputField extends StatelessWidget {
-  const _InputField({
-    required this.hint,
-    this.trailing,
-    this.hasTrailingBox = false,
-  });
-
-  final String hint;
-  final Widget? trailing;
-  final bool hasTrailingBox;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 48,
-      padding: const EdgeInsets.only(left: 14, right: 10),
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.black87, width: 1),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Text(
-              hint,
-              style: const TextStyle(fontSize: 33 / 2, fontWeight: FontWeight.w400),
-            ),
-          ),
-          if (trailing != null)
-            hasTrailingBox
-                ? Container(
-                    width: 28,
-                    height: 28,
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.black87, width: 1),
-                      borderRadius: BorderRadius.circular(8),
+      body: Center(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 320),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const SizedBox(
+                  width: double.infinity,
+                  child: Text(
+                    'Пропуск',
+                    style: TextStyle(
+                      fontSize: 44 / 2,
+                      fontWeight: FontWeight.w600,
                     ),
-                    child: Center(child: trailing),
-                  )
-                : trailing!,
-        ],
-      ),
-    );
-  }
-}
-
-class _SubmitButton extends StatelessWidget {
-  const _SubmitButton({required this.text});
-
-  final String text;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: 200,
-      height: 44,
-      child: OutlinedButton(
-        onPressed: () {},
-        style: OutlinedButton.styleFrom(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-        ),
-        child: Text(
-          text,
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w400,
+                    textAlign: TextAlign.left,
+                  ),
+                ),
+                const SizedBox(height: 18),
+                const SizedBox(
+                  width: double.infinity,
+                  child: PassFieldLabel('Эл.почта*'),
+                ),
+                const SizedBox(height: 8),
+                PassEditableInputField(
+                  controller: _emailController,
+                  hint: 'Введите электронную почту',
+                  keyboardType: TextInputType.emailAddress,
+                ),
+                const SizedBox(height: 18),
+                const SizedBox(
+                  width: double.infinity,
+                  child: PassFieldLabel('Компания*'),
+                ),
+                const SizedBox(height: 8),
+                PassEditableInputField(
+                  controller: _companyController,
+                  hint: 'Введите компанию',
+                ),
+                const SizedBox(height: 18),
+                const SizedBox(
+                  width: double.infinity,
+                  child: PassFieldLabel('Должность*'),
+                ),
+                const SizedBox(height: 8),
+                PassEditableInputField(
+                  controller: _positionController,
+                  hint: 'Введите должность',
+                ),
+                const SizedBox(height: 18),
+                const SizedBox(
+                  width: double.infinity,
+                  child: PassFieldLabel('Парковочное место (необязательно)'),
+                ),
+                const SizedBox(height: 8),
+                PassInputField(
+                  hint: _selectedParkingPlace == null
+                      ? 'Парковочное место'
+                      : 'Парковочное место №$_selectedParkingPlace',
+                  trailing: Icon(
+                    _isParkingMenuOpen
+                        ? Icons.keyboard_arrow_up_rounded
+                        : Icons.keyboard_arrow_down_rounded,
+                    size: 26,
+                  ),
+                  hasTrailingBox: true,
+                  onTap: _toggleParkingMenu,
+                  borderRadius: _isParkingMenuOpen
+                      ? const BorderRadius.only(
+                          topLeft: Radius.circular(12),
+                          topRight: Radius.circular(12),
+                        )
+                      : BorderRadius.circular(12),
+                ),
+                AnimatedSize(
+                  duration: const Duration(milliseconds: 220),
+                  curve: Curves.easeInOut,
+                  child: _isParkingMenuOpen
+                      ? Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.black87, width: 1),
+                            borderRadius: const BorderRadius.only(
+                              bottomLeft: Radius.circular(12),
+                              bottomRight: Radius.circular(12),
+                            ),
+                          ),
+                          child: Wrap(
+                            spacing: 8,
+                            runSpacing: 10,
+                            children: _parkingPlaces.map((place) {
+                              return InkWell(
+                                onTap: () => _selectParkingPlace(place),
+                                borderRadius: BorderRadius.circular(8),
+                                child: SizedBox(
+                                  width: 52,
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        '№$place',
+                                        style: const TextStyle(fontSize: 13, color: Colors.black87),
+                                      ),
+                                      const SizedBox(height: 2),
+                                      Image.asset(
+                                        'assets/icons/nav_parking.png',
+                                        width: 34,
+                                        height: 34,
+                                        color: Colors.black87,
+                                        colorBlendMode: BlendMode.srcIn,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                        )
+                      : const SizedBox.shrink(),
+                ),
+                const SizedBox(height: 26),
+                PassSubmitButton(
+                  text: 'Купить пропуск',
+                  onPressed: _canBuyPass ? _showPurchaseModal : null,
+                ),
+              ],
+            ),
           ),
         ),
       ),

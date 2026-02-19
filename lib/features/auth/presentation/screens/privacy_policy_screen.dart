@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:wordpice/core/theme/app_text_styles.dart';
-import 'account_confirmation_screen.dart';
 
 
 class PrivacyPolicyScreen extends StatefulWidget {
@@ -11,8 +10,6 @@ class PrivacyPolicyScreen extends StatefulWidget {
 }
 
 class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
-  bool _accepted = false;
-
   static const String _policyText = '''
 Настоящая Политика конфиденциальности определяет порядок обработки и защиты персональных данных пользователей мобильного приложения.
 
@@ -92,37 +89,6 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
                     const Text(
                       _policyText,
                       style: TextStyle(fontSize: 14, color: Colors.black87, height: 1.4),
-                    ),
-                    const SizedBox(height: 24),
-
-                    Row(
-                      children: [
-                        Checkbox(
-                          value: _accepted,
-                          onChanged: (v) => setState(() => _accepted = v ?? false),
-                        ),
-                        const Expanded(
-                          child: Text(
-                            'Я принимаю условия конфиденциальности',
-                            style: AppTextStyles.body14,
-                          ),
-                        ),
-                      ],
-                    ),
-
-                    const SizedBox(height: 12),
-
-                    Center(
-                      child: OutlinedButton(
-                        onPressed: _accepted
-                          ? () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(builder: (_) => const AccountConfirmationScreen()),
-                              );
-                            }
-                          : null,
-                        child: const Text('Отправить'),
-                      ),
                     ),
                   ],
                 ),

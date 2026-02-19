@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:wordpice/app/navigation/app_tab_navigator.dart';
 import 'package:wordpice/core/widgets/app_shell.dart';
 import 'package:wordpice/features/auth/presentation/screens/auth_screen.dart';
@@ -40,49 +40,52 @@ class _PassesScreenState extends State<PassesScreen> {
       onLogout: _logout,
       onNotifications: () {},
       notificationCount: 0,
-      body: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 96, 16, 24),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const SizedBox(
-              width: 280,
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Пропуск',
-                  style: TextStyle(
-                    fontSize: 38,
-                    fontWeight: FontWeight.w500,
+      body: Center(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 320),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const SizedBox(
+                  width: double.infinity,
+                  child: Text(
+                    'Пропуск',
+                    style: TextStyle(
+                      fontSize: 44 / 2,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    textAlign: TextAlign.left,
                   ),
                 ),
-              ),
+                const SizedBox(height: 42),
+                _ActionButton(
+                  text: 'Пропуск БЦ',
+                  onPressed: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const BcPassScreen()),
+                  ),
+                ),
+                const SizedBox(height: 30),
+                _ActionButton(
+                  text: 'Пропуск сотрудника',
+                  onPressed: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const EmployeePassScreen()),
+                  ),
+                ),
+                const SizedBox(height: 30),
+                _ActionButton(
+                  text: 'Пропуск для гостя',
+                  onPressed: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const GuestPassScreen()),
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(height: 42),
-            _ActionButton(
-              text: 'Пропуск БЦ',
-              onPressed: () => Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const BcPassScreen()),
-              ),
-            ),
-            const SizedBox(height: 30),
-            _ActionButton(
-              text: 'Пропуск сотрудника',
-              onPressed: () => Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const EmployeePassScreen()),
-              ),
-            ),
-            const SizedBox(height: 30),
-            _ActionButton(
-              text: 'Пропуск для гостя',
-              onPressed: () => Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const GuestPassScreen()),
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );

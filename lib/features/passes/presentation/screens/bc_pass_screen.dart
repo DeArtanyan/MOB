@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:wordpice/app/navigation/app_tab_navigator.dart';
 import 'package:wordpice/core/widgets/app_shell.dart';
 import 'package:wordpice/features/auth/presentation/screens/auth_screen.dart';
+import 'package:wordpice/features/passes/presentation/widgets/pass_confirmation_modal.dart';
 
 /// Экран "Пропуск БЦ" (UI-only).
 class BcPassScreen extends StatefulWidget {
@@ -14,6 +15,16 @@ class BcPassScreen extends StatefulWidget {
 class _BcPassScreenState extends State<BcPassScreen> {
   static const int _tabIndex = 2; // Пропуск
   int _selectedBottomIndex = _tabIndex;
+  bool _isParkingMenuOpen = false;
+  int? _selectedParkingPlace;
+
+  static const List<int> _parkingPlaces = <int>[
+    21, 22, 23, 24, 25,
+    16, 17, 18, 19, 20,
+    11, 12, 13, 14, 15,
+    6, 7, 8, 9, 10,
+    1, 2, 3, 4, 5,
+  ];
 
   void _logout() {
     Navigator.pushAndRemoveUntil(
@@ -24,9 +35,29 @@ class _BcPassScreenState extends State<BcPassScreen> {
   }
 
   void _onBottomChanged(int index) {
-    if (index == _tabIndex) return;
-    setState(() => _selectedBottomIndex = index);
     AppTabNavigator.goToTab(context, index);
+  }
+
+  void _toggleParkingMenu() {
+    setState(() => _isParkingMenuOpen = !_isParkingMenuOpen);
+  }
+
+  void _selectParkingPlace(int place) {
+    setState(() {
+      _selectedParkingPlace = place;
+      _isParkingMenuOpen = false;
+    });
+  }
+
+  Future<void> _showPurchaseModal() {
+    final parking = _selectedParkingPlace == null
+        ? 'Парковочное место: нет'
+        : 'Парковочное место №$_selectedParkingPlace';
+
+    return PassConfirmationModal.show(
+      context,
+      parking: parking,
+    );
   }
 
   @override
@@ -59,27 +90,88 @@ class _BcPassScreenState extends State<BcPassScreen> {
                 const SizedBox(height: 18),
                 const SizedBox(
                   width: double.infinity,
-                  child: _FieldLabel('Парковочное место'),
+                  child: _FieldLabel('Парковочное место (Необязательно)'),
                 ),
                 const SizedBox(height: 8),
-                const _InputField(
-                  hint: 'Парковочное место',
-                  trailing: Icon(Icons.keyboard_arrow_down_rounded, size: 26),
+                _InputField(
+                  hint: _selectedParkingPlace == null
+                      ? 'Парковочное место'
+                      : 'Парковочное место №$_selectedParkingPlace',
+                  trailing: Icon(
+                    _isParkingMenuOpen
+                        ? Icons.keyboard_arrow_up_rounded
+                        : Icons.keyboard_arrow_down_rounded,
+                    size: 26,
+                  ),
                   hasTrailingBox: true,
+                  onTap: _toggleParkingMenu,
+                  borderRadius: _isParkingMenuOpen
+                      ? const BorderRadius.only(
+                          topLeft: Radius.circular(12),
+                          topRight: Radius.circular(12),
+                        )
+                      : BorderRadius.circular(12),
+                ),
+                AnimatedSize(
+                  duration: const Duration(milliseconds: 220),
+                  curve: Curves.easeInOut,
+                  child: _isParkingMenuOpen
+                      ? Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.black87, width: 1),
+                            borderRadius: const BorderRadius.only(
+                              bottomLeft: Radius.circular(12),
+                              bottomRight: Radius.circular(12),
+                            ),
+                          ),
+                          child: Wrap(
+                            spacing: 8,
+                            runSpacing: 10,
+                            children: _parkingPlaces.map((place) {
+                              return InkWell(
+                                onTap: () => _selectParkingPlace(place),
+                                borderRadius: BorderRadius.circular(8),
+                                child: SizedBox(
+                                  width: 52,
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        '№$place',
+                                        style: const TextStyle(fontSize: 13, color: Colors.black87),
+                                      ),
+                                      const SizedBox(height: 2),
+                                      Image.asset(
+                                        'assets/icons/nav_parking.png',
+                                        width: 34,
+                                        height: 34,
+                                        color: Colors.black87,
+                                        colorBlendMode: BlendMode.srcIn,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                        )
+                      : const SizedBox.shrink(),
                 ),
                 const SizedBox(height: 20),
                 SizedBox(
                   width: 200,
                   height: 44,
                   child: OutlinedButton(
-                    onPressed: () {},
+                    onPressed: _showPurchaseModal,
                     style: OutlinedButton.styleFrom(
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
                     child: const Text(
-                      'Запросить пропуск',
+                      'Купить пропуск',
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w400,
@@ -96,14 +188,6 @@ class _BcPassScreenState extends State<BcPassScreen> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: const Icon(Icons.qr_code_2, size: 120),
-                ),
-                const SizedBox(height: 10),
-                const Text(
-                  'Типо какой то номер??',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w400,
-                  ),
                 ),
               ],
             ),
@@ -136,42 +220,50 @@ class _InputField extends StatelessWidget {
     required this.hint,
     this.trailing,
     this.hasTrailingBox = false,
+    this.onTap,
+    this.borderRadius,
   });
 
   final String hint;
   final Widget? trailing;
   final bool hasTrailingBox;
+  final VoidCallback? onTap;
+  final BorderRadius? borderRadius;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 48,
-      padding: const EdgeInsets.only(left: 14, right: 10),
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.black87, width: 1),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Text(
-              hint,
-              style: const TextStyle(fontSize: 33 / 2, fontWeight: FontWeight.w400),
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        height: 48,
+        padding: const EdgeInsets.only(left: 14, right: 10),
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.black87, width: 1),
+          borderRadius: borderRadius ?? BorderRadius.circular(12),
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: Text(
+                hint,
+                style: const TextStyle(fontSize: 33 / 2, fontWeight: FontWeight.w400),
+              ),
             ),
-          ),
-          if (trailing != null)
-            hasTrailingBox
-                ? Container(
-                    width: 28,
-                    height: 28,
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.black87, width: 1),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Center(child: trailing),
-                  )
-                : trailing!,
-        ],
+            if (trailing != null)
+              hasTrailingBox
+                  ? Container(
+                      width: 28,
+                      height: 28,
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.black87, width: 1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Center(child: trailing),
+                    )
+                  : trailing!,
+          ],
+        ),
       ),
     );
   }

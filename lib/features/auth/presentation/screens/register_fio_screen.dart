@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:wordpice/core/theme/app_text_styles.dart';
 import 'package:wordpice/core/widgets/app_back_button.dart';
 import 'package:wordpice/core/widgets/app_logo_top_left.dart';
+import 'account_confirmation_screen.dart';
 import 'privacy_policy_screen.dart';
 
 class RegisterFioScreen extends StatefulWidget {
@@ -22,6 +23,12 @@ class _RegisterFioScreenState extends State<RegisterFioScreen> {
     _lastNameController.dispose();
     _middleNameController.dispose();
     super.dispose();
+  }
+
+  void _goToAccountConfirmation() {
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => const AccountConfirmationScreen()),
+    );
   }
 
   void _openPolicy() {
@@ -83,11 +90,21 @@ class _RegisterFioScreenState extends State<RegisterFioScreen> {
 
                     const SizedBox(height: 18),
 
-                    const Center(
-                      child: Text(
-                        'Нажимая на кнопку “Зарегистрироваться”, я соглашаюсь с условиями\nПолитики конфиденциальности',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 10, color: Colors.black54),
+                    Center(
+                      child: InkWell(
+                        onTap: _openPolicy,
+                        borderRadius: BorderRadius.circular(8),
+                        child: const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                          child: Text(
+                            'Нажимая на кнопку “Зарегистрироваться”, я соглашаюсь с условиями\nПолитики конфиденциальности',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 10,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ),
                       ),
                     ),
 
@@ -95,7 +112,7 @@ class _RegisterFioScreenState extends State<RegisterFioScreen> {
 
                     Center(
                       child: OutlinedButton(
-                        onPressed: _openPolicy,
+                        onPressed: _goToAccountConfirmation,
                         child: const Text('Зарегистрироваться'),
                       ),
                     ),
