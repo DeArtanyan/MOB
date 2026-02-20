@@ -37,9 +37,6 @@ class _PassesScreenState extends State<PassesScreen> {
     return AppShell(
       selectedBottomIndex: _selectedBottomIndex,
       onBottomChanged: _onBottomChanged,
-      onLogout: _logout,
-      onNotifications: () {},
-      notificationCount: 0,
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
@@ -121,3 +118,4 @@ class _ActionButton extends StatelessWidget {
     );
   }
 }
+

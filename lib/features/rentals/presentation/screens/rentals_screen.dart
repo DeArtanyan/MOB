@@ -1,7 +1,8 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:wordpice/app/navigation/app_tab_navigator.dart';
 import 'package:wordpice/core/widgets/app_shell.dart';
 import 'package:wordpice/features/auth/presentation/screens/auth_screen.dart';
+import 'package:wordpice/features/rentals/presentation/screens/office_rental_screen.dart';
 
 /// Экран "Аренды" (UI-only).
 class RentalsScreen extends StatefulWidget {
@@ -34,34 +35,40 @@ class _RentalsScreenState extends State<RentalsScreen> {
     return AppShell(
       selectedBottomIndex: _selectedBottomIndex,
       onBottomChanged: _onBottomChanged,
-      onLogout: _logout,
-      onNotifications: () {},
-      notificationCount: 0,
-      body: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 96, 16, 24),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: const [
-            SizedBox(
-              width: 280,
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Аренды',
-                  style: TextStyle(
-                    fontSize: 38,
-                    fontWeight: FontWeight.w500,
+      body: Center(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 320),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const SizedBox(
+                  width: double.infinity,
+                  child: Text(
+                    'Аренды',
+                    style: TextStyle(
+                      fontSize: 44 / 2,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    textAlign: TextAlign.left,
                   ),
                 ),
-              ),
+                const SizedBox(height: 42),
+                const _ActionButton(text: 'Аренда переговорной'),
+                const SizedBox(height: 30),
+                _ActionButton(
+                  text: 'Аренда офиса',
+                  onPressed: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const OfficeRentalScreen()),
+                  ),
+                ),
+                const SizedBox(height: 30),
+                const _ActionButton(text: 'Аренда коворкинга'),
+              ],
             ),
-            SizedBox(height: 42),
-            _ActionButton(text: 'Аренда переговорной'),
-            SizedBox(height: 30),
-            _ActionButton(text: 'Аренда офиса'),
-            SizedBox(height: 30),
-            _ActionButton(text: 'Аренда коворкинга'),
-          ],
+          ),
         ),
       ),
     );
@@ -69,9 +76,10 @@ class _RentalsScreenState extends State<RentalsScreen> {
 }
 
 class _ActionButton extends StatelessWidget {
-  const _ActionButton({required this.text});
+  const _ActionButton({required this.text, this.onPressed});
 
   final String text;
+  final VoidCallback? onPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -79,7 +87,7 @@ class _ActionButton extends StatelessWidget {
       width: 280,
       height: 52,
       child: OutlinedButton(
-        onPressed: () {},
+        onPressed: onPressed ?? () {},
         style: OutlinedButton.styleFrom(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
@@ -96,3 +104,4 @@ class _ActionButton extends StatelessWidget {
     );
   }
 }
+

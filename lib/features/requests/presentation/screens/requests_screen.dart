@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:wordpice/app/navigation/app_tab_navigator.dart';
 import 'package:wordpice/core/widgets/app_shell.dart';
 import 'package:wordpice/features/auth/presentation/screens/auth_screen.dart';
@@ -192,9 +192,6 @@ class _RequestsScreenState extends State<RequestsScreen> {
     return AppShell(
       selectedBottomIndex: _selectedBottomIndex,
       onBottomChanged: _onBottomChanged,
-      onLogout: _logout,
-      onNotifications: () {},
-      notificationCount: 0,
       body: SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(36, 16, 36, 24),
         child: Column(
@@ -583,3 +580,5 @@ class _SubmitButton extends StatelessWidget {
     );
   }
 }
+
+

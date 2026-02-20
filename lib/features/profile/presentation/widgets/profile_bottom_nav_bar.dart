@@ -1,9 +1,8 @@
-
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:wordpice/core/theme/app_colors.dart';
 
 /// Нижняя навигация профиля.
-/// UI-only, без backend и бизнес-логики.
 class ProfileBottomNavBar extends StatefulWidget {
   const ProfileBottomNavBar({
     super.key,
@@ -22,13 +21,13 @@ class _ProfileBottomNavBarState extends State<ProfileBottomNavBar> {
   static const int _visibleCount = 4;
 
   final List<_NavItemData> _items = const <_NavItemData>[
-    _NavItemData(label: 'Аренды', iconAsset: 'assets/icons/nav_rentals.png'),
-    _NavItemData(label: 'Заявки', iconAsset: 'assets/icons/nav_requests.png'),
-    _NavItemData(label: 'Пропуск', iconAsset: 'assets/icons/nav_pass.png'),
-    _NavItemData(label: 'Профиль', iconAsset: 'assets/icons/nav_profile.png'),
-    _NavItemData(label: 'Отзывы', iconAsset: 'assets/icons/nav_reviews.png'),
-    _NavItemData(label: 'Парковка', iconAsset: 'assets/icons/nav_parking.png'),
-    _NavItemData(label: 'Архив', iconAsset: 'assets/icons/nav_archive.png'),
+    _NavItemData(label: 'Аренды', iconAsset: 'assets/icons/nav_rentals.svg'),
+    _NavItemData(label: 'Заявки', iconAsset: 'assets/icons/nav_requests.svg'),
+    _NavItemData(label: 'Пропуск', iconAsset: 'assets/icons/nav_pass.svg'),
+    _NavItemData(label: 'Профиль', iconAsset: 'assets/icons/nav_profile.svg'),
+    _NavItemData(label: 'Отзывы', iconAsset: 'assets/icons/nav_reviews.svg'),
+    _NavItemData(label: 'Парковка', iconAsset: 'assets/icons/nav_parking.svg'),
+    _NavItemData(label: 'Архив', iconAsset: 'assets/icons/nav_archive.svg'),
   ];
 
   int _startIndex = 0;
@@ -78,14 +77,12 @@ class _ProfileBottomNavBarState extends State<ProfileBottomNavBar> {
       (_startIndex + _visibleCount).clamp(0, _items.length),
     );
 
-    // ИЗМЕНЕНО: высота бара теперь 100px
     const double barHeight = 100;
-
     const double arrowSize = 34;
     const double arrowRadius = 14;
 
     return Container(
-      height: barHeight, // ✅ исправлено — теперь один height
+      height: barHeight,
       padding: const EdgeInsets.fromLTRB(12, 12, 12, 16),
       decoration: BoxDecoration(
         color: AppColors.controlGrey,
@@ -162,7 +159,7 @@ class _ArrowButton extends StatelessWidget {
             borderRadius: BorderRadius.circular(radius),
           ),
         ),
-        child: const Icon(Icons.chevron_left, size: 20),
+        child: Icon(icon, size: 20),
       ),
     );
   }
@@ -191,11 +188,11 @@ class _NavItem extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // ✅ ИЗМЕНЕНО: иконки теперь строго 30x30
-            Image.asset(
+            SvgPicture.asset(
               iconAsset,
-              width: 30,
-              height: 30,
+              width: 28,
+              height: 28,
+              colorFilter: const ColorFilter.mode(Colors.black87, BlendMode.srcIn),
             ),
             const SizedBox(height: 6),
             Text(
@@ -204,9 +201,7 @@ class _NavItem extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
                 fontSize: 12,
-                fontWeight: isSelected
-                    ? FontWeight.w600
-                    : FontWeight.w400,
+                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
                 color: AppColors.textPrimary,
               ),
             ),

@@ -1,7 +1,9 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:wordpice/app/navigation/app_tab_navigator.dart';
 import 'package:wordpice/core/widgets/app_shell.dart';
 import 'package:wordpice/features/auth/presentation/screens/auth_screen.dart';
+import 'package:wordpice/features/parking/presentation/widgets/parking_confirmation_modal.dart';
 
 /// Экран "Парковка" (UI-only).
 class ParkingScreen extends StatefulWidget {
@@ -14,6 +16,7 @@ class ParkingScreen extends StatefulWidget {
 class _ParkingScreenState extends State<ParkingScreen> {
   static const int _tabIndex = 5; // Парковка
   int _selectedBottomIndex = _tabIndex;
+  int? _selectedPlace;
 
   static const List<int> _places = <int>[
     21, 22, 23, 24, 25,
@@ -37,14 +40,23 @@ class _ParkingScreenState extends State<ParkingScreen> {
     AppTabNavigator.goToTab(context, index);
   }
 
+  void _onSelectPlace(int place) {
+    setState(() => _selectedPlace = place);
+  }
+
+  Future<void> _onBookPressed() {
+    if (_selectedPlace == null) return Future.value();
+    return ParkingConfirmationModal.show(
+      context,
+      parkingPlace: _selectedPlace!,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return AppShell(
       selectedBottomIndex: _selectedBottomIndex,
       onBottomChanged: _onBottomChanged,
-      onLogout: _logout,
-      onNotifications: () {},
-      notificationCount: 0,
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.fromLTRB(16, 28, 16, 24),
@@ -73,6 +85,8 @@ class _ParkingScreenState extends State<ParkingScreen> {
                       .map(
                         (number) => _ParkingPlace(
                           number: number,
+                          selected: _selectedPlace == number,
+                          onTap: () => _onSelectPlace(number),
                         ),
                       )
                       .toList(),
@@ -82,7 +96,7 @@ class _ParkingScreenState extends State<ParkingScreen> {
                   width: 190,
                   height: 48,
                   child: OutlinedButton(
-                    onPressed: () {},
+                    onPressed: _selectedPlace == null ? null : _onBookPressed,
                     style: OutlinedButton.styleFrom(
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -107,32 +121,55 @@ class _ParkingScreenState extends State<ParkingScreen> {
 }
 
 class _ParkingPlace extends StatelessWidget {
-  const _ParkingPlace({required this.number});
+  const _ParkingPlace({
+    required this.number,
+    required this.selected,
+    required this.onTap,
+  });
 
   final int number;
+  final bool selected;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: 52,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            '№$number',
-            style: const TextStyle(
-              fontSize: 30 / 2,
-              fontWeight: FontWeight.w400,
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(10),
+      child: Container(
+        width: 52,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          color: selected ? const Color(0xFFECECEC) : Colors.transparent,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              '№$number',
+              style: const TextStyle(
+                fontSize: 30 / 2,
+                fontWeight: FontWeight.w400,
+              ),
             ),
-          ),
-          const SizedBox(height: 2),
-          Image.asset(
-            'assets/icons/nav_parking.png',
-            width: 42,
-            height: 42,
-          ),
-        ],
+            const SizedBox(height: 2),
+            SvgPicture.asset(
+              'assets/icons/nav_parking.svg',
+              width: 42,
+              height: 42,
+              colorFilter: ColorFilter.mode(
+                selected ? Colors.black : Colors.black87,
+                BlendMode.srcIn,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 }
+
+
+
+
+

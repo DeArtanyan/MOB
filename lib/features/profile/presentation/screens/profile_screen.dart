@@ -1,18 +1,13 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:wordpice/app/navigation/app_tab_navigator.dart';
 import 'package:wordpice/core/theme/app_colors.dart';
 import 'package:wordpice/core/widgets/app_shell.dart';
-import 'package:wordpice/features/auth/presentation/screens/auth_screen.dart';
+import 'package:wordpice/features/profile/presentation/screens/edit_profile_screen.dart';
 import 'package:wordpice/features/profile/presentation/widgets/qr_modal.dart';
 import 'package:wordpice/features/profile/presentation/widgets/segment_carousel.dart';
 
 /// Экран "Профиль" (UI-only).
-///
-/// Правки по требованиям:
-/// - Отступ от хедера до первой карточки: 40px
-/// - Расстояние между карточками: 30px
-/// - Контактная карточка и карточка пропуска: ширина 340px (на 20px уже)
-/// - Сегментированный переключатель (стрелки + "Избранное") по центру
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
 
@@ -23,14 +18,11 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   static const int _tabIndex = 3; // Профиль
   int _selectedBottomIndex = _tabIndex;
-
   int _carouselIndex = 0;
 
-  void _logout() {
-    Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(builder: (_) => const AuthScreen()),
-      (_) => false,
+  void _openEditScreen() {
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => const EditProfileScreen()),
     );
   }
 
@@ -45,28 +37,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return AppShell(
       selectedBottomIndex: _selectedBottomIndex,
       onBottomChanged: _onBottomChanged,
-      onLogout: _logout,
-      onNotifications: () {},
-      notificationCount: 1,
       body: SingleChildScrollView(
-        // ✅ 40px от хедера до первой карточки
         padding: const EdgeInsets.fromLTRB(16, 40, 16, 28),
         child: Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 360),
             child: Column(
               children: [
-                const _UserCard(),
-
-                // ✅ 30px между карточками
+                _UserCard(onEditTap: _openEditScreen),
                 const SizedBox(height: 30),
-
-                // ✅ уже на 20px
-                const _NarrowCard(child: _InfoCard()),
-
+                _NarrowCard(child: _InfoCard(onEditTap: _openEditScreen)),
                 const SizedBox(height: 30),
-
-                // ✅ уже на 20px
                 _NarrowCard(
                   child: _PassCard(
                     onShowPressed: () => QrModal.showQr(
@@ -75,10 +56,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ),
                 ),
-
                 const SizedBox(height: 30),
-
-                // ✅ по центру (и в ширине 340)
                 _NarrowCard(
                   child: Center(
                     child: SegmentCarousel(
@@ -88,14 +66,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ),
                 ),
-
                 const SizedBox(height: 12),
-
-                // Фильтры (2x2) в той же ширине 340
                 const _NarrowCard(child: _FiltersGrid()),
-
                 const SizedBox(height: 16),
-
                 const Text(
                   'У вас нет истории аренд',
                   style: TextStyle(
@@ -113,7 +86,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 }
 
-/// Обёртка для блоков шириной 340px (на 20px меньше).
 class _NarrowCard extends StatelessWidget {
   const _NarrowCard({required this.child});
 
@@ -144,7 +116,9 @@ class _Card extends StatelessWidget {
 }
 
 class _UserCard extends StatelessWidget {
-  const _UserCard();
+  const _UserCard({required this.onEditTap});
+
+  final VoidCallback onEditTap;
 
   @override
   Widget build(BuildContext context) {
@@ -153,14 +127,37 @@ class _UserCard extends StatelessWidget {
         padding: const EdgeInsets.fromLTRB(14, 14, 14, 14),
         child: Row(
           children: [
-            Container(
-              width: 54,
-              height: 54,
-              decoration: BoxDecoration(
-                color: AppColors.background,
-                borderRadius: BorderRadius.circular(27),
-              ),
-              child: const Icon(Icons.person_outline, size: 26),
+            Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Container(
+                  width: 54,
+                  height: 54,
+                  decoration: BoxDecoration(
+                    color: AppColors.background,
+                    borderRadius: BorderRadius.circular(27),
+                  ),
+                  child: const Icon(Icons.person_outline, size: 26),
+                ),
+                Positioned(
+                  top: -6,
+                  right: -6,
+                  child: SizedBox(
+                    width: 24,
+                    height: 24,
+                    child: IconButton(
+                      onPressed: onEditTap,
+                      padding: EdgeInsets.zero,
+                      icon: SvgPicture.asset(
+                        'assets/icons/edit-2.svg',
+                        width: 20,
+                        height: 20,
+                        colorFilter: const ColorFilter.mode(AppColors.textPrimary, BlendMode.srcIn),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
             const SizedBox(width: 12),
             const Expanded(
@@ -187,21 +184,6 @@ class _UserCard extends StatelessWidget {
                 ],
               ),
             ),
-            SizedBox(
-              width: 40,
-              height: 40,
-              child: OutlinedButton(
-                onPressed: () {},
-                style: OutlinedButton.styleFrom(
-                  padding: EdgeInsets.zero,
-                  side: BorderSide(color: AppColors.border, width: 1),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14),
-                  ),
-                ),
-                child: const Icon(Icons.edit_outlined, size: 18),
-              ),
-            ),
           ],
         ),
       ),
@@ -210,7 +192,9 @@ class _UserCard extends StatelessWidget {
 }
 
 class _InfoCard extends StatelessWidget {
-  const _InfoCard();
+  const _InfoCard({required this.onEditTap});
+
+  final VoidCallback onEditTap;
 
   @override
   Widget build(BuildContext context) {
@@ -252,7 +236,7 @@ class _InfoCard extends StatelessWidget {
                   ),
                   SizedBox(height: 2),
                   Text(
-                    'ООО “Офис”',
+                    'ООО "Офис"',
                     style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w400,
@@ -265,16 +249,15 @@ class _InfoCard extends StatelessWidget {
             SizedBox(
               width: 40,
               height: 40,
-              child: OutlinedButton(
-                onPressed: () {},
-                style: OutlinedButton.styleFrom(
-                  padding: EdgeInsets.zero,
-                  side: BorderSide(color: AppColors.border, width: 1),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14),
-                  ),
+              child: IconButton(
+                onPressed: onEditTap,
+                padding: EdgeInsets.zero,
+                icon: SvgPicture.asset(
+                  'assets/icons/edit.svg',
+                  width: 28,
+                  height: 28,
+                  colorFilter: const ColorFilter.mode(AppColors.textPrimary, BlendMode.srcIn),
                 ),
-                child: const Icon(Icons.edit_outlined, size: 18),
               ),
             ),
           ],
@@ -344,7 +327,7 @@ class _PassCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   const Text(
-                    'Парковочное место:№31',
+                    'Парковочное место: №31',
                     style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w400,

@@ -1,9 +1,11 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:wordpice/core/theme/app_colors.dart';
 
 class BottomNavItem {
   final String label;
-  final String iconAsset; // PNG из assets
+  final String iconAsset;
+
   const BottomNavItem({required this.label, required this.iconAsset});
 }
 
@@ -33,7 +35,7 @@ class _BottomNavCarouselState extends State<BottomNavCarousel> {
     _index = widget.initialIndex.clamp(0, widget.items.length - 1);
     _controller = PageController(
       initialPage: _index,
-      viewportFraction: 1.0, // важно: без “выпирания”
+      viewportFraction: 1.0,
     );
   }
 
@@ -71,7 +73,6 @@ class _BottomNavCarouselState extends State<BottomNavCarousel> {
         children: [
           _Arrow(icon: Icons.chevron_left, onTap: _prev),
           const SizedBox(width: 10),
-
           Expanded(
             child: ClipRRect(
               borderRadius: BorderRadius.circular(14),
@@ -96,10 +97,11 @@ class _BottomNavCarouselState extends State<BottomNavCarousel> {
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Image.asset(
+                            SvgPicture.asset(
                               item.iconAsset,
-                              width: 22,
-                              height: 22,
+                              width: 20,
+                              height: 20,
+                              colorFilter: const ColorFilter.mode(Colors.black87, BlendMode.srcIn),
                             ),
                             const SizedBox(height: 4),
                             Text(
@@ -119,7 +121,6 @@ class _BottomNavCarouselState extends State<BottomNavCarousel> {
               ),
             ),
           ),
-
           const SizedBox(width: 10),
           _Arrow(icon: Icons.chevron_right, onTap: _next),
         ],

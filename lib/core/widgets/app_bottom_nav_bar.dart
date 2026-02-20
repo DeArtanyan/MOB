@@ -1,13 +1,8 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:wordpice/core/theme/app_colors.dart';
 
 /// Единый нижний навигационный бар (подвал) для всех основных экранов.
-///
-/// UI-only: здесь нет бизнес-логики, только выбор вкладки.
-///
-/// Требования:
-/// - высота 100px
-/// - иконки 30x30
 class AppBottomNavBar extends StatefulWidget {
   const AppBottomNavBar({
     super.key,
@@ -25,15 +20,14 @@ class AppBottomNavBar extends StatefulWidget {
 class _AppBottomNavBarState extends State<AppBottomNavBar> {
   static const int _visibleCount = 4;
 
-  // Единый список пунктов как в макете.
   final List<_NavItemData> _items = const <_NavItemData>[
-    _NavItemData(label: 'Аренды', iconAsset: 'assets/icons/nav_rentals.png'),
-    _NavItemData(label: 'Заявки', iconAsset: 'assets/icons/nav_requests.png'),
-    _NavItemData(label: 'Пропуск', iconAsset: 'assets/icons/nav_pass.png'),
-    _NavItemData(label: 'Профиль', iconAsset: 'assets/icons/nav_profile.png'),
-    _NavItemData(label: 'Отзывы', iconAsset: 'assets/icons/nav_reviews.png'),
-    _NavItemData(label: 'Парковка', iconAsset: 'assets/icons/nav_parking.png'),
-    _NavItemData(label: 'Архив', iconAsset: 'assets/icons/nav_archive.png'),
+    _NavItemData(label: 'Аренды', iconAsset: 'assets/icons/nav_rentals.svg'),
+    _NavItemData(label: 'Заявки', iconAsset: 'assets/icons/nav_requests.svg'),
+    _NavItemData(label: 'Пропуск', iconAsset: 'assets/icons/nav_pass.svg'),
+    _NavItemData(label: 'Профиль', iconAsset: 'assets/icons/nav_profile.svg'),
+    _NavItemData(label: 'Отзывы', iconAsset: 'assets/icons/nav_reviews.svg'),
+    _NavItemData(label: 'Парковка', iconAsset: 'assets/icons/nav_parking.svg'),
+    _NavItemData(label: 'Архив', iconAsset: 'assets/icons/nav_archive.svg'),
   ];
 
   int _startIndex = 0;
@@ -84,7 +78,7 @@ class _AppBottomNavBarState extends State<AppBottomNavBar> {
     );
 
     return Container(
-      height: 100, // ✅ требование: высота 100px
+      height: 100,
       padding: const EdgeInsets.fromLTRB(12, 12, 12, 16),
       decoration: BoxDecoration(
         color: AppColors.controlGrey,
@@ -174,10 +168,11 @@ class _NavItem extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset(
+            SvgPicture.asset(
               iconAsset,
-              width: 30, // ✅ требование: 30x30
-              height: 30,
+              width: 28,
+              height: 28,
+              colorFilter: const ColorFilter.mode(Colors.black87, BlendMode.srcIn),
             ),
             const SizedBox(height: 6),
             Text(
@@ -200,5 +195,6 @@ class _NavItem extends StatelessWidget {
 class _NavItemData {
   final String label;
   final String iconAsset;
+
   const _NavItemData({required this.label, required this.iconAsset});
 }

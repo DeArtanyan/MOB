@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:wordpice/app/navigation/app_tab_navigator.dart';
 import 'package:wordpice/core/widgets/app_shell.dart';
 import 'package:wordpice/features/auth/presentation/screens/auth_screen.dart';
@@ -65,9 +66,6 @@ class _BcPassScreenState extends State<BcPassScreen> {
     return AppShell(
       selectedBottomIndex: _selectedBottomIndex,
       onBottomChanged: _onBottomChanged,
-      onLogout: _logout,
-      onNotifications: () {},
-      notificationCount: 0,
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
@@ -90,7 +88,7 @@ class _BcPassScreenState extends State<BcPassScreen> {
                 const SizedBox(height: 18),
                 const SizedBox(
                   width: double.infinity,
-                  child: _FieldLabel('Парковочное место (Необязательно)'),
+                  child: _FieldLabel('Парковочное место (необязательно)'),
                 ),
                 const SizedBox(height: 8),
                 _InputField(
@@ -143,12 +141,11 @@ class _BcPassScreenState extends State<BcPassScreen> {
                                         style: const TextStyle(fontSize: 13, color: Colors.black87),
                                       ),
                                       const SizedBox(height: 2),
-                                      Image.asset(
-                                        'assets/icons/nav_parking.png',
+                                      SvgPicture.asset(
+                                        'assets/icons/nav_parking.svg',
                                         width: 34,
                                         height: 34,
-                                        color: Colors.black87,
-                                        colorBlendMode: BlendMode.srcIn,
+                                        colorFilter: const ColorFilter.mode(Colors.black87, BlendMode.srcIn),
                                       ),
                                     ],
                                   ),
@@ -268,3 +265,4 @@ class _InputField extends StatelessWidget {
     );
   }
 }
+

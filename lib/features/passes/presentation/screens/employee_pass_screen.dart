@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:wordpice/app/navigation/app_tab_navigator.dart';
 import 'package:wordpice/core/widgets/app_shell.dart';
 import 'package:wordpice/features/auth/presentation/screens/auth_screen.dart';
@@ -101,9 +102,6 @@ class _EmployeePassScreenState extends State<EmployeePassScreen> {
     return AppShell(
       selectedBottomIndex: _selectedBottomIndex,
       onBottomChanged: _onBottomChanged,
-      onLogout: _logout,
-      onNotifications: () {},
-      notificationCount: 0,
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
@@ -210,12 +208,11 @@ class _EmployeePassScreenState extends State<EmployeePassScreen> {
                                         style: const TextStyle(fontSize: 13, color: Colors.black87),
                                       ),
                                       const SizedBox(height: 2),
-                                      Image.asset(
-                                        'assets/icons/nav_parking.png',
+                                      SvgPicture.asset(
+                                        'assets/icons/nav_parking.svg',
                                         width: 34,
                                         height: 34,
-                                        color: Colors.black87,
-                                        colorBlendMode: BlendMode.srcIn,
+                                        colorFilter: const ColorFilter.mode(Colors.black87, BlendMode.srcIn),
                                       ),
                                     ],
                                   ),
@@ -239,3 +236,4 @@ class _EmployeePassScreenState extends State<EmployeePassScreen> {
     );
   }
 }
+
