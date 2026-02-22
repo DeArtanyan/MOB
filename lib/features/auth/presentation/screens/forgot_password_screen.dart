@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:wordpice/core/theme/app_text_styles.dart';
 import 'package:wordpice/core/widgets/app_back_button.dart';
-import 'forgot_password_code_screen.dart';
+import 'forgot_password_email_sent_screen.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
@@ -19,9 +19,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     super.dispose();
   }
 
-  void _goToCode() {
+  void _goToEmailSent() {
     Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => const ForgotPasswordCodeScreen()),
+      MaterialPageRoute(builder: (_) => const ForgotPasswordEmailSentScreen()),
     );
   }
 
@@ -32,7 +32,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         child: Stack(
           children: [
             const AppBackButton(),
-
             Center(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -40,7 +39,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SizedBox(height: 32),
-
                     const Center(
                       child: Text(
                         'Восстановление\nпароля',
@@ -48,12 +46,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                         style: AppTextStyles.title26,
                       ),
                     ),
-
                     const SizedBox(height: 16),
-
                     const Center(
                       child: Text(
-                        'Введите адрес эл. почты от аккаунта, мы\nотправим Вам код сброса пароля',
+                        'Введите адрес эл. почты от аккаунта, мы отправим\nВам ссылку для сброса пароля',
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: 12,
@@ -62,9 +58,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                         ),
                       ),
                     ),
-
                     const SizedBox(height: 26),
-
                     const Text('Эл.почта*', style: AppTextStyles.label12Grey),
                     const SizedBox(height: 8),
                     TextField(
@@ -74,12 +68,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                         hintText: 'Введите электронную почту',
                       ),
                     ),
-
                     const SizedBox(height: 22),
-
                     Center(
                       child: OutlinedButton(
-                        onPressed: _goToCode,
+                        onPressed: _goToEmailSent,
                         child: const Text('Отправить'),
                       ),
                     ),

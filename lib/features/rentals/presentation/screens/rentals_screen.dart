@@ -2,6 +2,8 @@
 import 'package:wordpice/app/navigation/app_tab_navigator.dart';
 import 'package:wordpice/core/widgets/app_shell.dart';
 import 'package:wordpice/features/auth/presentation/screens/auth_screen.dart';
+import 'package:wordpice/features/rentals/presentation/screens/coworking_rental_screen.dart';
+import 'package:wordpice/features/rentals/presentation/screens/meeting_room_rental_screen.dart';
 import 'package:wordpice/features/rentals/presentation/screens/office_rental_screen.dart';
 
 /// Экран "Аренды" (UI-only).
@@ -55,7 +57,13 @@ class _RentalsScreenState extends State<RentalsScreen> {
                   ),
                 ),
                 const SizedBox(height: 42),
-                const _ActionButton(text: 'Аренда переговорной'),
+                _ActionButton(
+                  text: 'Аренда переговорной',
+                  onPressed: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const MeetingRoomRentalScreen()),
+                  ),
+                ),
                 const SizedBox(height: 30),
                 _ActionButton(
                   text: 'Аренда офиса',
@@ -65,7 +73,13 @@ class _RentalsScreenState extends State<RentalsScreen> {
                   ),
                 ),
                 const SizedBox(height: 30),
-                const _ActionButton(text: 'Аренда коворкинга'),
+                _ActionButton(
+                  text: 'Аренда коворкинга',
+                  onPressed: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const CoworkingRentalScreen()),
+                  ),
+                ),
               ],
             ),
           ),

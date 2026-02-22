@@ -4,6 +4,33 @@ import 'package:wordpice/core/theme/app_colors.dart';
 class DeleteAccountModal {
   const DeleteAccountModal._();
 
+  static const TextStyle _titleStyle = TextStyle(
+    fontSize: 18,
+    fontWeight: FontWeight.w500,
+    color: Colors.black87,
+  );
+  static const TextStyle _messageStyle = TextStyle(
+    fontSize: 16,
+    fontWeight: FontWeight.w400,
+    color: Colors.black87,
+    height: 1.35,
+  );
+  static const TextStyle _buttonTextStyle = TextStyle(
+    fontSize: 16,
+    fontWeight: FontWeight.w400,
+    color: Colors.black87,
+  );
+
+  static ButtonStyle _modalButtonStyle(Color backgroundColor) {
+    return OutlinedButton.styleFrom(
+      backgroundColor: backgroundColor,
+      side: const BorderSide(color: Colors.black87, width: 1),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+    );
+  }
+
   static Future<void> show(BuildContext context) async {
     await showDialog<void>(
       context: context,
@@ -21,22 +48,13 @@ class DeleteAccountModal {
               children: [
                 const Text(
                   'Удаление',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.black87,
-                  ),
+                  style: _titleStyle,
                 ),
                 const SizedBox(height: 16),
                 const Text(
                   'Вы действительно хотите удалить\nпрофиль?',
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w400,
-                    color: Colors.black87,
-                    height: 1.35,
-                  ),
+                  style: _messageStyle,
                 ),
                 const SizedBox(height: 18),
                 SizedBox(
@@ -44,20 +62,10 @@ class DeleteAccountModal {
                   height: 44,
                   child: OutlinedButton(
                     onPressed: () => Navigator.of(dialogContext).pop(),
-                    style: OutlinedButton.styleFrom(
-                      backgroundColor: AppColors.controlGrey,
-                      side: const BorderSide(color: Colors.black87, width: 1),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
+                    style: _modalButtonStyle(AppColors.controlGrey),
                     child: const Text(
                       'Удалить',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w400,
-                        color: Colors.black87,
-                      ),
+                      style: _buttonTextStyle,
                     ),
                   ),
                 ),
@@ -67,20 +75,10 @@ class DeleteAccountModal {
                   height: 44,
                   child: OutlinedButton(
                     onPressed: () => Navigator.of(dialogContext).pop(),
-                    style: OutlinedButton.styleFrom(
-                      backgroundColor: AppColors.background,
-                      side: const BorderSide(color: Colors.black87, width: 1),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
+                    style: _modalButtonStyle(AppColors.background),
                     child: const Text(
                       'Отмена',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w400,
-                        color: Colors.black87,
-                      ),
+                      style: _buttonTextStyle,
                     ),
                   ),
                 ),

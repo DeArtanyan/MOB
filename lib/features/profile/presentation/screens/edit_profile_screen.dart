@@ -5,6 +5,35 @@ import 'package:wordpice/core/theme/app_colors.dart';
 import 'package:wordpice/core/widgets/app_shell.dart';
 import 'package:wordpice/features/profile/presentation/widgets/delete_account_modal.dart';
 
+const _kPrimaryButtonTextStyle = TextStyle(
+  fontSize: 15,
+  fontWeight: FontWeight.w400,
+);
+const _kExitTextStyle = TextStyle(
+  fontSize: 17,
+  fontWeight: FontWeight.w600,
+  color: Colors.black87,
+);
+const _kSectionTitleStyle = TextStyle(
+  fontSize: 15,
+  fontWeight: FontWeight.w500,
+  color: Colors.black87,
+);
+const _kDeleteButtonTextStyle = TextStyle(
+  fontSize: 15,
+  fontWeight: FontWeight.w400,
+  color: Colors.black87,
+);
+const _kInputLabelStyle = TextStyle(
+  fontSize: 14,
+  fontWeight: FontWeight.w400,
+  color: Colors.black87,
+);
+const _kInputTextStyle = TextStyle(
+  fontSize: 15,
+  color: Colors.black87,
+);
+
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});
 
@@ -93,7 +122,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     ),
                     child: const Text(
                       'Сохранить',
-                      style: TextStyle(fontSize: 15, fontWeight: FontWeight.w400),
+                      style: _kPrimaryButtonTextStyle,
                     ),
                   ),
                 ),
@@ -102,11 +131,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   onPressed: _exitWithoutSaving,
                   child: const Text(
                     'Выйти без сохранения',
-                    style: TextStyle(
-                      fontSize: 34 / 2,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black87,
-                    ),
+                    style: _kExitTextStyle,
                   ),
                 ),
               ],
@@ -221,11 +246,7 @@ class _EditorCard extends StatelessWidget {
           children: [
             const Text(
               'ОСНОВНОЕ',
-              style: TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.w500,
-                color: Colors.black87,
-              ),
+              style: _kSectionTitleStyle,
             ),
             const SizedBox(height: 8),
             _LabeledInput(
@@ -272,11 +293,7 @@ class _EditorCard extends StatelessWidget {
                   ),
                   child: const Text(
                     'Удалить аккаунт',
-                    style: TextStyle(
-                      fontSize: 30 / 2,
-                      fontWeight: FontWeight.w400,
-                      color: Colors.black87,
-                    ),
+                    style: _kDeleteButtonTextStyle,
                   ),
                 ),
               ),
@@ -304,11 +321,7 @@ class _LabeledInput extends StatelessWidget {
       children: [
         Text(
           label,
-          style: const TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w400,
-            color: Colors.black87,
-          ),
+          style: _kInputLabelStyle,
         ),
         const SizedBox(height: 3),
         Container(
@@ -321,7 +334,7 @@ class _LabeledInput extends StatelessWidget {
           ),
           child: TextField(
             controller: controller,
-            style: const TextStyle(fontSize: 15, color: Colors.black87),
+            style: _kInputTextStyle,
             decoration: const InputDecoration(
               isCollapsed: true,
               border: InputBorder.none,

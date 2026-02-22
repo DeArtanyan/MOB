@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:wordpice/core/theme/app_input_decorations.dart';
 import 'package:wordpice/core/theme/app_text_styles.dart';
-import 'package:wordpice/core/widgets/app_back_button.dart';
 
 class ForgotPasswordNewPasswordScreen extends StatefulWidget {
   const ForgotPasswordNewPasswordScreen({super.key});
 
   @override
-  State<ForgotPasswordNewPasswordScreen> createState() => _ForgotPasswordNewPasswordScreenState();
+  State<ForgotPasswordNewPasswordScreen> createState() =>
+      _ForgotPasswordNewPasswordScreenState();
 }
 
-class _ForgotPasswordNewPasswordScreenState extends State<ForgotPasswordNewPasswordScreen> {
+class _ForgotPasswordNewPasswordScreenState
+    extends State<ForgotPasswordNewPasswordScreen> {
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
 
@@ -27,77 +29,76 @@ class _ForgotPasswordNewPasswordScreenState extends State<ForgotPasswordNewPassw
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Stack(
-          children: [
-            const AppBackButton(),
-
-            Center(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 32),
-
-                    const Center(
-                      child: Text(
-                        'Восстановление\nпароля',
-                        textAlign: TextAlign.center,
-                        style: AppTextStyles.title26,
-                      ),
-                    ),
-
-                    const SizedBox(height: 26),
-
-                    const Text('Новый пароль*', style: AppTextStyles.label12Grey),
-                    const SizedBox(height: 8),
-                    TextField(
-                      controller: _passwordController,
-                      obscureText: _obscurePassword,
-                      decoration: InputDecoration(
-                        hintText: 'Введите пароль',
-                        suffixIcon: IconButton(
-                          onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
-                          icon: Icon(
-                            _obscurePassword ? Icons.visibility_off_outlined : Icons.visibility_outlined,
-                          ),
-                        ),
-                      ),
-                    ),
-
-                    const SizedBox(height: 18),
-
-                    const Text('Подтвердите пароль*', style: AppTextStyles.label12Grey),
-                    const SizedBox(height: 8),
-                    TextField(
-                      controller: _confirmPasswordController,
-                      obscureText: _obscureConfirmPassword,
-                      decoration: InputDecoration(
-                        hintText: 'Введите пароль',
-                        suffixIcon: IconButton(
-                          onPressed: () => setState(() => _obscureConfirmPassword = !_obscureConfirmPassword),
-                          icon: Icon(
-                            _obscureConfirmPassword ? Icons.visibility_off_outlined : Icons.visibility_outlined,
-                          ),
-                        ),
-                      ),
-                    ),
-
-                    const SizedBox(height: 26),
-
-                    Center(
-                      child: OutlinedButton(
-                        onPressed: () {
-                          // UI-only: позже будет запрос на backend
-                        },
-                        child: const Text('Подтвердить'),
-                      ),
-                    ),
-                  ],
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          child: Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Center(
+                  child: Text(
+                    'Восстановление\nпароля',
+                    textAlign: TextAlign.center,
+                    style: AppTextStyles.title26,
+                  ),
                 ),
-              ),
+                const SizedBox(height: 28),
+                const Text('Новый пароль*', style: AppTextStyles.label12Grey),
+                const SizedBox(height: 8),
+                TextField(
+                  controller: _passwordController,
+                  obscureText: _obscurePassword,
+                  decoration: AppInputDecorations.authField(
+                    hintText: 'Введите пароль',
+                    suffixIcon: IconButton(
+                      onPressed: () =>
+                          setState(() => _obscurePassword = !_obscurePassword),
+                      icon: Icon(
+                        _obscurePassword
+                            ? Icons.visibility_off_outlined
+                            : Icons.visibility_outlined,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 18),
+                const Text(
+                  'Подтвердите пароль*',
+                  style: AppTextStyles.label12Grey,
+                ),
+                const SizedBox(height: 8),
+                TextField(
+                  controller: _confirmPasswordController,
+                  obscureText: _obscureConfirmPassword,
+                  decoration: AppInputDecorations.authField(
+                    hintText: 'Введите пароль',
+                    suffixIcon: IconButton(
+                      onPressed: () => setState(
+                        () => _obscureConfirmPassword = !_obscureConfirmPassword,
+                      ),
+                      icon: Icon(
+                        _obscureConfirmPassword
+                            ? Icons.visibility_off_outlined
+                            : Icons.visibility_outlined,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 28),
+                Center(
+                  child: SizedBox(
+                    width: 160,
+                    height: 44,
+                    child: OutlinedButton(
+                      onPressed: () {},
+                      child: const Text('Подтвердить'),
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
