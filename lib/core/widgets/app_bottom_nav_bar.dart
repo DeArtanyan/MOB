@@ -170,8 +170,8 @@ class _NavItem extends StatelessWidget {
           children: [
             SvgPicture.asset(
               iconAsset,
-              width: 28,
-              height: 28,
+              width: 33,
+              height: 33,
               colorFilter: const ColorFilter.mode(Colors.black87, BlendMode.srcIn),
             ),
             const SizedBox(height: 6),
@@ -180,7 +180,7 @@ class _NavItem extends StatelessWidget {
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
-                fontSize: 12,
+                fontSize: 13,
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
                 color: AppColors.textPrimary,
               ),

@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:wordpice/app/navigation/app_tab_navigator.dart';
 import 'package:wordpice/core/widgets/app_shell.dart';
@@ -206,7 +207,7 @@ class _OfficeRentalCard extends StatelessWidget {
                       children: [
                         const Align(
                           alignment: Alignment.topRight,
-                          child: Icon(Icons.favorite_border, size: 24),
+                          child: Icon(CupertinoIcons.heart, size: 24),
                         ),
                         Center(
                           child: Column(

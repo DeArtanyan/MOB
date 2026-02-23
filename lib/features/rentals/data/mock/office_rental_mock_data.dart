@@ -7,7 +7,7 @@ const List<OfficeRentalItem> officeRentalMockData = [
     room: 'Кабинет №1',
     capacity: 10,
     availableTime: '09:00 - 22:00',
-    pricePerHour: 1000,
+    pricePerHour: 10000,
   ),
   OfficeRentalItem(
     dateText: '5 февраля, 2026',
@@ -16,6 +16,14 @@ const List<OfficeRentalItem> officeRentalMockData = [
     capacity: 8,
     availableTime: '10:00 - 21:00',
     pricePerHour: 1200,
+  ),
+  OfficeRentalItem(
+    dateText: '5 февраля, 2026',
+    title: 'Аренда офиса',
+    room: 'Кабинет №3',
+    capacity: 12,
+    availableTime: '08:00 - 20:00',
+    pricePerHour: 1500,
   ),
   OfficeRentalItem(
     dateText: '5 февраля, 2026',

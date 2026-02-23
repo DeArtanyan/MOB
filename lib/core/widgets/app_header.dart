@@ -42,7 +42,7 @@ class AppHeader extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   side: BorderSide(color: AppColors.border, width: 1),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(6),
                   ),
                 ),
                 child: const Text(
