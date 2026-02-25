@@ -88,7 +88,7 @@ class _ForgotPasswordNewPasswordScreenState
                 const SizedBox(height: 28),
                 Center(
                   child: SizedBox(
-                    width: 160,
+                    width: 200,
                     height: 44,
                     child: OutlinedButton(
                       onPressed: () {},

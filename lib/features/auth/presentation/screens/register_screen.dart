@@ -175,9 +175,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                     const SizedBox(height: 8),
                     Center(
-                      child: OutlinedButton(
+                      child: SizedBox(
+                        width: 200,
+                        child: OutlinedButton(
                         onPressed: _goToAccountConfirmation,
                         child: const Text('Зарегистрироваться'),
+                        ),
                       ),
                     ),
                     const SizedBox(height: 4),

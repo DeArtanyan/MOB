@@ -102,7 +102,7 @@ class _AuthScreenState extends State<AuthScreen> {
 
                     Center(
                       child: SizedBox(
-                        width: 160,
+                        width: 200,
                         height: 44,
                         child: OutlinedButton(
                           onPressed: () {

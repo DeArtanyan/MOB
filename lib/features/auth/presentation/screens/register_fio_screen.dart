@@ -111,9 +111,12 @@ class _RegisterFioScreenState extends State<RegisterFioScreen> {
                     const SizedBox(height: 16),
 
                     Center(
-                      child: OutlinedButton(
+                      child: SizedBox(
+                        width: 200,
+                        child: OutlinedButton(
                         onPressed: _goToAccountConfirmation,
                         child: const Text('Зарегистрироваться'),
+                        ),
                       ),
                     ),
                   ],

@@ -1,0 +1,221 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:wordpice/features/rentals/presentation/models/office_rental_item.dart';
+import 'package:wordpice/features/rentals/presentation/utils/rental_time_slots_helper.dart';
+import 'package:wordpice/features/rentals/presentation/widgets/office_booking_confirmation_modal.dart';
+import 'package:wordpice/features/rentals/presentation/widgets/office_time_picker_modal.dart';
+import 'package:wordpice/features/rentals/presentation/widgets/rental_time_slot_chip.dart';
+
+class OfficeRentalCard extends StatefulWidget {
+  const OfficeRentalCard({
+    super.key,
+    required this.item,
+  });
+
+  final OfficeRentalItem item;
+
+  @override
+  State<OfficeRentalCard> createState() => _OfficeRentalCardState();
+}
+
+class _OfficeRentalCardState extends State<OfficeRentalCard> {
+  late final List<String> _freeTimeSlots;
+
+  @override
+  void initState() {
+    super.initState();
+    _freeTimeSlots = [widget.item.availableTime];
+  }
+
+  Future<void> _pickTimeRange() async {
+    if (_freeTimeSlots.isEmpty) return;
+    await _pickTimeRangeForSlot(_freeTimeSlots.first);
+  }
+
+  Future<void> _pickTimeRangeForSlot(String sourceRange) async {
+    final picked = await OfficeTimePickerModal.show(
+      context,
+      availableTime: sourceRange,
+    );
+    if (picked == null) return;
+
+    final confirmed = await OfficeBookingConfirmationModal.show(
+      context,
+      date: widget.item.dateText,
+      timeRange: picked,
+      title: widget.item.title,
+      room: widget.item.room,
+      pricePerHour: widget.item.pricePerHour,
+    );
+    if (!confirmed || !mounted) return;
+
+    setState(() {
+      final slotIndex = _freeTimeSlots.indexOf(sourceRange);
+      if (slotIndex == -1) return;
+
+      final nextSlots = List<String>.from(_freeTimeSlots);
+      nextSlots.removeAt(slotIndex);
+      nextSlots.insertAll(
+        slotIndex,
+        RentalTimeSlotsHelper.subtractBookedRange(
+          sourceRange: sourceRange,
+          bookedRange: picked,
+        ),
+      );
+
+      nextSlots.sort(
+        (a, b) => RentalTimeSlotsHelper.rangeStartHour(a).compareTo(
+          RentalTimeSlotsHelper.rangeStartHour(b),
+        ),
+      );
+
+      _freeTimeSlots
+        ..clear()
+        ..addAll(nextSlots);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final item = widget.item;
+    final hasFreeTime = _freeTimeSlots.isNotEmpty;
+    final hasSingleSlot = _freeTimeSlots.length == 1;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        Center(
+          child: Container(
+            constraints: const BoxConstraints(maxWidth: 332),
+            width: double.infinity,
+            padding: const EdgeInsets.fromLTRB(14, 10, 12, 10),
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.black87, width: 1),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(14),
+                  child: Container(
+                    width: 48,
+                    height: 48,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFBDBDBD),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Icon(Icons.image_outlined, size: 28, color: Colors.white),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: SizedBox(
+                    height: 90,
+                    child: Stack(
+                      children: [
+                        const Align(
+                          alignment: Alignment.topRight,
+                          child: Icon(CupertinoIcons.heart, size: 24),
+                        ),
+                        Center(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                item.title,
+                                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
+                              ),
+                              const SizedBox(height: 3),
+                              Text(
+                                item.room,
+                                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
+                              ),
+                              const SizedBox(height: 3),
+                              Text(
+                                'Вместимость: ${item.capacity} человек',
+                                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(height: 10),
+        if (!hasFreeTime)
+          Center(
+            child: Container(
+              width: 286,
+              height: 36,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.black87, width: 1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: const Text(
+                'Свободного времени нет',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w400),
+              ),
+            ),
+          ),
+        if (hasSingleSlot) ...[
+          Center(
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: _pickTimeRange,
+                borderRadius: BorderRadius.circular(8),
+                child: Container(
+                  width: 286,
+                  height: 36,
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.black87, width: 1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  alignment: Alignment.center,
+                  child: Text(
+                    'Доступное время с ${_freeTimeSlots.first}',
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w400),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+        if (hasFreeTime && !hasSingleSlot) ...[
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 40),
+            child: Row(
+              children: [
+                for (var i = 0; i < _freeTimeSlots.length; i++) ...[
+                  Expanded(
+                    child: RentalTimeSlotChip(
+                      text: _freeTimeSlots[i],
+                      onTap: () => _pickTimeRangeForSlot(_freeTimeSlots[i]),
+                    ),
+                  ),
+                  if (i != _freeTimeSlots.length - 1) const SizedBox(width: 10),
+                ],
+              ],
+            ),
+          ),
+        ],
+        const SizedBox(height: 10),
+        Text(
+          '${item.pricePerHour}р/час',
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w400),
+        ),
+      ],
+    );
+  }
+}

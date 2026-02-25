@@ -3,7 +3,9 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:wordpice/app/navigation/app_tab_navigator.dart';
 import 'package:wordpice/core/theme/app_colors.dart';
 import 'package:wordpice/core/widgets/app_shell.dart';
+import 'package:wordpice/features/profile/presentation/models/profile_activity_filter.dart';
 import 'package:wordpice/features/profile/presentation/screens/edit_profile_screen.dart';
+import 'package:wordpice/features/profile/presentation/widgets/profile_activity_section.dart';
 import 'package:wordpice/features/profile/presentation/widgets/qr_modal.dart';
 import 'package:wordpice/features/profile/presentation/widgets/segment_carousel.dart';
 
@@ -30,6 +32,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
     if (index == _tabIndex) return;
     setState(() => _selectedBottomIndex = index);
     AppTabNavigator.goToTab(context, index);
+  }
+
+  ProfileActivityFilter get _selectedActivityFilter {
+    switch (_carouselIndex) {
+      case 0:
+        return ProfileActivityFilter.activeRentals;
+      case 1:
+        return ProfileActivityFilter.favorites;
+      case 2:
+        return ProfileActivityFilter.rentalHistory;
+      case 3:
+        return ProfileActivityFilter.requests;
+      default:
+        return ProfileActivityFilter.rentalHistory;
+    }
   }
 
   @override
@@ -60,7 +77,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 _NarrowCard(
                   child: Center(
                     child: SegmentCarousel(
-                      items: const ['Избранное', 'Все аренды', 'Переговорные'],
+                      items: const ['Активные аренды', 'Избранное', 'История аренды', 'Заявки'],
                       initialIndex: _carouselIndex,
                       onChanged: (i) => setState(() => _carouselIndex = i),
                     ),
@@ -68,15 +85,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 const SizedBox(height: 12),
                 const _NarrowCard(child: _FiltersGrid()),
-                const SizedBox(height: 16),
-                const Text(
-                  'У вас нет истории аренд',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w400,
-                    color: AppColors.textPrimary,
-                  ),
-                ),
+                const SizedBox(height: 30),
+                _NarrowCard(child: ProfileActivitySection(filter: _selectedActivityFilter)),
               ],
             ),
           ),

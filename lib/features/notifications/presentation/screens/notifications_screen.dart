@@ -4,6 +4,8 @@ import 'package:wordpice/core/theme/app_colors.dart';
 import 'package:wordpice/core/widgets/app_bottom_nav_bar.dart';
 import 'package:wordpice/core/widgets/app_header.dart';
 import 'package:wordpice/features/auth/presentation/screens/auth_screen.dart';
+import 'package:wordpice/features/notifications/data/mock/notifications_mock_data.dart';
+import 'package:wordpice/features/notifications/presentation/widgets/notification_card.dart';
 
 class NotificationsScreen extends StatefulWidget {
   const NotificationsScreen({
@@ -90,16 +92,27 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 260),
-                  const Center(
-                    child: Text(
-                      'Уведомлений нет',
-                      style: TextStyle(
-                        fontSize: 60 / 2,
-                        fontWeight: FontWeight.w400,
-                        color: Colors.black87,
-                      ),
-                    ),
+                  const SizedBox(height: 46),
+                  Expanded(
+                    child: notificationsMockData.isEmpty
+                        ? const Center(
+                            child: Text(
+                              'Уведомлений нет',
+                              style: TextStyle(
+                                fontSize: 60 / 2,
+                                fontWeight: FontWeight.w400,
+                                color: Colors.black87,
+                              ),
+                            ),
+                          )
+                        : ListView.separated(
+                            padding: EdgeInsets.zero,
+                            itemCount: notificationsMockData.length,
+                            separatorBuilder: (_, __) => const SizedBox(height: 46),
+                            itemBuilder: (_, i) => NotificationCard(
+                              item: notificationsMockData[i],
+                            ),
+                          ),
                   ),
                 ],
               ),

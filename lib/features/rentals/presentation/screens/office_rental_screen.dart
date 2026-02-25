@@ -1,9 +1,10 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:wordpice/app/navigation/app_tab_navigator.dart';
 import 'package:wordpice/core/widgets/app_shell.dart';
 import 'package:wordpice/features/rentals/data/mock/office_rental_mock_data.dart';
-import 'package:wordpice/features/rentals/presentation/models/office_rental_item.dart';
+import 'package:wordpice/features/rentals/presentation/widgets/office_rental_card.dart';
+import 'package:wordpice/features/rentals/presentation/widgets/office_rental_price_filter.dart';
+import 'package:wordpice/features/rentals/presentation/widgets/rental_date_filter.dart';
 
 class OfficeRentalScreen extends StatefulWidget {
   const OfficeRentalScreen({super.key});
@@ -15,6 +16,7 @@ class OfficeRentalScreen extends StatefulWidget {
 class _OfficeRentalScreenState extends State<OfficeRentalScreen> {
   static const int _tabIndex = 0;
   int _selectedBottomIndex = _tabIndex;
+  DateTime? _selectedDate;
 
   static const int _minPrice = 10000;
   static const int _maxPrice = 30000;
@@ -22,6 +24,41 @@ class _OfficeRentalScreenState extends State<OfficeRentalScreen> {
 
   void _onBottomChanged(int index) {
     AppTabNavigator.goToTab(context, index);
+  }
+
+  Future<void> _pickDate() async {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: _selectedDate ?? today,
+      firstDate: today,
+      lastDate: DateTime(today.year + 5),
+      locale: const Locale('ru', 'RU'),
+    );
+    if (picked == null) return;
+    setState(() => _selectedDate = picked);
+  }
+
+  String get _dateText {
+    final now = DateTime.now();
+    final value = _selectedDate ?? DateTime(now.year, now.month, now.day);
+    if (value == null) return '05 февраля';
+    const months = [
+      'января',
+      'февраля',
+      'марта',
+      'апреля',
+      'мая',
+      'июня',
+      'июля',
+      'августа',
+      'сентября',
+      'октября',
+      'ноября',
+      'декабря',
+    ];
+    return '${value.day} ${months[value.month - 1]}';
   }
 
   String _formatPrice(int price) {
@@ -43,9 +80,13 @@ class _OfficeRentalScreenState extends State<OfficeRentalScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const _DateFilter(),
+            RentalDateFilter(
+              leftPadding: 10,
+              text: _dateText,
+              onTap: _pickDate,
+            ),
             const SizedBox(height: 10),
-            _PriceFilter(
+            OfficeRentalPriceFilter(
               value: _priceValue,
               min: _minPrice.toDouble(),
               max: _maxPrice.toDouble(),
@@ -72,197 +113,13 @@ class _OfficeRentalScreenState extends State<OfficeRentalScreen> {
                     style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
                   ),
                 ),
-                _OfficeRentalCard(item: item),
+                OfficeRentalCard(item: item),
                 const SizedBox(height: 12),
               ],
             ],
           ],
         ),
       ),
-    );
-  }
-}
-
-class _DateFilter extends StatelessWidget {
-  const _DateFilter();
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 10),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Text(
-            '05 февраля',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w400),
-          ),
-          const SizedBox(width: 8),
-          Container(
-            width: 30,
-            height: 30,
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.black87),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: const Icon(Icons.keyboard_arrow_down_rounded, size: 20),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _PriceFilter extends StatelessWidget {
-  const _PriceFilter({
-    required this.value,
-    required this.min,
-    required this.max,
-    required this.minLabel,
-    required this.maxLabel,
-    required this.onChanged,
-  });
-
-  final double value;
-  final double min;
-  final double max;
-  final String minLabel;
-  final String maxLabel;
-  final ValueChanged<double> onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Text(
-          minLabel,
-          style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w400),
-        ),
-        Expanded(
-          child: SliderTheme(
-            data: SliderTheme.of(context).copyWith(
-              trackHeight: 4,
-              activeTrackColor: const Color(0xFFCDCDCD),
-              inactiveTrackColor: const Color(0xFFCDCDCD),
-              thumbColor: const Color(0xFF8F8F8F),
-              thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 7),
-              overlayShape: SliderComponentShape.noOverlay,
-            ),
-            child: Slider(
-              min: min,
-              max: max,
-              value: value,
-              onChanged: onChanged,
-            ),
-          ),
-        ),
-        Text(
-          maxLabel,
-          style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w400),
-        ),
-      ],
-    );
-  }
-}
-
-class _OfficeRentalCard extends StatelessWidget {
-  const _OfficeRentalCard({required this.item});
-
-  final OfficeRentalItem item;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        Center(
-          child: Container(
-            constraints: const BoxConstraints(maxWidth: 332),
-            width: double.infinity,
-            padding: const EdgeInsets.fromLTRB(14, 10, 12, 10),
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.black87, width: 1),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(14),
-                  child: Container(
-                    width: 48,
-                    height: 48,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFBDBDBD),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: const Icon(Icons.image_outlined, size: 28, color: Colors.white),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: SizedBox(
-                    height: 90,
-                    child: Stack(
-                      children: [
-                        const Align(
-                          alignment: Alignment.topRight,
-                          child: Icon(CupertinoIcons.heart, size: 24),
-                        ),
-                        Center(
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                item.title,
-                                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
-                              ),
-                              const SizedBox(height: 3),
-                              Text(
-                                item.room,
-                                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
-                              ),
-                              const SizedBox(height: 3),
-                              Text(
-                                'Вместимость: ${item.capacity} человек',
-                                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-        const SizedBox(height: 10),
-        Center(
-          child: Container(
-            width: 286,
-            height: 36,
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.black87, width: 1),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            alignment: Alignment.center,
-            child: Text(
-              'Доступное время с ${item.availableTime}',
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w400),
-            ),
-          ),
-        ),
-        const SizedBox(height: 10),
-        Text(
-          '${item.pricePerHour}р/час',
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w400),
-        ),
-      ],
     );
   }
 }

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:wordpice/app/navigation/app_tab_navigator.dart';
 import 'package:wordpice/core/widgets/app_shell.dart';
+import 'package:wordpice/features/rentals/presentation/widgets/rental_date_filter.dart';
+import 'package:wordpice/features/rentals/presentation/widgets/rental_empty_rooms_message.dart';
 
 class MeetingRoomRentalScreen extends StatefulWidget {
   const MeetingRoomRentalScreen({super.key});
@@ -12,9 +14,45 @@ class MeetingRoomRentalScreen extends StatefulWidget {
 class _MeetingRoomRentalScreenState extends State<MeetingRoomRentalScreen> {
   static const int _tabIndex = 0;
   int _selectedBottomIndex = _tabIndex;
+  DateTime? _selectedDate;
 
   void _onBottomChanged(int index) {
     AppTabNavigator.goToTab(context, index);
+  }
+
+  Future<void> _pickDate() async {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: _selectedDate ?? today,
+      firstDate: today,
+      lastDate: DateTime(today.year + 5),
+      locale: const Locale('ru', 'RU'),
+    );
+    if (picked == null) return;
+    setState(() => _selectedDate = picked);
+  }
+
+  String get _dateText {
+    final now = DateTime.now();
+    final value = _selectedDate ?? DateTime(now.year, now.month, now.day);
+    if (value == null) return '05 февраля';
+    const months = [
+      'января',
+      'февраля',
+      'марта',
+      'апреля',
+      'мая',
+      'июня',
+      'июля',
+      'августа',
+      'сентября',
+      'октября',
+      'ноября',
+      'декабря',
+    ];
+    return '${value.day} ${months[value.month - 1]}';
   }
 
   @override
@@ -23,49 +61,16 @@ class _MeetingRoomRentalScreenState extends State<MeetingRoomRentalScreen> {
       selectedBottomIndex: _selectedBottomIndex,
       onBottomChanged: _onBottomChanged,
       body: Padding(
-        padding: const EdgeInsets.fromLTRB(24, 28, 24, 24),
+        padding: EdgeInsets.fromLTRB(24, 28, 24, 24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: const [
-            _DateFilter(),
-            SizedBox(height: 260),
-            Text(
-              'Нет свободных помещений',
-              style: TextStyle(
-                fontSize: 25,
-                fontWeight: FontWeight.w400,
-              ),
-            ),
+          children: [
+            RentalDateFilter(text: _dateText, onTap: _pickDate),
+            const SizedBox(height: 260),
+            const RentalEmptyRoomsMessage(),
           ],
         ),
       ),
-    );
-  }
-}
-
-class _DateFilter extends StatelessWidget {
-  const _DateFilter();
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        const Text(
-          '05 февраля',
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
-        ),
-        const SizedBox(width: 8),
-        Container(
-          width: 26,
-          height: 26,
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.black87),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: const Icon(Icons.keyboard_arrow_down_rounded, size: 18),
-        ),
-      ],
     );
   }
 }

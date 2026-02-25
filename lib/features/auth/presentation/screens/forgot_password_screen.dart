@@ -70,9 +70,12 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     ),
                     const SizedBox(height: 22),
                     Center(
-                      child: OutlinedButton(
+                      child: SizedBox(
+                        width: 200,
+                        child: OutlinedButton(
                         onPressed: _goToEmailSent,
                         child: const Text('Отправить'),
+                        ),
                       ),
                     ),
                   ],
