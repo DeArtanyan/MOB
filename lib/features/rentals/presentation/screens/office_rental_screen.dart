@@ -1,10 +1,11 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:wordpice/app/navigation/app_tab_navigator.dart';
 import 'package:wordpice/core/widgets/app_shell.dart';
 import 'package:wordpice/features/rentals/data/mock/office_rental_mock_data.dart';
+import 'package:wordpice/features/rentals/presentation/utils/rental_date_text_helper.dart';
 import 'package:wordpice/features/rentals/presentation/widgets/office_rental_card.dart';
-import 'package:wordpice/features/rentals/presentation/widgets/office_rental_price_filter.dart';
 import 'package:wordpice/features/rentals/presentation/widgets/rental_date_filter.dart';
+import 'package:wordpice/features/rentals/presentation/widgets/rental_price_range_filter.dart';
 
 class OfficeRentalScreen extends StatefulWidget {
   const OfficeRentalScreen({super.key});
@@ -20,7 +21,7 @@ class _OfficeRentalScreenState extends State<OfficeRentalScreen> {
 
   static const int _minPrice = 10000;
   static const int _maxPrice = 30000;
-  double _priceValue = _maxPrice.toDouble();
+  RangeValues _priceRange = RangeValues(_minPrice.toDouble(), _maxPrice.toDouble());
 
   void _onBottomChanged(int index) {
     AppTabNavigator.goToTab(context, index);
@@ -40,37 +41,22 @@ class _OfficeRentalScreenState extends State<OfficeRentalScreen> {
     setState(() => _selectedDate = picked);
   }
 
-  String get _dateText {
-    final now = DateTime.now();
-    final value = _selectedDate ?? DateTime(now.year, now.month, now.day);
-    if (value == null) return '05 февраля';
-    const months = [
-      'января',
-      'февраля',
-      'марта',
-      'апреля',
-      'мая',
-      'июня',
-      'июля',
-      'августа',
-      'сентября',
-      'октября',
-      'ноября',
-      'декабря',
-    ];
-    return '${value.day} ${months[value.month - 1]}';
-  }
+  String get _dateText => RentalDateTextHelper.formatDayMonth(_selectedDate);
 
-  String _formatPrice(int price) {
-    final text = price.toString();
+  String _formatPrice(double price) {
+    final text = price.round().toString();
     if (text.length <= 3) return text;
     return '${text.substring(0, text.length - 3)} ${text.substring(text.length - 3)}';
   }
 
   @override
   Widget build(BuildContext context) {
-    final maxPerDay = _priceValue.round();
-    final filtered = officeRentalMockData.where((e) => e.pricePerHour * 10 <= maxPerDay).toList();
+    final minPerDay = _priceRange.start.round();
+    final maxPerDay = _priceRange.end.round();
+    final filtered = officeRentalMockData.where((e) {
+      final pricePerDay = e.price * 10;
+      return pricePerDay >= minPerDay && pricePerDay <= maxPerDay;
+    }).toList();
 
     return AppShell(
       selectedBottomIndex: _selectedBottomIndex,
@@ -85,16 +71,15 @@ class _OfficeRentalScreenState extends State<OfficeRentalScreen> {
               text: _dateText,
               onTap: _pickDate,
             ),
-            const SizedBox(height: 10),
-            OfficeRentalPriceFilter(
-              value: _priceValue,
+            const SizedBox(height: 20),
+            RentalPriceRangeFilter(
+              values: _priceRange,
               min: _minPrice.toDouble(),
               max: _maxPrice.toDouble(),
-              minLabel: _formatPrice(_minPrice),
-              maxLabel: _formatPrice(_priceValue.round()),
-              onChanged: (v) => setState(() => _priceValue = v),
+              formatLabel: _formatPrice,
+              onChanged: (values) => setState(() => _priceRange = values),
             ),
-            const SizedBox(height: 18),
+            const SizedBox(height: 20),
             if (filtered.isEmpty) ...[
               const SizedBox(height: 220),
               const Padding(
@@ -106,14 +91,24 @@ class _OfficeRentalScreenState extends State<OfficeRentalScreen> {
               ),
             ] else ...[
               for (final item in filtered) ...[
-                Padding(
-                  padding: const EdgeInsets.only(left: 4, bottom: 6),
-                  child: Text(
-                    item.dateText,
-                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
+                Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 332),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(left: 4, bottom: 6),
+                          child: Text(
+                            item.dateText,
+                            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
+                          ),
+                        ),
+                        OfficeRentalCard(item: item),
+                      ],
+                    ),
                   ),
                 ),
-                OfficeRentalCard(item: item),
                 const SizedBox(height: 12),
               ],
             ],

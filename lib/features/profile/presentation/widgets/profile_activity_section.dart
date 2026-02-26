@@ -30,8 +30,7 @@ class ProfileActivitySection extends StatelessWidget {
           children: [
             for (var i = 0; i < profileActiveRentalsMockData.length; i++) ...[
               ProfileActiveRentalCard(item: profileActiveRentalsMockData[i]),
-              if (i != profileActiveRentalsMockData.length - 1)
-                const SizedBox(height: 14),
+              if (i != profileActiveRentalsMockData.length - 1) const SizedBox(height: 30),
             ],
           ],
         );
@@ -45,8 +44,7 @@ class ProfileActivitySection extends StatelessWidget {
           children: [
             for (var i = 0; i < profileFavoriteRentalsMockData.length; i++) ...[
               ProfileFavoriteRentalCard(item: profileFavoriteRentalsMockData[i]),
-              if (i != profileFavoriteRentalsMockData.length - 1)
-                const SizedBox(height: 14),
+              if (i != profileFavoriteRentalsMockData.length - 1) const SizedBox(height: 30),
             ],
           ],
         );
@@ -60,8 +58,7 @@ class ProfileActivitySection extends StatelessWidget {
           children: [
             for (var i = 0; i < profileRentalHistoryMockData.length; i++) ...[
               ProfileRentalHistoryCard(item: profileRentalHistoryMockData[i]),
-              if (i != profileRentalHistoryMockData.length - 1)
-                const SizedBox(height: 14),
+              if (i != profileRentalHistoryMockData.length - 1) const SizedBox(height: 22),
             ],
           ],
         );
@@ -75,8 +72,7 @@ class ProfileActivitySection extends StatelessWidget {
           children: [
             for (var i = 0; i < profileRequestsMockData.length; i++) ...[
               ProfileRequestCard(item: profileRequestsMockData[i]),
-              if (i != profileRequestsMockData.length - 1)
-                const SizedBox(height: 14),
+              if (i != profileRequestsMockData.length - 1) const SizedBox(height: 22),
             ],
           ],
         );

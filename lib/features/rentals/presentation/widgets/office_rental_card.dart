@@ -1,5 +1,6 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:wordpice/core/widgets/favorite_heart_toggle.dart';
 import 'package:wordpice/features/rentals/presentation/models/office_rental_item.dart';
 import 'package:wordpice/features/rentals/presentation/utils/rental_time_slots_helper.dart';
 import 'package:wordpice/features/rentals/presentation/widgets/office_booking_confirmation_modal.dart';
@@ -45,7 +46,7 @@ class _OfficeRentalCardState extends State<OfficeRentalCard> {
       timeRange: picked,
       title: widget.item.title,
       room: widget.item.room,
-      pricePerHour: widget.item.pricePerHour,
+      price: widget.item.price,
     );
     if (!confirmed || !mounted) return;
 
@@ -114,9 +115,25 @@ class _OfficeRentalCardState extends State<OfficeRentalCard> {
                     height: 90,
                     child: Stack(
                       children: [
-                        const Align(
+                        Align(
                           alignment: Alignment.topRight,
-                          child: Icon(CupertinoIcons.heart, size: 24),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              const FavoriteHeartToggle(),
+                              const SizedBox(height: 6),
+                              SvgPicture.asset(
+                                'assets/icons/nav_archive.svg',
+                                width: 22,
+                                height: 22,
+                                colorFilter: const ColorFilter.mode(
+                                  Colors.black87,
+                                  BlendMode.srcIn,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                         Center(
                           child: Column(
@@ -212,7 +229,7 @@ class _OfficeRentalCardState extends State<OfficeRentalCard> {
         ],
         const SizedBox(height: 10),
         Text(
-          '${item.pricePerHour}р/час',
+          '${item.price}р',
           style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w400),
         ),
       ],

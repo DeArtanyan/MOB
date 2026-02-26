@@ -1,6 +1,7 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:wordpice/core/theme/app_colors.dart';
+import 'package:wordpice/core/widgets/favorite_heart_toggle.dart';
+import 'package:wordpice/features/passes/presentation/screens/employee_pass_screen.dart';
 import 'package:wordpice/features/profile/presentation/models/rental_history_item.dart';
 
 class ProfileActiveRentalCard extends StatefulWidget {
@@ -16,20 +17,21 @@ class ProfileActiveRentalCard extends StatefulWidget {
 }
 
 class _ProfileActiveRentalCardState extends State<ProfileActiveRentalCard> {
+  static const int _loopMultiplier = 1000;
   static const List<String> _actions = [
-    'Пригласить',
+    'Пригласить сотрудника',
     'Перенести бронь',
     'Отменить бронь',
   ];
 
-  int _actionIndex = 0;
   late final PageController _actionController;
 
   @override
   void initState() {
     super.initState();
+    final initialPage = _actions.length * _loopMultiplier;
     _actionController = PageController(
-      initialPage: _actionIndex,
+      initialPage: initialPage,
       viewportFraction: 1.0,
     );
   }
@@ -41,7 +43,6 @@ class _ProfileActiveRentalCardState extends State<ProfileActiveRentalCard> {
   }
 
   void _showPrevAction() {
-    if (_actionIndex <= 0) return;
     _actionController.previousPage(
       duration: const Duration(milliseconds: 250),
       curve: Curves.easeOut,
@@ -49,10 +50,16 @@ class _ProfileActiveRentalCardState extends State<ProfileActiveRentalCard> {
   }
 
   void _showNextAction() {
-    if (_actionIndex >= _actions.length - 1) return;
     _actionController.nextPage(
       duration: const Duration(milliseconds: 250),
       curve: Curves.easeOut,
+    );
+  }
+
+  void _onActionPressed(int actionIndex) {
+    if (actionIndex != 0) return;
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => const EmployeePassScreen()),
     );
   }
 
@@ -101,12 +108,12 @@ class _ProfileActiveRentalCardState extends State<ProfileActiveRentalCard> {
                 const SizedBox(width: 12),
                 Expanded(
                   child: SizedBox(
-                    height: 90,
+                    height: item.timeSlots.isNotEmpty ? 112 : 90,
                     child: Stack(
                       children: [
                         const Align(
                           alignment: Alignment.topRight,
-                          child: Icon(CupertinoIcons.heart, size: 24),
+                          child: FavoriteHeartToggle(),
                         ),
                         Center(
                           child: Column(
@@ -127,6 +134,16 @@ class _ProfileActiveRentalCardState extends State<ProfileActiveRentalCard> {
                                 item.capacity,
                                 style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
                               ),
+                              if (item.timeSlots.isNotEmpty) ...[
+                                const SizedBox(height: 3),
+                                Text(
+                                  item.timeSlots.first,
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ),
+                              ],
                             ],
                           ),
                         ),
@@ -135,49 +152,6 @@ class _ProfileActiveRentalCardState extends State<ProfileActiveRentalCard> {
                   ),
                 ),
               ],
-            ),
-          ),
-        ),
-        if (item.timeSlots.isNotEmpty) ...[
-          const SizedBox(height: 10),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 40),
-            child: Row(
-              children: [
-                for (var i = 0; i < item.timeSlots.length; i++) ...[
-                  Expanded(
-                    child: Container(
-                      height: 28,
-                      decoration: BoxDecoration(
-                        border: Border.all(color: AppColors.border, width: 1),
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      alignment: Alignment.center,
-                      child: Text(
-                        item.timeSlots[i],
-                        style: const TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w400,
-                          color: AppColors.textPrimary,
-                        ),
-                      ),
-                    ),
-                  ),
-                  if (i != item.timeSlots.length - 1) const SizedBox(width: 10),
-                ],
-              ],
-            ),
-          ),
-        ],
-        const SizedBox(height: 8),
-        Align(
-          alignment: Alignment.centerRight,
-          child: Text(
-            item.priceLabel,
-            style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w400,
-              color: AppColors.textPrimary,
             ),
           ),
         ),
@@ -191,33 +165,37 @@ class _ProfileActiveRentalCardState extends State<ProfileActiveRentalCard> {
             ),
             const SizedBox(width: 12),
             SizedBox(
-              width: 160,
+              width: 190,
               height: 30,
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: PageView.builder(
-                  controller: _actionController,
-                  onPageChanged: (i) => setState(() => _actionIndex = i),
-                  itemCount: _actions.length,
-                  itemBuilder: (_, i) {
-                    return Container(
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: Colors.transparent,
-                        border: Border.all(color: AppColors.border, width: 1),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Text(
-                        _actions[i],
-                        style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          color: AppColors.textPrimary,
+              child: PageView.builder(
+                controller: _actionController,
+                itemCount: _actions.length * _loopMultiplier * 2,
+                itemBuilder: (_, i) {
+                  final actionIndex = i % _actions.length;
+                  return Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      onTap: () => _onActionPressed(actionIndex),
+                      borderRadius: BorderRadius.circular(5),
+                      child: Container(
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: Colors.transparent,
+                          border: Border.all(color: AppColors.border, width: 1),
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        child: Text(
+                          _actions[actionIndex],
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
+                            color: AppColors.textPrimary,
+                          ),
                         ),
                       ),
-                    );
-                  },
-                ),
+                    ),
+                  );
+                },
               ),
             ),
             const SizedBox(width: 12),

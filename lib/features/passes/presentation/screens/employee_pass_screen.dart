@@ -113,7 +113,7 @@ class _EmployeePassScreenState extends State<EmployeePassScreen> {
                 const SizedBox(
                   width: double.infinity,
                   child: Text(
-                    'Пропуск',
+                    'Пропуск сотрудника',
                     style: TextStyle(
                       fontSize: 44 / 2,
                       fontWeight: FontWeight.w600,

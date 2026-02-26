@@ -70,7 +70,7 @@ class _ParkingScreenState extends State<ParkingScreen> {
                   child: Text(
                     'Парковочные места',
                     style: TextStyle(
-                      fontSize: 38 / 2,
+                      fontSize: 19,
                       fontWeight: FontWeight.w600,
                     ),
                     textAlign: TextAlign.left,
@@ -105,7 +105,7 @@ class _ParkingScreenState extends State<ParkingScreen> {
                     child: const Text(
                       'Забронировать',
                       style: TextStyle(
-                        fontSize: 28 / 2,
+                        fontSize: 14,
                         fontWeight: FontWeight.w400,
                       ),
                     ),
@@ -148,7 +148,7 @@ class _ParkingPlace extends StatelessWidget {
             Text(
               '№$number',
               style: const TextStyle(
-                fontSize: 30 / 2,
+                fontSize: 15,
                 fontWeight: FontWeight.w400,
               ),
             ),

@@ -1,6 +1,7 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:wordpice/app/navigation/app_tab_navigator.dart';
 import 'package:wordpice/core/widgets/app_shell.dart';
+import 'package:wordpice/features/rentals/presentation/utils/rental_date_text_helper.dart';
 import 'package:wordpice/features/rentals/presentation/widgets/rental_date_filter.dart';
 import 'package:wordpice/features/rentals/presentation/widgets/rental_empty_rooms_message.dart';
 
@@ -34,26 +35,7 @@ class _MeetingRoomRentalScreenState extends State<MeetingRoomRentalScreen> {
     setState(() => _selectedDate = picked);
   }
 
-  String get _dateText {
-    final now = DateTime.now();
-    final value = _selectedDate ?? DateTime(now.year, now.month, now.day);
-    if (value == null) return '05 февраля';
-    const months = [
-      'января',
-      'февраля',
-      'марта',
-      'апреля',
-      'мая',
-      'июня',
-      'июля',
-      'августа',
-      'сентября',
-      'октября',
-      'ноября',
-      'декабря',
-    ];
-    return '${value.day} ${months[value.month - 1]}';
-  }
+  String get _dateText => RentalDateTextHelper.formatDayMonth(_selectedDate);
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +43,7 @@ class _MeetingRoomRentalScreenState extends State<MeetingRoomRentalScreen> {
       selectedBottomIndex: _selectedBottomIndex,
       onBottomChanged: _onBottomChanged,
       body: Padding(
-        padding: EdgeInsets.fromLTRB(24, 28, 24, 24),
+        padding: const EdgeInsets.fromLTRB(24, 28, 24, 24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

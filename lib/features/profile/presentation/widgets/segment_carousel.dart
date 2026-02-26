@@ -18,16 +18,21 @@ class SegmentCarousel extends StatefulWidget {
 }
 
 class _SegmentCarouselState extends State<SegmentCarousel> {
+  static const int _loopMultiplier = 1000;
+
   late final PageController _controller;
-  late int _index;
 
   @override
   void initState() {
     super.initState();
-    _index = widget.initialIndex.clamp(0, widget.items.length - 1);
+
+    final safeLength = widget.items.isEmpty ? 1 : widget.items.length;
+    final initialIndex = widget.initialIndex.clamp(0, safeLength - 1);
+
+    final initialPage = safeLength * _loopMultiplier + initialIndex;
     _controller = PageController(
-      initialPage: _index,
-      viewportFraction: 1.0, // важно: соседи не должны быть видны
+      initialPage: initialPage,
+      viewportFraction: 1.0,
     );
   }
 
@@ -38,7 +43,7 @@ class _SegmentCarouselState extends State<SegmentCarousel> {
   }
 
   void _prev() {
-    if (_index <= 0) return;
+    if (widget.items.isEmpty) return;
     _controller.previousPage(
       duration: const Duration(milliseconds: 250),
       curve: Curves.easeOut,
@@ -46,7 +51,7 @@ class _SegmentCarouselState extends State<SegmentCarousel> {
   }
 
   void _next() {
-    if (_index >= widget.items.length - 1) return;
+    if (widget.items.isEmpty) return;
     _controller.nextPage(
       duration: const Duration(milliseconds: 250),
       curve: Curves.easeOut,
@@ -55,10 +60,8 @@ class _SegmentCarouselState extends State<SegmentCarousel> {
 
   @override
   Widget build(BuildContext context) {
-    // В прототипе стрелки и центральная кнопка компактнее.
-    // У пользователя в эмуляторе обрезался текст — поэтому:
-    // - уменьшаем высоты
-    // - задаём TextStyle.height = 1.0
+    if (widget.items.isEmpty) return const SizedBox.shrink();
+
     const double kHeight = 38;
     const double kArrowSize = 34;
     const double kRadius = 14;
@@ -67,59 +70,57 @@ class _SegmentCarouselState extends State<SegmentCarousel> {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-        _ArrowButton(
-          icon: Icons.chevron_left,
-          onTap: _prev,
-          size: kArrowSize,
-          radius: kRadius,
-        ),
-        const SizedBox(width: 10),
-
-        SizedBox(
-          width: 160,
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(kRadius),
-            child: SizedBox(
-              height: kHeight,
-              child: PageView.builder(
-                controller: _controller,
-                onPageChanged: (i) {
-                  setState(() => _index = i);
-                  widget.onChanged(i);
-                },
-                itemCount: widget.items.length,
-                itemBuilder: (_, i) {
-                  return Container(
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: AppColors.background,
-                      borderRadius: BorderRadius.circular(kRadius),
-                      border: Border.all(color: AppColors.border, width: 1),
-                    ),
-                    child: Text(
-                      widget.items[i],
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w400,
-                        height: 1.0,
-                        color: Colors.black87,
+          _ArrowButton(
+            icon: Icons.chevron_left,
+            onTap: _prev,
+            size: kArrowSize,
+            radius: kRadius,
+          ),
+          const SizedBox(width: 10),
+          SizedBox(
+            width: 160,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(kRadius),
+              child: SizedBox(
+                height: kHeight,
+                child: PageView.builder(
+                  controller: _controller,
+                  onPageChanged: (page) {
+                    final nextIndex = page % widget.items.length;
+                    widget.onChanged(nextIndex);
+                  },
+                  itemBuilder: (_, page) {
+                    final itemIndex = page % widget.items.length;
+                    return Container(
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: AppColors.background,
+                        borderRadius: BorderRadius.circular(kRadius),
+                        border: Border.all(color: AppColors.border, width: 1),
                       ),
-                    ),
-                  );
-                },
+                      child: Text(
+                        widget.items[itemIndex],
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w400,
+                          height: 1.0,
+                          color: Colors.black87,
+                        ),
+                      ),
+                    );
+                  },
+                ),
               ),
             ),
           ),
-        ),
-
-        const SizedBox(width: 10),
-        _ArrowButton(
-          icon: Icons.chevron_right,
-          onTap: _next,
-          size: kArrowSize,
-          radius: kRadius,
-        ),
-      ],
+          const SizedBox(width: 10),
+          _ArrowButton(
+            icon: Icons.chevron_right,
+            onTap: _next,
+            size: kArrowSize,
+            radius: kRadius,
+          ),
+        ],
       ),
     );
   }
@@ -148,7 +149,9 @@ class _ArrowButton extends StatelessWidget {
         style: OutlinedButton.styleFrom(
           padding: EdgeInsets.zero,
           side: BorderSide(color: AppColors.border, width: 1),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(radius)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(radius),
+          ),
         ),
         child: Icon(icon, color: Colors.black87, size: 20),
       ),

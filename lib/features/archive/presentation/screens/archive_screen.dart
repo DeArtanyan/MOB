@@ -1,7 +1,7 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:wordpice/app/navigation/app_tab_navigator.dart';
+import 'package:wordpice/core/widgets/favorite_heart_toggle.dart';
 import 'package:wordpice/core/widgets/app_shell.dart';
 import 'package:wordpice/features/archive/data/mock/archive_mock_data.dart';
 import 'package:wordpice/features/archive/presentation/models/archive_item.dart';
@@ -108,15 +108,15 @@ class _ArchiveCard extends StatelessWidget {
                     height: 90,
                     child: Stack(
                       children: [
-                        const Align(
+                        Align(
                           alignment: Alignment.topRight,
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
-                              Icon(CupertinoIcons.heart, size: 24),
-                              SizedBox(height: 4),
-                              _ArchivedBadgeIcon(),
+                              const FavoriteHeartToggle(),
+                              const SizedBox(height: 4),
+                              const _ArchivedBadgeIcon(),
                             ],
                           ),
                         ),
@@ -152,7 +152,7 @@ class _ArchiveCard extends StatelessWidget {
         ),
         const SizedBox(height: 10),
         Text(
-          '${item.pricePerHour}р/час',
+          '${item.price}р',
           style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w400),
         ),
       ],

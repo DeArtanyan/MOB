@@ -1,4 +1,4 @@
-import 'package:wordpice/features/profile/presentation/models/profile_request_item.dart';
+﻿import 'package:wordpice/features/profile/presentation/models/profile_request_item.dart';
 
 const List<ProfileRequestItem> profileRequestsMockData = [
   ProfileRequestItem(

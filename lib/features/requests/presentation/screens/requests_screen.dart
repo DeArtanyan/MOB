@@ -1,8 +1,13 @@
 ﻿import 'package:flutter/material.dart';
 import 'package:wordpice/app/navigation/app_tab_navigator.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:wordpice/core/widgets/app_shell.dart';
-import 'package:wordpice/features/auth/presentation/screens/auth_screen.dart';
 import 'package:wordpice/features/requests/presentation/widgets/request_confirmation_modal.dart';
+import 'package:wordpice/features/requests/presentation/widgets/request_form_comment_field.dart';
+import 'package:wordpice/features/requests/presentation/widgets/request_form_dropdown_menu.dart';
+import 'package:wordpice/features/requests/presentation/widgets/request_form_field_label.dart';
+import 'package:wordpice/features/requests/presentation/widgets/request_form_input_field.dart';
+import 'package:wordpice/features/requests/presentation/widgets/request_form_submit_button.dart';
 
 /// Экран "Заявки" (UI-only).
 class RequestsScreen extends StatefulWidget {
@@ -24,14 +29,6 @@ class _RequestsScreenState extends State<RequestsScreen> {
   bool _isTimeMenuOpen = false;
   bool _isRoomTypeMenuOpen = false;
   bool _isCabinetMenuOpen = false;
-
-  void _logout() {
-    Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(builder: (_) => const AuthScreen()),
-      (_) => false,
-    );
-  }
 
   void _onBottomChanged(int index) {
     if (index == _tabIndex) return;
@@ -205,17 +202,23 @@ class _RequestsScreenState extends State<RequestsScreen> {
               ),
             ),
             const SizedBox(height: 18),
-            const _FieldLabel('Дата*'),
+            const RequestFormFieldLabel('Дата*'),
             const SizedBox(height: 8),
-            _InputField(
+            RequestFormInputField(
               hint: _dateText,
-              trailing: const Icon(Icons.calendar_month_outlined, size: 26),
+              trailing: SvgPicture.asset(
+                'assets/icons/calendar.svg',
+                width: 24,
+                height: 24,
+                colorFilter: const ColorFilter.mode(Colors.black87, BlendMode.srcIn),
+              ),
               onTap: _pickDate,
+              showTrailingFrame: false,
             ),
             const SizedBox(height: 18),
-            const _FieldLabel('Тип заявки*'),
+            const RequestFormFieldLabel('Тип заявки*'),
             const SizedBox(height: 8),
-            _InputField(
+            RequestFormInputField(
               hint: _requestTypeText,
               trailing: Icon(
                 _isRequestTypeMenuOpen
@@ -232,46 +235,15 @@ class _RequestsScreenState extends State<RequestsScreen> {
                   : BorderRadius.circular(12),
             ),
             if (_isRequestTypeMenuOpen)
-              Container(
-                transform: Matrix4.translationValues(0, -1, 0),
+              RequestFormDropdownMenu(
+                items: _requestTypes,
+                onSelect: _selectRequestType,
                 height: 74,
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.black87, width: 1),
-                  borderRadius: const BorderRadius.only(
-                    bottomLeft: Radius.circular(12),
-                    bottomRight: Radius.circular(12),
-                  ),
-                ),
-                child: ListView.separated(
-                  padding: const EdgeInsets.all(8),
-                  itemCount: _requestTypes.length,
-                  separatorBuilder: (_, __) => const SizedBox(height: 6),
-                  itemBuilder: (context, index) {
-                    final type = _requestTypes[index];
-                    return InkWell(
-                      onTap: () => _selectRequestType(type),
-                      borderRadius: BorderRadius.circular(6),
-                      child: Container(
-                        height: 30,
-                        alignment: Alignment.centerLeft,
-                        padding: const EdgeInsets.symmetric(horizontal: 8),
-                        child: Text(
-                          type,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w400,
-                            color: Colors.black87,
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                ),
               ),
             const SizedBox(height: 18),
-            const _FieldLabel('Время*'),
+            const RequestFormFieldLabel('Время*'),
             const SizedBox(height: 8),
-            _InputField(
+            RequestFormInputField(
               hint: _timeText,
               trailing: Icon(
                 _isTimeMenuOpen
@@ -288,46 +260,15 @@ class _RequestsScreenState extends State<RequestsScreen> {
                   : BorderRadius.circular(12),
             ),
             if (_isTimeMenuOpen)
-              Container(
-                transform: Matrix4.translationValues(0, -1, 0),
+              RequestFormDropdownMenu(
+                items: _timeSlots,
+                onSelect: _selectTime,
                 height: 86,
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.black87, width: 1),
-                  borderRadius: const BorderRadius.only(
-                    bottomLeft: Radius.circular(12),
-                    bottomRight: Radius.circular(12),
-                  ),
-                ),
-                child: ListView.separated(
-                  padding: const EdgeInsets.all(8),
-                  itemCount: _timeSlots.length,
-                  separatorBuilder: (_, __) => const SizedBox(height: 6),
-                  itemBuilder: (context, index) {
-                    final slot = _timeSlots[index];
-                    return InkWell(
-                      onTap: () => _selectTime(slot),
-                      borderRadius: BorderRadius.circular(6),
-                      child: Container(
-                        height: 30,
-                        alignment: Alignment.centerLeft,
-                        padding: const EdgeInsets.symmetric(horizontal: 8),
-                        child: Text(
-                          slot,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w400,
-                            color: Colors.black87,
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                ),
               ),
             const SizedBox(height: 18),
-            const _FieldLabel('Тип помещения*'),
+            const RequestFormFieldLabel('Тип помещения*'),
             const SizedBox(height: 8),
-            _InputField(
+            RequestFormInputField(
               hint: _roomTypeText,
               trailing: Icon(
                 _isRoomTypeMenuOpen
@@ -344,46 +285,15 @@ class _RequestsScreenState extends State<RequestsScreen> {
                   : BorderRadius.circular(12),
             ),
             if (_isRoomTypeMenuOpen)
-              Container(
-                transform: Matrix4.translationValues(0, -1, 0),
+              RequestFormDropdownMenu(
+                items: _roomTypes,
+                onSelect: _selectRoomType,
                 height: 108,
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.black87, width: 1),
-                  borderRadius: const BorderRadius.only(
-                    bottomLeft: Radius.circular(12),
-                    bottomRight: Radius.circular(12),
-                  ),
-                ),
-                child: ListView.separated(
-                  padding: const EdgeInsets.all(8),
-                  itemCount: _roomTypes.length,
-                  separatorBuilder: (_, __) => const SizedBox(height: 6),
-                  itemBuilder: (context, index) {
-                    final type = _roomTypes[index];
-                    return InkWell(
-                      onTap: () => _selectRoomType(type),
-                      borderRadius: BorderRadius.circular(6),
-                      child: Container(
-                        height: 30,
-                        alignment: Alignment.centerLeft,
-                        padding: const EdgeInsets.symmetric(horizontal: 8),
-                        child: Text(
-                          type,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w400,
-                            color: Colors.black87,
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                ),
               ),
             const SizedBox(height: 18),
-            const _FieldLabel('Кабинет №*'),
+            const RequestFormFieldLabel('Кабинет №*'),
             const SizedBox(height: 8),
-            _InputField(
+            RequestFormInputField(
               hint: _cabinetText,
               trailing: Icon(
                 _isCabinetMenuOpen
@@ -400,49 +310,18 @@ class _RequestsScreenState extends State<RequestsScreen> {
                   : BorderRadius.circular(12),
             ),
             if (_isCabinetMenuOpen)
-              Container(
-                transform: Matrix4.translationValues(0, -1, 0),
+              RequestFormDropdownMenu(
+                items: _cabinetOptions,
+                onSelect: _selectCabinet,
                 height: 108,
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.black87, width: 1),
-                  borderRadius: const BorderRadius.only(
-                    bottomLeft: Radius.circular(12),
-                    bottomRight: Radius.circular(12),
-                  ),
-                ),
-                child: ListView.separated(
-                  padding: const EdgeInsets.all(8),
-                  itemCount: _cabinetOptions.length,
-                  separatorBuilder: (_, __) => const SizedBox(height: 6),
-                  itemBuilder: (context, index) {
-                    final cabinet = _cabinetOptions[index];
-                    return InkWell(
-                      onTap: () => _selectCabinet(cabinet),
-                      borderRadius: BorderRadius.circular(6),
-                      child: Container(
-                        height: 30,
-                        alignment: Alignment.centerLeft,
-                        padding: const EdgeInsets.symmetric(horizontal: 8),
-                        child: Text(
-                          cabinet,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w400,
-                            color: Colors.black87,
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                ),
               ),
             const SizedBox(height: 18),
-            const _FieldLabel('Комментарий (необязательно)'),
+            const RequestFormFieldLabel('Комментарий (необязательно)'),
             const SizedBox(height: 8),
-            const _CommentField(),
+            const RequestFormCommentField(),
             const SizedBox(height: 20),
             Center(
-              child: _SubmitButton(
+              child: RequestFormSubmitButton(
                 text: 'Создать заявку',
                 onPressed: _canCreateRequest ? _showCreateRequestModal : null,
               ),
@@ -453,132 +332,3 @@ class _RequestsScreenState extends State<RequestsScreen> {
     );
   }
 }
-
-class _FieldLabel extends StatelessWidget {
-  const _FieldLabel(this.text);
-
-  final String text;
-
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      text,
-      style: const TextStyle(
-        fontSize: 18 * 0.9,
-        fontWeight: FontWeight.w400,
-      ),
-    );
-  }
-}
-
-class _InputField extends StatelessWidget {
-  const _InputField({
-    required this.hint,
-    required this.trailing,
-    this.onTap,
-    this.borderRadius,
-  });
-
-  final String hint;
-  final Widget trailing;
-  final VoidCallback? onTap;
-  final BorderRadius? borderRadius;
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
-      child: Container(
-        height: 48,
-        padding: const EdgeInsets.only(left: 14, right: 10),
-        decoration: BoxDecoration(
-          border: Border.all(color: Colors.black87, width: 1),
-          borderRadius: borderRadius ?? BorderRadius.circular(12),
-        ),
-        child: Row(
-          children: [
-            Expanded(
-              child: Text(
-                hint,
-                style: const TextStyle(fontSize: 33 / 2, fontWeight: FontWeight.w400),
-              ),
-            ),
-            Container(
-              width: 28,
-              height: 28,
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.black87, width: 1),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Center(child: trailing),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _CommentField extends StatelessWidget {
-  const _CommentField();
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: 104,
-      child: TextField(
-        maxLines: null,
-        expands: true,
-        textAlignVertical: TextAlignVertical.top,
-        decoration: InputDecoration(
-          hintText: 'Введите комментарий',
-          contentPadding: const EdgeInsets.fromLTRB(14, 14, 14, 14),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: Colors.black87, width: 1),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: Colors.black87, width: 1),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _SubmitButton extends StatelessWidget {
-  const _SubmitButton({
-    required this.text,
-    required this.onPressed,
-  });
-
-  final String text;
-  final VoidCallback? onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: 210,
-      height: 44,
-      child: OutlinedButton(
-        onPressed: onPressed,
-        style: OutlinedButton.styleFrom(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-        ),
-        child: Text(
-          text,
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w400,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-

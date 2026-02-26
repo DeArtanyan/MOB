@@ -3,6 +3,7 @@ import 'package:wordpice/core/theme/app_colors.dart';
 import 'package:wordpice/core/widgets/app_bottom_nav_bar.dart';
 import 'package:wordpice/core/widgets/app_header.dart';
 import 'package:wordpice/features/auth/presentation/screens/auth_screen.dart';
+import 'package:wordpice/features/notifications/data/mock/notifications_mock_data.dart';
 import 'package:wordpice/features/notifications/presentation/screens/notifications_screen.dart';
 
 /// Единый каркас экрана: хедер + контент + нижний бар.
@@ -55,7 +56,7 @@ class AppShell extends StatelessWidget {
                   ),
                 );
               },
-              notificationCount: notificationCount ?? 0,
+              notificationCount: notificationCount ?? notificationsMockData.length,
             ),
           ),
           Expanded(child: body),

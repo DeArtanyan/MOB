@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:wordpice/features/archive/presentation/screens/archive_screen.dart';
 import 'package:wordpice/features/parking/presentation/screens/parking_screen.dart';
 import 'package:wordpice/features/passes/presentation/screens/passes_screen.dart';
@@ -51,3 +51,4 @@ class _PlaceholderScreen extends StatelessWidget {
     );
   }
 }
+

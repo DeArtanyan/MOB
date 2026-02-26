@@ -69,7 +69,7 @@ class _GuestPassScreenState extends State<GuestPassScreen> {
                 const SizedBox(
                   width: double.infinity,
                   child: Text(
-                    'Пропуск',
+                    'Пропуск гостя',
                     style: TextStyle(
                       fontSize: 44 / 2,
                       fontWeight: FontWeight.w600,

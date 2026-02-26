@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:wordpice/core/theme/app_colors.dart';
 import 'package:wordpice/features/profile/presentation/models/profile_request_item.dart';
@@ -58,7 +58,7 @@ class ProfileRequestCard extends StatelessWidget {
                       style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
                     ),
                   ),
-                  if (item.hasAttachment) ...[
+                  if (item.hasAttachment)
                     SvgPicture.asset(
                       'assets/icons/document_download.svg',
                       width: 28,
@@ -68,7 +68,6 @@ class ProfileRequestCard extends StatelessWidget {
                         BlendMode.srcIn,
                       ),
                     ),
-                  ],
                 ],
               ),
             ],

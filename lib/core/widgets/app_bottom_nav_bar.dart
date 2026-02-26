@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:wordpice/core/theme/app_colors.dart';
 
@@ -19,6 +19,8 @@ class AppBottomNavBar extends StatefulWidget {
 
 class _AppBottomNavBarState extends State<AppBottomNavBar> {
   static const int _visibleCount = 4;
+  static const int _loopMultiplier = 1000;
+  static int _persistedStartIndex = 0;
 
   final List<_NavItemData> _items = const <_NavItemData>[
     _NavItemData(label: 'Аренды', iconAsset: 'assets/icons/nav_rentals.svg'),
@@ -30,53 +32,50 @@ class _AppBottomNavBarState extends State<AppBottomNavBar> {
     _NavItemData(label: 'Архив', iconAsset: 'assets/icons/nav_archive.svg'),
   ];
 
-  int _startIndex = 0;
+  late final PageController _controller;
+  late int _page;
 
+  int get _itemsCount => _items.length;
   @override
   void initState() {
     super.initState();
-    _syncStartToSelected();
+    final startIndex = _persistedStartIndex.clamp(0, _itemsCount - 1);
+    final basePage = _itemsCount * _loopMultiplier;
+    _page = basePage + startIndex;
+    _controller = PageController(
+      initialPage: _page,
+      viewportFraction: 1 / _visibleCount,
+    );
   }
 
   @override
   void didUpdateWidget(covariant AppBottomNavBar oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.selectedIndex != widget.selectedIndex) {
-      _syncStartToSelected();
-    }
+    // Не автоскроллим подвал при выборе пункта: меняем только выделение.
   }
 
-  void _syncStartToSelected() {
-    final maxStart = (_items.length - _visibleCount).clamp(0, 999);
-    int start = _startIndex;
-
-    if (widget.selectedIndex < start) {
-      start = widget.selectedIndex;
-    } else if (widget.selectedIndex >= start + _visibleCount) {
-      start = widget.selectedIndex - (_visibleCount - 1);
-    }
-
-    _startIndex = start.clamp(0, maxStart);
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   void _prev() {
-    if (_startIndex <= 0) return;
-    setState(() => _startIndex -= 1);
+    _controller.previousPage(
+      duration: const Duration(milliseconds: 250),
+      curve: Curves.easeOut,
+    );
   }
 
   void _next() {
-    final maxStart = (_items.length - _visibleCount).clamp(0, 999);
-    if (_startIndex >= maxStart) return;
-    setState(() => _startIndex += 1);
+    _controller.nextPage(
+      duration: const Duration(milliseconds: 250),
+      curve: Curves.easeOut,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    final visible = _items.sublist(
-      _startIndex,
-      (_startIndex + _visibleCount).clamp(0, _items.length),
-    );
-
     return Container(
       height: 100,
       padding: const EdgeInsets.fromLTRB(12, 12, 12, 16),
@@ -92,22 +91,31 @@ class _AppBottomNavBarState extends State<AppBottomNavBar> {
           _ArrowButton(icon: Icons.chevron_left, onTap: _prev),
           const SizedBox(width: 10),
           Expanded(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: List.generate(visible.length, (localIndex) {
-                final globalIndex = _startIndex + localIndex;
-                final item = visible[localIndex];
-                final isSelected = globalIndex == widget.selectedIndex;
+            child: SizedBox(
+              height: 64,
+              child: PageView.builder(
+                controller: _controller,
+                padEnds: false,
+                onPageChanged: (page) {
+                  _page = page;
+                  _persistedStartIndex = page % _itemsCount;
+                },
+                itemCount: _itemsCount * _loopMultiplier * 2,
+                itemBuilder: (_, page) {
+                  final itemIndex = page % _itemsCount;
+                  final item = _items[itemIndex];
+                  final isSelected = itemIndex == widget.selectedIndex;
 
-                return Expanded(
-                  child: _NavItem(
-                    label: item.label,
-                    iconAsset: item.iconAsset,
-                    isSelected: isSelected,
-                    onTap: () => widget.onChanged(globalIndex),
-                  ),
-                );
-              }),
+                  return SizedBox.expand(
+                    child: _NavItem(
+                      label: item.label,
+                      iconAsset: item.iconAsset,
+                      isSelected: isSelected,
+                      onTap: () => widget.onChanged(itemIndex),
+                    ),
+                  );
+                },
+              ),
             ),
           ),
           const SizedBox(width: 10),

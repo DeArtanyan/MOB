@@ -5,7 +5,7 @@ class OfficeRentalItem {
     required this.room,
     required this.capacity,
     required this.availableTime,
-    required this.pricePerHour,
+    required this.price,
   });
 
   final String dateText;
@@ -13,5 +13,5 @@ class OfficeRentalItem {
   final String room;
   final int capacity;
   final String availableTime;
-  final int pricePerHour;
+  final int price;
 }

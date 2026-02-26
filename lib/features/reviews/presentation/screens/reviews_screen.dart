@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:wordpice/app/navigation/app_tab_navigator.dart';
 import 'package:wordpice/core/theme/app_colors.dart';
 import 'package:wordpice/core/widgets/app_shell.dart';
@@ -88,7 +89,7 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
                   ? const Center(
                       child: Text(
                         'Отзывы отсутствуют',
-                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.w400),
+                        style: TextStyle(fontSize: 24, fontWeight: FontWeight.w400),
                       ),
                     )
                   : Padding(
@@ -246,14 +247,24 @@ class _ReviewCard extends StatelessWidget {
             ],
           ),
         ),
-        const Positioned(
+        Positioned(
           right: 2,
           bottom: 2,
           child: Row(
             children: [
-              Icon(Icons.edit_outlined, size: 18, color: Colors.black54),
-              SizedBox(width: 10),
-              Icon(Icons.delete_outline, size: 18, color: Colors.black54),
+              SvgPicture.asset(
+                'assets/icons/edit-2.svg',
+                width: 25,
+                height: 25,
+                colorFilter: const ColorFilter.mode(Colors.black54, BlendMode.srcIn),
+              ),
+              const SizedBox(width: 10),
+              SvgPicture.asset(
+                'assets/icons/delete.svg',
+                width: 25,
+                height: 25,
+                colorFilter: const ColorFilter.mode(Colors.black54, BlendMode.srcIn),
+              ),
             ],
           ),
         ),

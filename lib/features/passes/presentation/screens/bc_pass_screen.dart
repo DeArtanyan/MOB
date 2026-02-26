@@ -77,7 +77,7 @@ class _BcPassScreenState extends State<BcPassScreen> {
                 const SizedBox(
                   width: double.infinity,
                   child: Text(
-                    'Пропуск',
+                    'Пропуск владельца',
                     style: TextStyle(
                       fontSize: 44 / 2,
                       fontWeight: FontWeight.w600,

@@ -1,6 +1,6 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:wordpice/core/theme/app_colors.dart';
+import 'package:wordpice/core/widgets/favorite_heart_toggle.dart';
 import 'package:wordpice/features/profile/presentation/models/rental_history_item.dart';
 
 class ProfileFavoriteRentalCard extends StatelessWidget {
@@ -13,6 +13,8 @@ class ProfileFavoriteRentalCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final priceText = item.priceLabel.split('/').first;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -48,11 +50,7 @@ class ProfileFavoriteRentalCard extends StatelessWidget {
                       children: [
                         const Align(
                           alignment: Alignment.topRight,
-                          child: Icon(
-                            CupertinoIcons.heart_fill,
-                            size: 24,
-                            color: Colors.black,
-                          ),
+                          child: FavoriteHeartToggle(initialFilled: true),
                         ),
                         Center(
                           child: Column(
@@ -88,7 +86,7 @@ class ProfileFavoriteRentalCard extends StatelessWidget {
         Align(
           alignment: Alignment.centerRight,
           child: Text(
-            item.priceLabel,
+            priceText,
             style: const TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w400,

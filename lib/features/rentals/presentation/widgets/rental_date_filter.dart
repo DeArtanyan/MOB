@@ -1,10 +1,10 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 
 class RentalDateFilter extends StatelessWidget {
   const RentalDateFilter({
     super.key,
     this.leftPadding = 0,
-    this.text = '05 февраля',
+    this.text = '5 февраля',
     this.onTap,
   });
 

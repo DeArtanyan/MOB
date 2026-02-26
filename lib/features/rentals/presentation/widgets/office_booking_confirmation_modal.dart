@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 
 class OfficeBookingConfirmationModal {
   OfficeBookingConfirmationModal._();
@@ -9,7 +9,7 @@ class OfficeBookingConfirmationModal {
     required String timeRange,
     required String title,
     required String room,
-    required int pricePerHour,
+    required int price,
   }) async {
     final result = await showDialog<bool>(
       context: context,
@@ -68,7 +68,7 @@ class OfficeBookingConfirmationModal {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Цена: ${pricePerHour}р',
+                    'Цена: ${price}р',
                     textAlign: TextAlign.center,
                     style: const TextStyle(
                       fontSize: 12,

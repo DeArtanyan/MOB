@@ -4,12 +4,12 @@ class ArchiveItem {
     required this.title,
     required this.room,
     required this.capacity,
-    required this.pricePerHour,
+    required this.price,
   });
 
   final String dateText;
   final String title;
   final String room;
   final int capacity;
-  final int pricePerHour;
+  final int price;
 }

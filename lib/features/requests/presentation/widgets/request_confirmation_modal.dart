@@ -30,7 +30,7 @@ class RequestConfirmationModal {
                   const Text(
                     'Подтверждение',
                     style: TextStyle(
-                      fontSize: 36 / 2,
+                      fontSize: 18,
                       fontWeight: FontWeight.w500,
                       color: Colors.black87,
                     ),
@@ -51,7 +51,7 @@ class RequestConfirmationModal {
                     '$date, $time',
                     textAlign: TextAlign.center,
                     style: const TextStyle(
-                      fontSize: 24 / 2,
+                      fontSize: 12,
                       fontWeight: FontWeight.w400,
                       color: Colors.black87,
                     ),
@@ -61,7 +61,7 @@ class RequestConfirmationModal {
                     requestType,
                     textAlign: TextAlign.center,
                     style: const TextStyle(
-                      fontSize: 24 / 2,
+                      fontSize: 12,
                       fontWeight: FontWeight.w400,
                       color: Colors.black87,
                     ),
@@ -71,7 +71,7 @@ class RequestConfirmationModal {
                     roomType,
                     textAlign: TextAlign.center,
                     style: const TextStyle(
-                      fontSize: 24 / 2,
+                      fontSize: 12,
                       fontWeight: FontWeight.w400,
                       color: Colors.black87,
                     ),
@@ -81,7 +81,7 @@ class RequestConfirmationModal {
                     cabinet,
                     textAlign: TextAlign.center,
                     style: const TextStyle(
-                      fontSize: 24 / 2,
+                      fontSize: 12,
                       fontWeight: FontWeight.w400,
                       color: Colors.black87,
                     ),

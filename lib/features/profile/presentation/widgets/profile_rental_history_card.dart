@@ -1,6 +1,6 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:wordpice/core/theme/app_colors.dart';
+import 'package:wordpice/core/widgets/favorite_heart_toggle.dart';
 import 'package:wordpice/features/profile/presentation/models/rental_history_item.dart';
 
 class ProfileRentalHistoryCard extends StatelessWidget {
@@ -54,12 +54,12 @@ class ProfileRentalHistoryCard extends StatelessWidget {
                 const SizedBox(width: 12),
                 Expanded(
                   child: SizedBox(
-                    height: 90,
+                    height: item.timeSlots.isNotEmpty ? 112 : 90,
                     child: Stack(
                       children: [
                         const Align(
                           alignment: Alignment.topRight,
-                          child: Icon(CupertinoIcons.heart, size: 24),
+                          child: FavoriteHeartToggle(),
                         ),
                         Center(
                           child: Column(
@@ -80,6 +80,16 @@ class ProfileRentalHistoryCard extends StatelessWidget {
                                 item.capacity,
                                 style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
                               ),
+                              if (item.timeSlots.isNotEmpty) ...[
+                                const SizedBox(height: 3),
+                                Text(
+                                  item.timeSlots.first,
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ),
+                              ],
                             ],
                           ),
                         ),
@@ -88,18 +98,6 @@ class ProfileRentalHistoryCard extends StatelessWidget {
                   ),
                 ),
               ],
-            ),
-          ),
-        ),
-        const SizedBox(height: 10),
-        Align(
-          alignment: Alignment.centerRight,
-          child: Text(
-            item.priceLabel,
-            style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w400,
-              color: AppColors.textPrimary,
             ),
           ),
         ),

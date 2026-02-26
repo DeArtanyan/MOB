@@ -6,20 +6,20 @@ const List<ArchiveItem> archiveMockData = [
     title: 'Аренда переговорной',
     room: 'Кабинет №1',
     capacity: 10,
-    pricePerHour: 1000,
+    price: 1000,
   ),
   ArchiveItem(
     dateText: '5 февраля, 2026',
     title: 'Аренда переговорной',
     room: 'Кабинет №1',
     capacity: 10,
-    pricePerHour: 1000,
+    price: 1000,
   ),
   ArchiveItem(
     dateText: '5 февраля, 2026',
     title: 'Аренда переговорной',
     room: 'Кабинет №1',
     capacity: 10,
-    pricePerHour: 1000,
+    price: 1000,
   ),
 ];
