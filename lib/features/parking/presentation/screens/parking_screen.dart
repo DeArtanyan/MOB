@@ -2,7 +2,6 @@
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:wordpice/app/navigation/app_tab_navigator.dart';
 import 'package:wordpice/core/widgets/app_shell.dart';
-import 'package:wordpice/features/auth/presentation/screens/auth_screen.dart';
 import 'package:wordpice/features/parking/presentation/widgets/parking_confirmation_modal.dart';
 
 /// Экран "Парковка" (UI-only).
@@ -25,14 +24,6 @@ class _ParkingScreenState extends State<ParkingScreen> {
     6, 7, 8, 9, 10,
     1, 2, 3, 4, 5,
   ];
-
-  void _logout() {
-    Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(builder: (_) => const AuthScreen()),
-      (_) => false,
-    );
-  }
 
   void _onBottomChanged(int index) {
     if (index == _tabIndex) return;
@@ -168,6 +159,7 @@ class _ParkingPlace extends StatelessWidget {
     );
   }
 }
+
 
 
 

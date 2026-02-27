@@ -1,13 +1,16 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:wordpice/core/theme/app_colors.dart';
+import 'package:wordpice/features/profile/presentation/models/profile_pass_item.dart';
 import 'package:wordpice/features/profile/presentation/widgets/profile_surface_card.dart';
 
 class ProfilePassCard extends StatelessWidget {
   const ProfilePassCard({
     super.key,
+    required this.pass,
     required this.onShowPressed,
   });
 
+  final ProfilePassItem pass;
   final VoidCallback onShowPressed;
 
   @override
@@ -30,49 +33,75 @@ class ProfilePassCard extends StatelessWidget {
             ),
             const SizedBox(width: 12),
             Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  const Text(
-                    'Пропуск для сотрудника',
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                      color: AppColors.textPrimary,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  SizedBox(
-                    height: 30,
-                    child: OutlinedButton(
-                      onPressed: onShowPressed,
-                      style: OutlinedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(horizontal: 18),
-                        side: const BorderSide(color: AppColors.border, width: 1),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14),
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(minHeight: 84),
+                child: pass.hasActivePass
+                    ? Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            pass.title,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                              color: AppColors.textPrimary,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          SizedBox(
+                            height: 30,
+                            child: OutlinedButton(
+                              onPressed: onShowPressed,
+                              style: OutlinedButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 24,
+                                ),
+                                side: const BorderSide(
+                                  color: AppColors.border,
+                                  width: 1,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                              child: Text(
+                                pass.showButtonLabel,
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w400,
+                                  color: AppColors.textPrimary,
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'Парковочное место: ${pass.parkingPlaceOrFallback}',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w400,
+                              color: AppColors.textPrimary,
+                            ),
+                          ),
+                        ],
+                      )
+                    : const Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          'Нет активных пропусков',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w400,
+                            color: AppColors.textPrimary,
+                          ),
                         ),
                       ),
-                      child: const Text(
-                        'Показать',
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w400,
-                          color: AppColors.textPrimary,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  const Text(
-                    'Парковочное место: №31',
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w400,
-                      color: AppColors.textPrimary,
-                    ),
-                  ),
-                ],
               ),
             ),
           ],

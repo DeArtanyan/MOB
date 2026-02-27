@@ -1,4 +1,4 @@
-import 'dart:async';
+﻿import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -83,7 +83,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
       PageRouteBuilder(
         transitionDuration: const Duration(milliseconds: 1200),
         reverseTransitionDuration: const Duration(milliseconds: 1200),
-        pageBuilder: (_, __, ___) => const AuthScreen(),
+        pageBuilder: (_, _, _) => const AuthScreen(),
       ),
     );
   }
@@ -143,7 +143,7 @@ class _AnimatedText extends StatelessWidget {
 
     return AnimatedBuilder(
       animation: controller,
-      builder: (_, __) {
+      builder: (_, _) {
         return Row(
           mainAxisSize: MainAxisSize.min,
           children: List.generate(total, (index) {
@@ -173,3 +173,4 @@ class _AnimatedText extends StatelessWidget {
     );
   }
 }
+

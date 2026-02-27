@@ -26,7 +26,7 @@ class AppHeader extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.controlGrey,
         border: Border(
-          bottom: BorderSide(color: AppColors.border.withOpacity(0.25), width: 1),
+          bottom: BorderSide(color: AppColors.border.withValues(alpha: 0.25), width: 1),
         ),
       ),
       child: Row(
@@ -105,3 +105,4 @@ class AppHeader extends StatelessWidget {
     );
   }
 }
+

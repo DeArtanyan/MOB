@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:wordpice/core/theme/app_text_styles.dart';
 import 'package:wordpice/core/theme/app_input_decorations.dart';
 import 'package:wordpice/core/widgets/app_logo_top_left.dart';
-import 'forgot_password_screen.dart';
-import 'register_screen.dart';
+import 'package:wordpice/features/auth/presentation/screens/account_confirmation_screen.dart';
+import 'package:wordpice/features/auth/presentation/screens/forgot_password_screen.dart';
+import 'package:wordpice/features/auth/presentation/screens/register_screen.dart';
+import 'package:wordpice/features/auth/presentation/widgets/auth_action_button.dart';
+import 'package:wordpice/features/auth/presentation/widgets/auth_form_card.dart';
+import 'package:wordpice/features/auth/presentation/widgets/auth_styles.dart';
+import 'package:wordpice/features/auth/presentation/widgets/auth_text_widgets.dart';
 import 'package:wordpice/features/profile/presentation/screens/profile_screen.dart';
 
 class AuthScreen extends StatefulWidget {
@@ -16,7 +20,6 @@ class AuthScreen extends StatefulWidget {
 class _AuthScreenState extends State<AuthScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-
   bool _obscurePassword = true;
 
   @override
@@ -27,9 +30,27 @@ class _AuthScreenState extends State<AuthScreen> {
   }
 
   void _openRegister() {
+    Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (_) => const RegisterScreen()));
+  }
+
+  void _openAccountConfirmation() {
     Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => const RegisterScreen()),
+      MaterialPageRoute(builder: (_) => const AccountConfirmationScreen()),
     );
+  }
+
+  void _openForgotPassword() {
+    Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (_) => const ForgotPasswordScreen()));
+  }
+
+  void _openProfile() {
+    Navigator.of(
+      context,
+    ).pushReplacement(MaterialPageRoute(builder: (_) => const ProfileScreen()));
   }
 
   @override
@@ -39,125 +60,78 @@ class _AuthScreenState extends State<AuthScreen> {
         child: Stack(
           children: [
             const AppLogoTopLeft(useHero: true),
-
             Center(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 32),
-
-                    const Center(
-                      child: Text(
-                        'Авторизация',
-                        style: AppTextStyles.title26,
-                      ),
-                    ),
-
-                    const SizedBox(height: 24),
-
-                    /// Email
-                    const Text(
-                      'Эл.почта*',
-                      style: AppTextStyles.label12Grey,
-                    ),
-                    const SizedBox(height: 8),
-
-                    TextField(
-                      controller: _emailController,
-                      keyboardType: TextInputType.emailAddress,
-                      decoration: AppInputDecorations.authField(
-                        hintText: 'Введите электронную почту',
-                      ),
-                    ),
-
-                    const SizedBox(height: 18),
-
-                    /// Пароль
-                    const Text(
-                      'Пароль*',
-                      style: AppTextStyles.label12Grey,
-                    ),
-                    const SizedBox(height: 8),
-
-                    TextField(
-                      controller: _passwordController,
-                      obscureText: _obscurePassword,
-                      decoration: AppInputDecorations.authField(
-                        hintText: 'Введите пароль',
-                        suffixIcon: IconButton(
-                          onPressed: () =>
-                              setState(() => _obscurePassword = !_obscurePassword),
-                          icon: Icon(
-                            _obscurePassword
-                                ? Icons.visibility_off_outlined
-                                : Icons.visibility_outlined,
-                          ),
+                padding: AuthStyles.screenHorizontalPadding,
+                child: AuthFormCard(
+                  padding: AuthStyles.formPaddingCompact,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 32),
+                      const Center(child: AuthTitleText('Авторизация')),
+                      const SizedBox(height: 24),
+                      const AuthLabelText('Эл.почта*'),
+                      const SizedBox(height: 8),
+                      TextField(
+                        controller: _emailController,
+                        keyboardType: TextInputType.emailAddress,
+                        decoration: AppInputDecorations.authField(
+                          hintText: 'Введите электронную почту',
                         ),
                       ),
-                    ),
-
-                    const SizedBox(height: 26),
-
-                    Center(
-                      child: SizedBox(
-                        width: 200,
-                        height: 44,
-                        child: OutlinedButton(
-                          onPressed: () {
-                            Navigator.of(context).pushReplacement(
-                              MaterialPageRoute(
-                                builder: (_) => const ProfileScreen(),
-                              ),
-                            );
-                          },
-                          style: OutlinedButton.styleFrom(
-                            side: const BorderSide(
-                              color: Colors.black87,
-                              width: 1,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
+                      const SizedBox(height: 18),
+                      const AuthLabelText('Пароль*'),
+                      const SizedBox(height: 8),
+                      TextField(
+                        controller: _passwordController,
+                        obscureText: _obscurePassword,
+                        decoration: AppInputDecorations.authField(
+                          hintText: 'Введите пароль',
+                          suffixIcon: IconButton(
+                            onPressed: () {
+                              setState(
+                                () => _obscurePassword = !_obscurePassword,
+                              );
+                            },
+                            icon: Icon(
+                              _obscurePassword
+                                  ? Icons.visibility_off_outlined
+                                  : Icons.visibility_outlined,
                             ),
                           ),
-                          child: const Text(
-                            'Войти',
-                            style: AppTextStyles.body14,
-                          ),
                         ),
                       ),
-                    ),
-
-                    const SizedBox(height: 16),
-
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        TextButton(
-                          onPressed: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (_) =>
-                                    const ForgotPasswordScreen(),
-                              ),
-                            );
-                          },
-                          child: const Text(
-                            'Забыли пароль?',
-                            style: AppTextStyles.body14,
-                          ),
+                      const SizedBox(height: 26),
+                      Center(
+                        child: AuthActionButton(
+                          label: 'Войти',
+                          onPressed: _openProfile,
                         ),
-                        TextButton(
-                          onPressed: _openRegister,
-                          child: const Text(
-                            'Зарегистрироваться',
-                            style: AppTextStyles.body14,
-                          ),
+                      ),
+                      const SizedBox(height: 10),
+                      Center(
+                        child: AuthActionButton(
+                          label: 'Подтвердить аккаунт',
+                          onPressed: _openAccountConfirmation,
                         ),
-                      ],
-                    ),
-                  ],
+                      ),
+                      const SizedBox(height: 16),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          TextButton(
+                            onPressed: _openForgotPassword,
+                            child: const AuthBodyText('Забыли пароль?'),
+                          ),
+                          TextButton(
+                            onPressed: _openRegister,
+                            child: const AuthBodyText('Зарегистрироваться'),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

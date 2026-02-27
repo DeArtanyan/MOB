@@ -1,6 +1,7 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:wordpice/app/navigation/app_tab_navigator.dart';
 import 'package:wordpice/core/widgets/app_shell.dart';
+import 'package:wordpice/features/profile/data/mock/profile_pass_mock_data.dart';
 import 'package:wordpice/features/profile/presentation/models/profile_activity_filter.dart';
 import 'package:wordpice/features/profile/presentation/screens/edit_profile_screen.dart';
 import 'package:wordpice/features/profile/presentation/widgets/profile_activity_section.dart';
@@ -11,7 +12,6 @@ import 'package:wordpice/features/profile/presentation/widgets/profile_user_card
 import 'package:wordpice/features/profile/presentation/widgets/qr_modal.dart';
 import 'package:wordpice/features/profile/presentation/widgets/segment_carousel.dart';
 
-/// Экран "Профиль" (UI-only).
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
 
@@ -20,14 +20,15 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  static const int _tabIndex = 3; // Профиль
+  static const int _tabIndex = 3;
+
   int _selectedBottomIndex = _tabIndex;
   int _carouselIndex = 0;
 
   void _openEditScreen() {
-    Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => const EditProfileScreen()),
-    );
+    Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (_) => const EditProfileScreen()));
   }
 
   void _onBottomChanged(int index) {
@@ -69,17 +70,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 const SizedBox(height: 30),
                 _NarrowCard(
                   child: ProfilePassCard(
-                    onShowPressed: () => QrModal.showQr(
-                      context,
-                      validUntilText: 'Действителен до 31.12.2026',
-                    ),
+                    pass: profilePassMockData,
+                    onShowPressed: () {
+                      if (!profilePassMockData.hasActivePass) return;
+                      QrModal.showQr(
+                        context,
+                        validUntilText: profilePassMockData.validUntilText!,
+                      );
+                    },
                   ),
                 ),
                 const SizedBox(height: 30),
                 _NarrowCard(
                   child: Center(
                     child: SegmentCarousel(
-                      items: const ['Активные аренды', 'Избранное', 'История аренды', 'Заявки'],
+                      items: const [
+                        'Активные аренды',
+                        'Избранное',
+                        'История аренды',
+                        'Заявки',
+                      ],
                       initialIndex: _carouselIndex,
                       onChanged: (i) => setState(() => _carouselIndex = i),
                     ),
@@ -88,7 +98,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 const SizedBox(height: 12),
                 const _NarrowCard(child: ProfileRentalTypeFilters()),
                 const SizedBox(height: 30),
-                _NarrowCard(child: ProfileActivitySection(filter: _selectedActivityFilter)),
+                _NarrowCard(
+                  child: ProfileActivitySection(
+                    filter: _selectedActivityFilter,
+                  ),
+                ),
               ],
             ),
           ),

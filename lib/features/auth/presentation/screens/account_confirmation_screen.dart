@@ -1,22 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:wordpice/core/theme/app_input_decorations.dart';
-import 'package:wordpice/core/theme/app_text_styles.dart';
 import 'package:wordpice/core/widgets/app_back_button.dart';
+import 'package:wordpice/features/auth/presentation/widgets/auth_action_button.dart';
+import 'package:wordpice/features/auth/presentation/widgets/auth_form_card.dart';
+import 'package:wordpice/features/auth/presentation/widgets/auth_styles.dart';
+import 'package:wordpice/features/auth/presentation/widgets/auth_text_widgets.dart';
 import 'package:wordpice/features/profile/presentation/screens/profile_screen.dart';
-import 'register_screen.dart';
 
 class AccountConfirmationScreen extends StatefulWidget {
   const AccountConfirmationScreen({super.key});
 
   @override
-  State<AccountConfirmationScreen> createState() => _AccountConfirmationScreenState();
+  State<AccountConfirmationScreen> createState() =>
+      _AccountConfirmationScreenState();
 }
 
 class _AccountConfirmationScreenState extends State<AccountConfirmationScreen> {
-  static const int _codeLength = 6;
+  static const _codeLength = 6;
 
-  final TextEditingController _emailController = TextEditingController();
+  final _emailController = TextEditingController();
   late final List<TextEditingController> _controllers;
   late final List<FocusNode> _focusNodes;
 
@@ -30,20 +33,25 @@ class _AccountConfirmationScreenState extends State<AccountConfirmationScreen> {
   @override
   void dispose() {
     _emailController.dispose();
-    for (final c in _controllers) {
-      c.dispose();
+    for (final controller in _controllers) {
+      controller.dispose();
     }
-    for (final f in _focusNodes) {
-      f.dispose();
+    for (final focusNode in _focusNodes) {
+      focusNode.dispose();
     }
     super.dispose();
   }
 
-  void _goBackToRegister() {
-    Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(builder: (_) => const RegisterScreen()),
-      (route) => false,
-    );
+  void _goBack() {
+    if (Navigator.of(context).canPop()) {
+      Navigator.of(context).pop();
+    }
+  }
+
+  void _submit() {
+    Navigator.of(
+      context,
+    ).pushReplacement(MaterialPageRoute(builder: (_) => const ProfileScreen()));
   }
 
   void _onChanged(int index, String value) {
@@ -59,8 +67,11 @@ class _AccountConfirmationScreenState extends State<AccountConfirmationScreen> {
       } else {
         _focusNodes[index].unfocus();
       }
-    } else {
-      if (index > 0) _focusNodes[index - 1].requestFocus();
+      return;
+    }
+
+    if (index > 0) {
+      _focusNodes[index - 1].requestFocus();
     }
   }
 
@@ -78,7 +89,7 @@ class _AccountConfirmationScreenState extends State<AccountConfirmationScreen> {
           LengthLimitingTextInputFormatter(1),
         ],
         decoration: const InputDecoration(contentPadding: EdgeInsets.zero),
-        onChanged: (v) => _onChanged(index, v),
+        onChanged: (value) => _onChanged(index, value),
       ),
     );
   }
@@ -89,61 +100,51 @@ class _AccountConfirmationScreenState extends State<AccountConfirmationScreen> {
       body: SafeArea(
         child: Stack(
           children: [
-            AppBackButton(onTap: _goBackToRegister),
+            AppBackButton(onTap: _goBack),
             Center(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 32),
-                    const Center(
-                      child: Text(
-                        'Подтверждение\nаккаунта',
-                        textAlign: TextAlign.center,
-                        style: AppTextStyles.title26,
+                padding: AuthStyles.screenHorizontalPadding,
+                child: AuthFormCard(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 32),
+                      const Center(
+                        child: AuthTitleText('Подтверждение\nаккаунта'),
                       ),
-                    ),
-                    const SizedBox(height: 16),
-                    const Center(
-                      child: Text(
-                        'Введите код, отправленный Вам на почту',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 12, color: Colors.black54, height: 1.4),
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    const Text('Эл.почта*', style: AppTextStyles.label12Grey),
-                    const SizedBox(height: 4),
-                    TextField(
-                      controller: _emailController,
-                      keyboardType: TextInputType.emailAddress,
-                      decoration: AppInputDecorations.authField(
-                        hintText: 'Введите электронную почту',
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    const Text('Код', style: AppTextStyles.body14),
-                    const SizedBox(height: 10),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: List.generate(_codeLength, (i) => _codeBox(i)),
-                    ),
-                    const SizedBox(height: 22),
-                    Center(
-                      child: SizedBox(
-                        width: 200,
-                        child: OutlinedButton(
-                        onPressed: () {
-                          Navigator.of(context).pushReplacement(
-                            MaterialPageRoute(builder: (_) => const ProfileScreen()),
-                          );
-                        },
-                        child: const Text('Отправить'),
+                      const SizedBox(height: 16),
+                      const Center(
+                        child: AuthHelperText(
+                          'Введите код, отправленный вам на почту',
+                          small: true,
                         ),
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 20),
+                      const AuthLabelText('Эл.почта*'),
+                      const SizedBox(height: 4),
+                      TextField(
+                        controller: _emailController,
+                        keyboardType: TextInputType.emailAddress,
+                        decoration: AppInputDecorations.authField(
+                          hintText: 'Введите электронную почту',
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      const AuthBodyText('Код'),
+                      const SizedBox(height: 10),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: List.generate(_codeLength, _codeBox),
+                      ),
+                      const SizedBox(height: 22),
+                      Center(
+                        child: AuthActionButton(
+                          label: 'Отправить',
+                          onPressed: _submit,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

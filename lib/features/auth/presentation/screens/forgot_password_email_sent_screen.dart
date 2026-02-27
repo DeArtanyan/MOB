@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:wordpice/core/theme/app_text_styles.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:wordpice/core/widgets/app_back_button.dart';
-import 'package:wordpice/features/auth/presentation/screens/forgot_password_new_password_screen.dart';
+import 'package:wordpice/features/auth/presentation/screens/auth_screen.dart';
+import 'package:wordpice/features/auth/presentation/widgets/auth_form_card.dart';
+import 'package:wordpice/features/auth/presentation/widgets/auth_styles.dart';
+import 'package:wordpice/features/auth/presentation/widgets/auth_text_widgets.dart';
 
 class ForgotPasswordEmailSentScreen extends StatelessWidget {
   const ForgotPasswordEmailSentScreen({super.key});
 
-  void _openNewPassword(BuildContext context) {
-    Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => const ForgotPasswordNewPasswordScreen()),
-    );
+  void _openAuth(BuildContext context) {
+    Navigator.of(
+      context,
+    ).pushReplacement(MaterialPageRoute(builder: (_) => const AuthScreen()));
   }
 
   @override
@@ -18,33 +21,34 @@ class ForgotPasswordEmailSentScreen extends StatelessWidget {
       body: SafeArea(
         child: GestureDetector(
           behavior: HitTestBehavior.opaque,
-          onTap: () => _openNewPassword(context),
+          onTap: () => _openAuth(context),
           child: Stack(
             children: [
               const AppBackButton(),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
+                padding: AuthStyles.screenHorizontalPadding,
                 child: Center(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: const [
-                      Text(
-                        'Восстановление\nпароля',
-                        textAlign: TextAlign.center,
-                        style: AppTextStyles.title26,
-                      ),
-                      SizedBox(height: 28),
-                      Text(
-                        'Мы отправили вам ссылку для сброса\nпароля, проверьте пожалуйста свой\nпочтовый ящик',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w400,
-                          color: Colors.black87,
-                          height: 1.35,
+                  child: AuthFormCard(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const AuthTitleText('Забыли пароль?'),
+                        const SizedBox(height: 30),
+                        SvgPicture.asset(
+                          'assets/icons/email.svg',
+                          width: 46,
+                          height: 46,
+                          colorFilter: const ColorFilter.mode(
+                            Colors.black87,
+                            BlendMode.srcIn,
+                          ),
                         ),
-                      ),
-                    ],
+                        const SizedBox(height: 20),
+                        const AuthStatusText(
+                          'Мы отправили вам временный пароль\nдля входа в аккаунт, проверьте\nпожалуйста свой почтовый ящик',
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),

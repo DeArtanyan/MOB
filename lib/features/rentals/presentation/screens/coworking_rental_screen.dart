@@ -14,7 +14,7 @@ class CoworkingRentalScreen extends StatefulWidget {
 
 class _CoworkingRentalScreenState extends State<CoworkingRentalScreen> {
   static const int _tabIndex = 0;
-  int _selectedBottomIndex = _tabIndex;
+  final int _selectedBottomIndex = _tabIndex;
   DateTime? _selectedDate;
 
   void _onBottomChanged(int index) {
@@ -56,3 +56,4 @@ class _CoworkingRentalScreenState extends State<CoworkingRentalScreen> {
     );
   }
 }
+

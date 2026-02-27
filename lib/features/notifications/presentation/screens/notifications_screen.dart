@@ -108,7 +108,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                         : ListView.separated(
                             padding: EdgeInsets.zero,
                             itemCount: notificationsMockData.length,
-                            separatorBuilder: (_, __) => const SizedBox(height: 46),
+                            separatorBuilder: (_, _) => const SizedBox(height: 46),
                             itemBuilder: (_, i) => NotificationCard(
                               item: notificationsMockData[i],
                             ),
@@ -130,3 +130,4 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     );
   }
 }
+

@@ -16,7 +16,7 @@ class OfficeRentalScreen extends StatefulWidget {
 
 class _OfficeRentalScreenState extends State<OfficeRentalScreen> {
   static const int _tabIndex = 0;
-  int _selectedBottomIndex = _tabIndex;
+  final int _selectedBottomIndex = _tabIndex;
   DateTime? _selectedDate;
 
   static const int _minPrice = 10000;
@@ -118,3 +118,4 @@ class _OfficeRentalScreenState extends State<OfficeRentalScreen> {
     );
   }
 }
+

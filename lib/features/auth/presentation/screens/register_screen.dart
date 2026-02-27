@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:wordpice/core/theme/app_input_decorations.dart';
-import 'package:wordpice/core/theme/app_text_styles.dart';
 import 'package:wordpice/core/widgets/app_logo_top_left.dart';
 import 'package:wordpice/features/auth/presentation/screens/account_confirmation_screen.dart';
 import 'package:wordpice/features/auth/presentation/screens/auth_screen.dart';
 import 'package:wordpice/features/auth/presentation/screens/privacy_policy_screen.dart';
+import 'package:wordpice/features/auth/presentation/widgets/auth_action_button.dart';
+import 'package:wordpice/features/auth/presentation/widgets/auth_form_card.dart';
+import 'package:wordpice/features/auth/presentation/widgets/auth_styles.dart';
+import 'package:wordpice/features/auth/presentation/widgets/auth_text_widgets.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -23,6 +26,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
+  bool _isPersonalDataAccepted = false;
 
   @override
   void dispose() {
@@ -36,9 +40,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   void _openPolicy() {
-    Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => const PrivacyPolicyScreen()),
-    );
+    Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (_) => const PrivacyPolicyScreen()));
   }
 
   void _goToAccountConfirmation() {
@@ -48,15 +52,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   void _goToAuth() {
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (_) => const AuthScreen()),
-    );
+    Navigator.of(
+      context,
+    ).pushReplacement(MaterialPageRoute(builder: (_) => const AuthScreen()));
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: Stack(
           children: [
@@ -64,139 +67,155 @@ class _RegisterScreenState extends State<RegisterScreen> {
             Positioned.fill(
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(24, 112, 24, 12),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Center(
-                      child: Text(
-                        'Регистрация',
-                        style: AppTextStyles.title26,
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    const Text('Имя*', style: AppTextStyles.label12Grey),
-                    const SizedBox(height: 4),
-                    TextField(
-                      controller: _firstNameController,
-                      decoration: AppInputDecorations.authField(
-                        hintText: 'Введите имя',
-                      ),
-                    ),
-                    const SizedBox(height: 14),
-                    const Text('Фамилия*', style: AppTextStyles.label12Grey),
-                    const SizedBox(height: 4),
-                    TextField(
-                      controller: _lastNameController,
-                      decoration: AppInputDecorations.authField(
-                        hintText: 'Введите фамилию',
-                      ),
-                    ),
-                    const SizedBox(height: 14),
-                    const Text(
-                      'Отчество (необязательно)',
-                      style: AppTextStyles.label12Grey,
-                    ),
-                    const SizedBox(height: 4),
-                    TextField(
-                      controller: _middleNameController,
-                      decoration: AppInputDecorations.authField(
-                        hintText: 'Введите отчество',
-                      ),
-                    ),
-                    const SizedBox(height: 14),
-                    const Text('Эл.почта*', style: AppTextStyles.label12Grey),
-                    const SizedBox(height: 4),
-                    TextField(
-                      controller: _emailController,
-                      keyboardType: TextInputType.emailAddress,
-                      decoration: AppInputDecorations.authField(
-                        hintText: 'Введите электронную почту',
-                      ),
-                    ),
-                    const SizedBox(height: 14),
-                    const Text('Пароль*', style: AppTextStyles.label12Grey),
-                    const SizedBox(height: 4),
-                    TextField(
-                      controller: _passwordController,
-                      obscureText: _obscurePassword,
-                      decoration: AppInputDecorations.authField(
-                        hintText: 'Введите пароль',
-                        suffixIcon: IconButton(
-                          onPressed: () =>
-                              setState(() => _obscurePassword = !_obscurePassword),
-                          icon: Icon(
-                            _obscurePassword
-                                ? Icons.visibility_off_outlined
-                                : Icons.visibility_outlined,
+                child: SingleChildScrollView(
+                  child: AuthFormCard(
+                    padding: AuthStyles.formPaddingCompact,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Center(child: AuthTitleText('Регистрация')),
+                        const SizedBox(height: 10),
+                        const AuthLabelText('Имя*'),
+                        const SizedBox(height: 4),
+                        TextField(
+                          controller: _firstNameController,
+                          decoration: AppInputDecorations.authField(
+                            hintText: 'Введите имя',
                           ),
                         ),
-                      ),
-                    ),
-                    const SizedBox(height: 14),
-                    const Text(
-                      'Подтвердите пароль*',
-                      style: AppTextStyles.label12Grey,
-                    ),
-                    const SizedBox(height: 4),
-                    TextField(
-                      controller: _confirmPasswordController,
-                      obscureText: _obscureConfirmPassword,
-                      decoration: AppInputDecorations.authField(
-                        hintText: 'Введите пароль',
-                        suffixIcon: IconButton(
-                          onPressed: () => setState(
-                            () => _obscureConfirmPassword = !_obscureConfirmPassword,
-                          ),
-                          icon: Icon(
-                            _obscureConfirmPassword
-                                ? Icons.visibility_off_outlined
-                                : Icons.visibility_outlined,
+                        const SizedBox(height: 30),
+                        const AuthLabelText('Фамилия*'),
+                        const SizedBox(height: 4),
+                        TextField(
+                          controller: _lastNameController,
+                          decoration: AppInputDecorations.authField(
+                            hintText: 'Введите фамилию',
                           ),
                         ),
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Center(
-                      child: InkWell(
-                        onTap: _openPolicy,
-                        borderRadius: BorderRadius.circular(8),
-                        child: const Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-                          child: Text(
-                            'Нажимая на кнопку “Зарегистрироваться”, я соглашаюсь с условиями\nПолитики конфиденциальности',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 10,
-                              color: Colors.black,
+                        const SizedBox(height: 30),
+                        const AuthLabelText('Отчество (необязательно)'),
+                        const SizedBox(height: 4),
+                        TextField(
+                          controller: _middleNameController,
+                          decoration: AppInputDecorations.authField(
+                            hintText: 'Введите отчество',
+                          ),
+                        ),
+                        const SizedBox(height: 30),
+                        const AuthLabelText('Эл.почта*'),
+                        const SizedBox(height: 4),
+                        TextField(
+                          controller: _emailController,
+                          keyboardType: TextInputType.emailAddress,
+                          decoration: AppInputDecorations.authField(
+                            hintText: 'Введите электронную почту',
+                          ),
+                        ),
+                        const SizedBox(height: 30),
+                        const AuthLabelText('Пароль*'),
+                        const SizedBox(height: 4),
+                        TextField(
+                          controller: _passwordController,
+                          obscureText: _obscurePassword,
+                          decoration: AppInputDecorations.authField(
+                            hintText: 'Введите пароль',
+                            suffixIcon: IconButton(
+                              onPressed: () {
+                                setState(
+                                  () => _obscurePassword = !_obscurePassword,
+                                );
+                              },
+                              icon: Icon(
+                                _obscurePassword
+                                    ? Icons.visibility_off_outlined
+                                    : Icons.visibility_outlined,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Center(
-                      child: SizedBox(
-                        width: 200,
-                        child: OutlinedButton(
-                        onPressed: _goToAccountConfirmation,
-                        child: const Text('Зарегистрироваться'),
+                        const SizedBox(height: 30),
+                        const AuthLabelText('Подтвердите пароль*'),
+                        const SizedBox(height: 4),
+                        TextField(
+                          controller: _confirmPasswordController,
+                          obscureText: _obscureConfirmPassword,
+                          decoration: AppInputDecorations.authField(
+                            hintText: 'Введите пароль',
+                            suffixIcon: IconButton(
+                              onPressed: () {
+                                setState(() {
+                                  _obscureConfirmPassword =
+                                      !_obscureConfirmPassword;
+                                });
+                              },
+                              icon: Icon(
+                                _obscureConfirmPassword
+                                    ? Icons.visibility_off_outlined
+                                    : Icons.visibility_outlined,
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
+                        const SizedBox(height: 16),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                              width: 24,
+                              height: 24,
+                              child: Checkbox(
+                                value: _isPersonalDataAccepted,
+                                onChanged: (value) {
+                                  setState(() {
+                                    _isPersonalDataAccepted = value ?? false;
+                                  });
+                                },
+                                materialTapTargetSize:
+                                    MaterialTapTargetSize.shrinkWrap,
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            const Expanded(
+                              child: AuthPolicyCheckboxText(
+                                'Я принимаю условия обработки персональных данных',
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        Center(
+                          child: InkWell(
+                            onTap: _openPolicy,
+                            borderRadius: BorderRadius.circular(8),
+                            child: const Padding(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 4,
+                                vertical: 2,
+                              ),
+                              child: AuthPolicyText(
+                                'Нажимая на кнопку “Зарегистрироваться”, я\nсоглашаюсь с условиями Политики\nконфиденциальности',
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Center(
+                          child: AuthActionButton(
+                            label: 'Зарегистрироваться',
+                            onPressed: _goToAccountConfirmation,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        const Center(child: AuthBodyText('Уже есть аккаунт?')),
+                        Center(
+                          child: TextButton(
+                            onPressed: _goToAuth,
+                            child: const AuthBodyText('Авторизация'),
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 4),
-                    const Center(
-                      child: Text(
-                        'Уже есть аккаунт?',
-                        style: AppTextStyles.body14,
-                      ),
-                    ),
-                    Center(
-                      child: TextButton(
-                        onPressed: _goToAuth,
-                        child: const Text('Авторизация'),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
               ),
             ),

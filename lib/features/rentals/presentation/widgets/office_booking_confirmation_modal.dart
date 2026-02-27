@@ -68,7 +68,7 @@ class OfficeBookingConfirmationModal {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Цена: ${price}р',
+                    'Цена: $priceр',
                     textAlign: TextAlign.center,
                     style: const TextStyle(
                       fontSize: 12,
@@ -105,3 +105,5 @@ class OfficeBookingConfirmationModal {
     return result ?? false;
   }
 }
+
+

@@ -1,7 +1,6 @@
 ﻿import 'package:flutter/material.dart';
 import 'package:wordpice/app/navigation/app_tab_navigator.dart';
 import 'package:wordpice/core/widgets/app_shell.dart';
-import 'package:wordpice/features/auth/presentation/screens/auth_screen.dart';
 import 'package:wordpice/features/rentals/presentation/screens/coworking_rental_screen.dart';
 import 'package:wordpice/features/rentals/presentation/screens/meeting_room_rental_screen.dart';
 import 'package:wordpice/features/rentals/presentation/screens/office_rental_screen.dart';
@@ -17,14 +16,6 @@ class RentalsScreen extends StatefulWidget {
 class _RentalsScreenState extends State<RentalsScreen> {
   static const int _tabIndex = 0; // Аренды
   int _selectedBottomIndex = _tabIndex;
-
-  void _logout() {
-    Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(builder: (_) => const AuthScreen()),
-      (_) => false,
-    );
-  }
 
   void _onBottomChanged(int index) {
     if (index == _tabIndex) return;
@@ -118,4 +109,5 @@ class _ActionButton extends StatelessWidget {
     );
   }
 }
+
 

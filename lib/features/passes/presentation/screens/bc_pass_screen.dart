@@ -1,9 +1,9 @@
-﻿import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter/material.dart';
 import 'package:wordpice/app/navigation/app_tab_navigator.dart';
 import 'package:wordpice/core/widgets/app_shell.dart';
-import 'package:wordpice/features/auth/presentation/screens/auth_screen.dart';
 import 'package:wordpice/features/passes/presentation/widgets/pass_confirmation_modal.dart';
+import 'package:wordpice/features/passes/presentation/widgets/pass_parking_selector.dart';
+import 'package:wordpice/features/passes/presentation/widgets/pass_form_widgets.dart';
 
 /// Экран "Пропуск БЦ" (UI-only).
 class BcPassScreen extends StatefulWidget {
@@ -15,25 +15,9 @@ class BcPassScreen extends StatefulWidget {
 
 class _BcPassScreenState extends State<BcPassScreen> {
   static const int _tabIndex = 2; // Пропуск
-  int _selectedBottomIndex = _tabIndex;
+  final int _selectedBottomIndex = _tabIndex;
   bool _isParkingMenuOpen = false;
   int? _selectedParkingPlace;
-
-  static const List<int> _parkingPlaces = <int>[
-    21, 22, 23, 24, 25,
-    16, 17, 18, 19, 20,
-    11, 12, 13, 14, 15,
-    6, 7, 8, 9, 10,
-    1, 2, 3, 4, 5,
-  ];
-
-  void _logout() {
-    Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(builder: (_) => const AuthScreen()),
-      (_) => false,
-    );
-  }
 
   void _onBottomChanged(int index) {
     AppTabNavigator.goToTab(context, index);
@@ -55,10 +39,7 @@ class _BcPassScreenState extends State<BcPassScreen> {
         ? 'Парковочное место: нет'
         : 'Парковочное место №$_selectedParkingPlace';
 
-    return PassConfirmationModal.show(
-      context,
-      parking: parking,
-    );
+    return PassConfirmationModal.show(context, parking: parking);
   }
 
   @override
@@ -86,95 +67,16 @@ class _BcPassScreenState extends State<BcPassScreen> {
                   ),
                 ),
                 const SizedBox(height: 18),
-                const SizedBox(
-                  width: double.infinity,
-                  child: _FieldLabel('Парковочное место (необязательно)'),
-                ),
-                const SizedBox(height: 8),
-                _InputField(
-                  hint: _selectedParkingPlace == null
-                      ? 'Парковочное место'
-                      : 'Парковочное место №$_selectedParkingPlace',
-                  trailing: Icon(
-                    _isParkingMenuOpen
-                        ? Icons.keyboard_arrow_up_rounded
-                        : Icons.keyboard_arrow_down_rounded,
-                    size: 26,
-                  ),
-                  hasTrailingBox: true,
-                  onTap: _toggleParkingMenu,
-                  borderRadius: _isParkingMenuOpen
-                      ? const BorderRadius.only(
-                          topLeft: Radius.circular(12),
-                          topRight: Radius.circular(12),
-                        )
-                      : BorderRadius.circular(12),
-                ),
-                AnimatedSize(
-                  duration: const Duration(milliseconds: 220),
-                  curve: Curves.easeInOut,
-                  child: _isParkingMenuOpen
-                      ? Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.black87, width: 1),
-                            borderRadius: const BorderRadius.only(
-                              bottomLeft: Radius.circular(12),
-                              bottomRight: Radius.circular(12),
-                            ),
-                          ),
-                          child: Wrap(
-                            spacing: 8,
-                            runSpacing: 10,
-                            children: _parkingPlaces.map((place) {
-                              return InkWell(
-                                onTap: () => _selectParkingPlace(place),
-                                borderRadius: BorderRadius.circular(8),
-                                child: SizedBox(
-                                  width: 52,
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Text(
-                                        '№$place',
-                                        style: const TextStyle(fontSize: 13, color: Colors.black87),
-                                      ),
-                                      const SizedBox(height: 2),
-                                      SvgPicture.asset(
-                                        'assets/icons/nav_parking.svg',
-                                        width: 34,
-                                        height: 34,
-                                        colorFilter: const ColorFilter.mode(Colors.black87, BlendMode.srcIn),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              );
-                            }).toList(),
-                          ),
-                        )
-                      : const SizedBox.shrink(),
+                PassParkingSelector(
+                  selectedParkingPlace: _selectedParkingPlace,
+                  isOpen: _isParkingMenuOpen,
+                  onToggle: _toggleParkingMenu,
+                  onSelect: _selectParkingPlace,
                 ),
                 const SizedBox(height: 20),
-                SizedBox(
-                  width: 200,
-                  height: 44,
-                  child: OutlinedButton(
-                    onPressed: _showPurchaseModal,
-                    style: OutlinedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    child: const Text(
-                      'Купить пропуск',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                  ),
+                PassSubmitButton(
+                  text: 'Купить пропуск',
+                  onPressed: _showPurchaseModal,
                 ),
                 const SizedBox(height: 28),
                 Container(
@@ -194,75 +96,3 @@ class _BcPassScreenState extends State<BcPassScreen> {
     );
   }
 }
-
-class _FieldLabel extends StatelessWidget {
-  const _FieldLabel(this.text);
-
-  final String text;
-
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      text,
-      style: const TextStyle(
-        fontSize: 18 * 0.9,
-        fontWeight: FontWeight.w400,
-      ),
-    );
-  }
-}
-
-class _InputField extends StatelessWidget {
-  const _InputField({
-    required this.hint,
-    this.trailing,
-    this.hasTrailingBox = false,
-    this.onTap,
-    this.borderRadius,
-  });
-
-  final String hint;
-  final Widget? trailing;
-  final bool hasTrailingBox;
-  final VoidCallback? onTap;
-  final BorderRadius? borderRadius;
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
-      child: Container(
-        height: 48,
-        padding: const EdgeInsets.only(left: 14, right: 10),
-        decoration: BoxDecoration(
-          border: Border.all(color: Colors.black87, width: 1),
-          borderRadius: borderRadius ?? BorderRadius.circular(12),
-        ),
-        child: Row(
-          children: [
-            Expanded(
-              child: Text(
-                hint,
-                style: const TextStyle(fontSize: 33 / 2, fontWeight: FontWeight.w400),
-              ),
-            ),
-            if (trailing != null)
-              hasTrailingBox
-                  ? Container(
-                      width: 28,
-                      height: 28,
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.black87, width: 1),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Center(child: trailing),
-                    )
-                  : trailing!,
-          ],
-        ),
-      ),
-    );
-  }
-}
-

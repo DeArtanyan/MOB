@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:wordpice/core/theme/app_colors.dart';
 import 'package:wordpice/core/theme/app_text_styles.dart';
 import 'package:wordpice/core/widgets/app_back_button.dart';
 import 'forgot_password_email_sent_screen.dart';
@@ -35,24 +36,31 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
             Center(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.symmetric(horizontal: 24),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.fromLTRB(20, 24, 20, 20),
+                  decoration: BoxDecoration(
+                    color: AppColors.controlGrey,
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
                     const SizedBox(height: 32),
                     const Center(
                       child: Text(
-                        'Восстановление\nпароля',
+                        'Забыли пароль?',
                         textAlign: TextAlign.center,
                         style: AppTextStyles.title26,
                       ),
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 32),
                     const Center(
                       child: Text(
-                        'Введите адрес эл. почты от аккаунта, мы отправим\nВам ссылку для сброса пароля',
+                        'Введите адрес эл. почты от аккаунта,\nмы отправим Вам временный пароль\nдля входа в аккаунт',
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          fontSize: 12,
+                          fontSize: 14,
                           color: Colors.black54,
                           height: 1.4,
                         ),
@@ -78,7 +86,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                         ),
                       ),
                     ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),

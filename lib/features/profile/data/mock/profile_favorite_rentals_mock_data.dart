@@ -7,7 +7,7 @@ const List<RentalHistoryItem> profileFavoriteRentalsMockData = [
     room: 'Кабинет №1',
     capacity: 'Вместимость: 10 человек',
     priceLabel: '1000р',
-    timeSlots: const [],
+    timeSlots: [],
   ),
   RentalHistoryItem(
     dateLabel: '',
@@ -15,6 +15,7 @@ const List<RentalHistoryItem> profileFavoriteRentalsMockData = [
     room: 'Кабинет №4',
     capacity: 'Вместимость: 12 человек',
     priceLabel: '1200р',
-    timeSlots: const [],
+    timeSlots: [],
   ),
 ];
+

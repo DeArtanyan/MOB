@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 
 class RequestFormDropdownMenu extends StatelessWidget {
   const RequestFormDropdownMenu({
@@ -27,7 +27,7 @@ class RequestFormDropdownMenu extends StatelessWidget {
       child: ListView.separated(
         padding: const EdgeInsets.all(8),
         itemCount: items.length,
-        separatorBuilder: (_, __) => const SizedBox(height: 6),
+        separatorBuilder: (_, _) => const SizedBox(height: 6),
         itemBuilder: (context, index) {
           final value = items[index];
           return InkWell(
@@ -52,3 +52,4 @@ class RequestFormDropdownMenu extends StatelessWidget {
     );
   }
 }
+

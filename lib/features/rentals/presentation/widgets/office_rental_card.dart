@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:wordpice/core/widgets/favorite_heart_toggle.dart';
 import 'package:wordpice/features/rentals/presentation/models/office_rental_item.dart';
@@ -7,11 +7,15 @@ import 'package:wordpice/features/rentals/presentation/widgets/office_booking_co
 import 'package:wordpice/features/rentals/presentation/widgets/office_time_picker_modal.dart';
 import 'package:wordpice/features/rentals/presentation/widgets/rental_time_slot_chip.dart';
 
+const _kCardTextStyle = TextStyle(fontSize: 16, fontWeight: FontWeight.w400);
+const _kSlotInfoTextStyle = TextStyle(
+  fontSize: 15,
+  fontWeight: FontWeight.w400,
+);
+const _kPriceTextStyle = TextStyle(fontSize: 18, fontWeight: FontWeight.w400);
+
 class OfficeRentalCard extends StatefulWidget {
-  const OfficeRentalCard({
-    super.key,
-    required this.item,
-  });
+  const OfficeRentalCard({super.key, required this.item});
 
   final OfficeRentalItem item;
 
@@ -21,6 +25,9 @@ class OfficeRentalCard extends StatefulWidget {
 
 class _OfficeRentalCardState extends State<OfficeRentalCard> {
   late final List<String> _freeTimeSlots;
+  int _slotWindowStart = 0;
+  int get _maxWindowStart =>
+      (_freeTimeSlots.length - 2).clamp(0, _freeTimeSlots.length);
 
   @override
   void initState() {
@@ -39,6 +46,7 @@ class _OfficeRentalCardState extends State<OfficeRentalCard> {
       availableTime: sourceRange,
     );
     if (picked == null) return;
+    if (!mounted) return;
 
     final confirmed = await OfficeBookingConfirmationModal.show(
       context,
@@ -65,14 +73,30 @@ class _OfficeRentalCardState extends State<OfficeRentalCard> {
       );
 
       nextSlots.sort(
-        (a, b) => RentalTimeSlotsHelper.rangeStartHour(a).compareTo(
-          RentalTimeSlotsHelper.rangeStartHour(b),
-        ),
+        (a, b) => RentalTimeSlotsHelper.rangeStartHour(
+          a,
+        ).compareTo(RentalTimeSlotsHelper.rangeStartHour(b)),
       );
 
       _freeTimeSlots
         ..clear()
         ..addAll(nextSlots);
+
+      if (_slotWindowStart > _maxWindowStart) {
+        _slotWindowStart = _maxWindowStart;
+      }
+    });
+  }
+
+  void _showPreviousSlots() {
+    setState(() {
+      _slotWindowStart = (_slotWindowStart - 1).clamp(0, _maxWindowStart);
+    });
+  }
+
+  void _showNextSlots() {
+    setState(() {
+      _slotWindowStart = (_slotWindowStart + 1).clamp(0, _maxWindowStart);
     });
   }
 
@@ -106,7 +130,11 @@ class _OfficeRentalCardState extends State<OfficeRentalCard> {
                       color: const Color(0xFFBDBDBD),
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: const Icon(Icons.image_outlined, size: 28, color: Colors.white),
+                    child: const Icon(
+                      Icons.image_outlined,
+                      size: 28,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -140,19 +168,13 @@ class _OfficeRentalCardState extends State<OfficeRentalCard> {
                             mainAxisSize: MainAxisSize.min,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                item.title,
-                                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
-                              ),
+                              Text(item.title, style: _kCardTextStyle),
                               const SizedBox(height: 3),
-                              Text(
-                                item.room,
-                                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
-                              ),
+                              Text(item.room, style: _kCardTextStyle),
                               const SizedBox(height: 3),
                               Text(
                                 'Вместимость: ${item.capacity} человек',
-                                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
+                                style: _kCardTextStyle,
                               ),
                             ],
                           ),
@@ -179,7 +201,7 @@ class _OfficeRentalCardState extends State<OfficeRentalCard> {
               child: const Text(
                 'Свободного времени нет',
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w400),
+                style: _kSlotInfoTextStyle,
               ),
             ),
           ),
@@ -202,7 +224,7 @@ class _OfficeRentalCardState extends State<OfficeRentalCard> {
                   child: Text(
                     'Доступное время с ${_freeTimeSlots.first}',
                     textAlign: TextAlign.center,
-                    style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w400),
+                    style: _kSlotInfoTextStyle,
                   ),
                 ),
               ),
@@ -210,29 +232,93 @@ class _OfficeRentalCardState extends State<OfficeRentalCard> {
           ),
         ],
         if (hasFreeTime && !hasSingleSlot) ...[
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 40),
-            child: Row(
-              children: [
-                for (var i = 0; i < _freeTimeSlots.length; i++) ...[
+          if (_freeTimeSlots.length <= 2)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 40),
+              child: Row(
+                children: [
+                  for (var i = 0; i < _freeTimeSlots.length; i++) ...[
+                    Expanded(
+                      child: RentalTimeSlotChip(
+                        text: _freeTimeSlots[i],
+                        onTap: () => _pickTimeRangeForSlot(_freeTimeSlots[i]),
+                      ),
+                    ),
+                    if (i != _freeTimeSlots.length - 1)
+                      const SizedBox(width: 10),
+                  ],
+                ],
+              ),
+            )
+          else
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Row(
+                children: [
+                  _SlotArrowButton(
+                    icon: Icons.chevron_left,
+                    onTap: _slotWindowStart > 0 ? _showPreviousSlots : null,
+                  ),
+                  const SizedBox(width: 10),
                   Expanded(
                     child: RentalTimeSlotChip(
-                      text: _freeTimeSlots[i],
-                      onTap: () => _pickTimeRangeForSlot(_freeTimeSlots[i]),
+                      text: _freeTimeSlots[_slotWindowStart],
+                      onTap: () => _pickTimeRangeForSlot(
+                        _freeTimeSlots[_slotWindowStart],
+                      ),
                     ),
                   ),
-                  if (i != _freeTimeSlots.length - 1) const SizedBox(width: 10),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: RentalTimeSlotChip(
+                      text: _freeTimeSlots[_slotWindowStart + 1],
+                      onTap: () => _pickTimeRangeForSlot(
+                        _freeTimeSlots[_slotWindowStart + 1],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  _SlotArrowButton(
+                    icon: Icons.chevron_right,
+                    onTap: _slotWindowStart < _freeTimeSlots.length - 2
+                        ? _showNextSlots
+                        : null,
+                  ),
                 ],
-              ],
+              ),
             ),
-          ),
         ],
         const SizedBox(height: 10),
-        Text(
-          '${item.price}р',
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w400),
-        ),
+        Text('${item.price}р', style: _kPriceTextStyle),
       ],
+    );
+  }
+}
+
+class _SlotArrowButton extends StatelessWidget {
+  const _SlotArrowButton({required this.icon, required this.onTap});
+
+  final IconData icon;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(10),
+      child: Container(
+        width: 30,
+        height: 30,
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.black87, width: 1),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Icon(
+          icon,
+          size: 20,
+          color: onTap == null ? Colors.black38 : Colors.black87,
+        ),
+      ),
     );
   }
 }
