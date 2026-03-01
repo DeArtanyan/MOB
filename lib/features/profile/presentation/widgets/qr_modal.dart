@@ -1,8 +1,24 @@
 import 'dart:ui';
+
 import 'package:flutter/material.dart';
+import 'package:wordpice/core/widgets/states/app_empty_state_text.dart';
 
 class QrModal {
   QrModal._();
+
+  static const TextStyle _hintStyle = TextStyle(
+    fontSize: 12,
+    color: Colors.black54,
+  );
+  static const TextStyle _messageStyle = TextStyle(
+    fontSize: 14,
+    color: Colors.black87,
+  );
+  static const TextStyle _titleStyle = TextStyle(
+    fontSize: 18,
+    fontWeight: FontWeight.w600,
+    color: Colors.black87,
+  );
 
   static Future<void> showQr(
     BuildContext context, {
@@ -25,11 +41,7 @@ class QrModal {
             child: const Icon(Icons.qr_code_2, size: 120),
           ),
           const SizedBox(height: 14),
-          Text(
-            validUntilText,
-            textAlign: TextAlign.center,
-            style: const TextStyle(fontSize: 12, color: Colors.black54),
-          ),
+          Text(validUntilText, textAlign: TextAlign.center, style: _hintStyle),
         ],
       ),
     );
@@ -39,10 +51,9 @@ class QrModal {
     return _show(
       context,
       title: 'Пропуск',
-      child: const Text(
-        'У вас нет активных аренд\nили приглашения как сотрудника',
-        textAlign: TextAlign.center,
-        style: TextStyle(fontSize: 14, color: Colors.black87, height: 1.3),
+      child: const AppEmptyStateText(
+        text: 'У вас нет активных аренд\nили приглашения как сотрудника',
+        style: _messageStyle,
       ),
     );
   }
@@ -82,11 +93,7 @@ class QrModal {
                             child: Text(
                               title,
                               textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.black87,
-                              ),
+                              style: _titleStyle,
                             ),
                           ),
                           IconButton(

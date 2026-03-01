@@ -1,17 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:wordpice/app/navigation/app_tab_navigator.dart';
-import 'package:wordpice/core/widgets/app_shell.dart';
+import 'package:wordpice/core/widgets/buttons/app_action_menu_button.dart';
+import 'package:wordpice/core/widgets/layout/app_constrained_scroll_view.dart';
+import 'package:wordpice/core/widgets/layout/app_shell.dart';
 import 'package:wordpice/features/passes/presentation/screens/bc_pass_screen.dart';
 import 'package:wordpice/features/passes/presentation/screens/employee_pass_screen.dart';
 import 'package:wordpice/features/passes/presentation/screens/guest_pass_screen.dart';
+import 'package:wordpice/features/passes/presentation/widgets/styles/pass_form_styles.dart';
 
-const _kTitleStyle = TextStyle(fontSize: 44 / 2, fontWeight: FontWeight.w600);
-const _kActionTextStyle = TextStyle(
-  fontSize: 36 / 2,
-  fontWeight: FontWeight.w400,
-);
-
-/// Экран "Пропуск" (UI-only).
 class PassesScreen extends StatefulWidget {
   const PassesScreen({super.key});
 
@@ -20,7 +16,9 @@ class PassesScreen extends StatefulWidget {
 }
 
 class _PassesScreenState extends State<PassesScreen> {
-  static const int _tabIndex = 2; // Пропуск
+  static const int _tabIndex = 2;
+  static const double _contentWidth = 320;
+
   int _selectedBottomIndex = _tabIndex;
 
   void _onBottomChanged(int index) {
@@ -34,76 +32,49 @@ class _PassesScreenState extends State<PassesScreen> {
     return AppShell(
       selectedBottomIndex: _selectedBottomIndex,
       onBottomChanged: _onBottomChanged,
-      body: Center(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 320),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                const SizedBox(
-                  width: double.infinity,
-                  child: Text(
-                    'Пропуск',
-                    style: _kTitleStyle,
-                    textAlign: TextAlign.left,
-                  ),
-                ),
-                const SizedBox(height: 42),
-                _ActionButton(
-                  text: 'Пропуск БЦ',
-                  onPressed: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const BcPassScreen()),
-                  ),
-                ),
-                const SizedBox(height: 30),
-                _ActionButton(
-                  text: 'Пропуск сотрудника',
-                  onPressed: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const EmployeePassScreen(),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 30),
-                _ActionButton(
-                  text: 'Пропуск для гостя',
-                  onPressed: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const GuestPassScreen()),
-                  ),
-                ),
-              ],
+      body: AppConstrainedScrollView(
+        maxWidth: _contentWidth,
+        centerVertically: true,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const SizedBox(
+              width: double.infinity,
+              child: Text(
+                'Пропуск',
+                style: PassFormStyles.title,
+                textAlign: TextAlign.left,
+              ),
             ),
-          ),
+            const SizedBox(height: 42),
+            AppActionMenuButton(
+              text: 'Пропуск БЦ',
+              textStyle: PassFormStyles.actionText,
+              onPressed: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const BcPassScreen()),
+              ),
+            ),
+            const SizedBox(height: 30),
+            AppActionMenuButton(
+              text: 'Пропуск сотрудника',
+              textStyle: PassFormStyles.actionText,
+              onPressed: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const EmployeePassScreen()),
+              ),
+            ),
+            const SizedBox(height: 30),
+            AppActionMenuButton(
+              text: 'Пропуск для гостя',
+              textStyle: PassFormStyles.actionText,
+              onPressed: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const GuestPassScreen()),
+              ),
+            ),
+          ],
         ),
-      ),
-    );
-  }
-}
-
-class _ActionButton extends StatelessWidget {
-  const _ActionButton({required this.text, this.onPressed});
-
-  final String text;
-  final VoidCallback? onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: 280,
-      height: 52,
-      child: OutlinedButton(
-        onPressed: onPressed ?? () {},
-        style: OutlinedButton.styleFrom(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-        ),
-        child: Text(text, style: _kActionTextStyle),
       ),
     );
   }

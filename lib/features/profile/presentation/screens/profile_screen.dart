@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:wordpice/app/navigation/app_tab_navigator.dart';
-import 'package:wordpice/core/widgets/app_shell.dart';
+import 'package:wordpice/core/widgets/layout/app_constrained_scroll_view.dart';
+import 'package:wordpice/core/widgets/layout/app_shell.dart';
 import 'package:wordpice/features/profile/data/mock/profile_pass_mock_data.dart';
 import 'package:wordpice/features/profile/presentation/models/profile_activity_filter.dart';
 import 'package:wordpice/features/profile/presentation/screens/edit_profile_screen.dart';
-import 'package:wordpice/features/profile/presentation/widgets/profile_activity_section.dart';
-import 'package:wordpice/features/profile/presentation/widgets/profile_info_card.dart';
-import 'package:wordpice/features/profile/presentation/widgets/profile_pass_card.dart';
+import 'package:wordpice/features/profile/presentation/widgets/cards/profile_info_card.dart';
+import 'package:wordpice/features/profile/presentation/widgets/cards/profile_pass_card.dart';
+import 'package:wordpice/features/profile/presentation/widgets/cards/profile_user_card.dart';
 import 'package:wordpice/features/profile/presentation/widgets/profile_rental_type_filters.dart';
-import 'package:wordpice/features/profile/presentation/widgets/profile_user_card.dart';
 import 'package:wordpice/features/profile/presentation/widgets/qr_modal.dart';
+import 'package:wordpice/features/profile/presentation/widgets/sections/profile_activity_section.dart';
 import 'package:wordpice/features/profile/presentation/widgets/segment_carousel.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -21,6 +22,20 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   static const int _tabIndex = 3;
+  static const double _contentWidth = 360;
+  static const double _narrowCardWidth = 340;
+  static const List<ProfileActivityFilter> _activityFilters = [
+    ProfileActivityFilter.activeRentals,
+    ProfileActivityFilter.favorites,
+    ProfileActivityFilter.rentalHistory,
+    ProfileActivityFilter.requests,
+  ];
+  static const List<String> _carouselItems = [
+    'Активные аренды',
+    'Избранное',
+    'История аренды',
+    'Заявки',
+  ];
 
   int _selectedBottomIndex = _tabIndex;
   int _carouselIndex = 0;
@@ -38,18 +53,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   ProfileActivityFilter get _selectedActivityFilter {
-    switch (_carouselIndex) {
-      case 0:
-        return ProfileActivityFilter.activeRentals;
-      case 1:
-        return ProfileActivityFilter.favorites;
-      case 2:
-        return ProfileActivityFilter.rentalHistory;
-      case 3:
-        return ProfileActivityFilter.requests;
-      default:
-        return ProfileActivityFilter.rentalHistory;
+    if (_carouselIndex < 0 || _carouselIndex >= _activityFilters.length) {
+      return ProfileActivityFilter.rentalHistory;
     }
+    return _activityFilters[_carouselIndex];
+  }
+
+  void _showPassQr() {
+    if (!profilePassMockData.hasActivePass) return;
+    QrModal.showQr(
+      context,
+      validUntilText: profilePassMockData.validUntilText!,
+    );
   }
 
   @override
@@ -57,57 +72,95 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return AppShell(
       selectedBottomIndex: _selectedBottomIndex,
       onBottomChanged: _onBottomChanged,
-      body: SingleChildScrollView(
+      body: AppConstrainedScrollView(
+        maxWidth: _contentWidth,
         padding: const EdgeInsets.fromLTRB(16, 40, 16, 28),
-        child: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 360),
-            child: Column(
-              children: [
-                ProfileUserCard(onEditTap: _openEditScreen),
-                const SizedBox(height: 30),
-                _NarrowCard(child: ProfileInfoCard(onEditTap: _openEditScreen)),
-                const SizedBox(height: 30),
-                _NarrowCard(
-                  child: ProfilePassCard(
-                    pass: profilePassMockData,
-                    onShowPressed: () {
-                      if (!profilePassMockData.hasActivePass) return;
-                      QrModal.showQr(
-                        context,
-                        validUntilText: profilePassMockData.validUntilText!,
-                      );
-                    },
-                  ),
-                ),
-                const SizedBox(height: 30),
-                _NarrowCard(
-                  child: Center(
-                    child: SegmentCarousel(
-                      items: const [
-                        'Активные аренды',
-                        'Избранное',
-                        'История аренды',
-                        'Заявки',
-                      ],
-                      initialIndex: _carouselIndex,
-                      onChanged: (i) => setState(() => _carouselIndex = i),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 12),
-                const _NarrowCard(child: ProfileRentalTypeFilters()),
-                const SizedBox(height: 30),
-                _NarrowCard(
-                  child: ProfileActivitySection(
-                    filter: _selectedActivityFilter,
-                  ),
-                ),
-              ],
+        child: _ProfileContent(
+          onEditTap: _openEditScreen,
+          carouselItems: _carouselItems,
+          carouselIndex: _carouselIndex,
+          onCarouselChanged: (index) => setState(() => _carouselIndex = index),
+          selectedActivityFilter: _selectedActivityFilter,
+          onShowPassQr: _showPassQr,
+        ),
+      ),
+    );
+  }
+}
+
+class _ProfileContent extends StatelessWidget {
+  const _ProfileContent({
+    required this.onEditTap,
+    required this.carouselItems,
+    required this.carouselIndex,
+    required this.onCarouselChanged,
+    required this.selectedActivityFilter,
+    required this.onShowPassQr,
+  });
+
+  final VoidCallback onEditTap;
+  final List<String> carouselItems;
+  final int carouselIndex;
+  final ValueChanged<int> onCarouselChanged;
+  final ProfileActivityFilter selectedActivityFilter;
+  final VoidCallback onShowPassQr;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        ProfileUserCard(onEditTap: onEditTap),
+        const SizedBox(height: 30),
+        _NarrowCard(child: ProfileInfoCard(onEditTap: onEditTap)),
+        const SizedBox(height: 30),
+        _NarrowCard(
+          child: ProfilePassCard(
+            pass: profilePassMockData,
+            onShowPressed: onShowPassQr,
+          ),
+        ),
+        const SizedBox(height: 30),
+        _ProfileActivityControls(
+          items: carouselItems,
+          carouselIndex: carouselIndex,
+          onChanged: onCarouselChanged,
+        ),
+        const SizedBox(height: 30),
+        _NarrowCard(
+          child: ProfileActivitySection(filter: selectedActivityFilter),
+        ),
+      ],
+    );
+  }
+}
+
+class _ProfileActivityControls extends StatelessWidget {
+  const _ProfileActivityControls({
+    required this.items,
+    required this.carouselIndex,
+    required this.onChanged,
+  });
+
+  final List<String> items;
+  final int carouselIndex;
+  final ValueChanged<int> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        _NarrowCard(
+          child: Center(
+            child: SegmentCarousel(
+              items: items,
+              initialIndex: carouselIndex,
+              onChanged: onChanged,
             ),
           ),
         ),
-      ),
+        const SizedBox(height: 26),
+        const _NarrowCard(child: ProfileRentalTypeFilters()),
+      ],
     );
   }
 }
@@ -119,6 +172,6 @@ class _NarrowCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(width: 340, child: child);
+    return SizedBox(width: _ProfileScreenState._narrowCardWidth, child: child);
   }
 }

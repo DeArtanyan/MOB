@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:wordpice/core/widgets/app_back_button.dart';
+import 'package:wordpice/core/widgets/buttons/app_back_button.dart';
 import 'package:wordpice/features/auth/presentation/screens/auth_screen.dart';
-import 'package:wordpice/features/auth/presentation/widgets/auth_form_card.dart';
-import 'package:wordpice/features/auth/presentation/widgets/auth_styles.dart';
-import 'package:wordpice/features/auth/presentation/widgets/auth_text_widgets.dart';
+import 'package:wordpice/features/auth/presentation/widgets/cards/auth_form_card.dart';
+import 'package:wordpice/features/auth/presentation/widgets/sections/auth_text.dart';
+import 'package:wordpice/features/auth/presentation/widgets/styles/auth_styles.dart';
 
 class ForgotPasswordEmailSentScreen extends StatelessWidget {
   const ForgotPasswordEmailSentScreen({super.key});

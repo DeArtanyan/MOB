@@ -1,0 +1,83 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:wordpice/core/theme/app_colors.dart';
+import 'package:wordpice/features/profile/presentation/models/profile_request_item.dart';
+import 'package:wordpice/features/profile/presentation/widgets/styles/profile_card_decorations.dart';
+import 'package:wordpice/features/profile/presentation/widgets/styles/profile_card_styles.dart';
+
+class ProfileRequestCard extends StatelessWidget {
+  const ProfileRequestCard({super.key, required this.item});
+
+  final ProfileRequestItem item;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 4, bottom: 8),
+          child: Text(
+            'Заявка №${item.number}:',
+            style: ProfileCardStyles.title,
+          ),
+        ),
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(13),
+          decoration: ProfileCardDecorations.outlinedCard(),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _RequestDetailRow(text: 'Тип заявки: ${item.requestType}'),
+              _RequestDetailRow(
+                text:
+                    'Тип помещения: ${item.roomType} Кабинет №: ${item.roomNumber}',
+              ),
+              _RequestDetailRow(text: 'Время работы: ${item.workTime}'),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: _RequestDetailRow(
+                      text: 'Комментарий: ${item.comment}',
+                    ),
+                  ),
+                  if (item.hasAttachment) const _RequestAttachmentIcon(),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _RequestDetailRow extends StatelessWidget {
+  const _RequestDetailRow({required this.text});
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(text, style: ProfileCardStyles.body);
+  }
+}
+
+class _RequestAttachmentIcon extends StatelessWidget {
+  const _RequestAttachmentIcon();
+
+  @override
+  Widget build(BuildContext context) {
+    return SvgPicture.asset(
+      'assets/icons/document_download.svg',
+      width: 28,
+      height: 28,
+      colorFilter: const ColorFilter.mode(
+        AppColors.textPrimary,
+        BlendMode.srcIn,
+      ),
+    );
+  }
+}

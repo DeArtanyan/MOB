@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:wordpice/app/navigation/app_tab_navigator.dart';
-import 'package:wordpice/core/widgets/app_shell.dart';
+import 'package:wordpice/core/widgets/layout/app_constrained_scroll_view.dart';
+import 'package:wordpice/core/widgets/layout/app_shell.dart';
 import 'package:wordpice/features/profile/presentation/widgets/delete_account_modal.dart';
-import 'package:wordpice/features/profile/presentation/widgets/edit_profile_cards.dart';
-import 'package:wordpice/features/profile/presentation/widgets/edit_profile_styles.dart';
+import 'package:wordpice/features/profile/presentation/widgets/cards/edit_profile_cards.dart';
+import 'package:wordpice/features/profile/presentation/widgets/styles/edit_profile_styles.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});
@@ -67,55 +68,83 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     return AppShell(
       selectedBottomIndex: _tabIndex,
       onBottomChanged: _onBottomChanged,
-      body: SingleChildScrollView(
+      body: AppConstrainedScrollView(
+        maxWidth: EditProfileStyles.maxContentWidth,
         padding: EditProfileStyles.screenPadding,
-        child: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(
-              maxWidth: EditProfileStyles.maxContentWidth,
+        child: Column(
+          children: [
+            const EditProfilePreviewCard(),
+            const SizedBox(height: 30),
+            _EditProfileEditorSection(
+              fields: _editorFields,
+              onDeleteTap: _showDeleteAccountDialog,
             ),
-            child: Column(
-              children: [
-                const EditProfilePreviewCard(),
-                const SizedBox(height: 30),
-                SizedBox(
-                  width: EditProfileStyles.editorWidth,
-                  child: EditProfileEditorCard(
-                    fields: _editorFields,
-                    onDeleteTap: _showDeleteAccountDialog,
-                  ),
-                ),
-                const SizedBox(height: 14),
-                SizedBox(
-                  width: EditProfileStyles.saveButtonWidth,
-                  height: EditProfileStyles.saveButtonHeight,
-                  child: OutlinedButton(
-                    onPressed: _closeScreen,
-                    style: OutlinedButton.styleFrom(
-                      padding: EdgeInsets.zero,
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: EditProfileStyles.saveButtonRadius,
-                      ),
-                    ),
-                    child: const Text(
-                      'Сохранить',
-                      style: EditProfileStyles.primaryButtonTextStyle,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                TextButton(
-                  onPressed: _closeScreen,
-                  child: const Text(
-                    'Выйти без сохранения',
-                    style: EditProfileStyles.exitTextStyle,
-                  ),
-                ),
-              ],
+            const SizedBox(height: 14),
+            _EditProfileActions(
+              onSaveTap: _closeScreen,
+              onExitTap: _closeScreen,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _EditProfileEditorSection extends StatelessWidget {
+  const _EditProfileEditorSection({
+    required this.fields,
+    required this.onDeleteTap,
+  });
+
+  final List<EditProfileField> fields;
+  final VoidCallback onDeleteTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: EditProfileStyles.editorWidth,
+      child: EditProfileEditorCard(fields: fields, onDeleteTap: onDeleteTap),
+    );
+  }
+}
+
+class _EditProfileActions extends StatelessWidget {
+  const _EditProfileActions({required this.onSaveTap, required this.onExitTap});
+
+  final VoidCallback onSaveTap;
+  final VoidCallback onExitTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        SizedBox(
+          width: EditProfileStyles.saveButtonWidth,
+          height: EditProfileStyles.saveButtonHeight,
+          child: OutlinedButton(
+            onPressed: onSaveTap,
+            style: OutlinedButton.styleFrom(
+              padding: EdgeInsets.zero,
+              shape: const RoundedRectangleBorder(
+                borderRadius: EditProfileStyles.saveButtonRadius,
+              ),
+            ),
+            child: const Text(
+              'Сохранить',
+              style: EditProfileStyles.primaryButtonTextStyle,
             ),
           ),
         ),
-      ),
+        const SizedBox(height: 8),
+        TextButton(
+          onPressed: onExitTap,
+          child: const Text(
+            'Выйти без сохранения',
+            style: EditProfileStyles.exitTextStyle,
+          ),
+        ),
+      ],
     );
   }
 }

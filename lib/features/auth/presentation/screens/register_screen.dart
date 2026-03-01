@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:wordpice/core/theme/app_input_decorations.dart';
-import 'package:wordpice/core/widgets/app_logo_top_left.dart';
+import 'package:wordpice/core/widgets/layout/app_logo_top_left.dart';
 import 'package:wordpice/features/auth/presentation/screens/account_confirmation_screen.dart';
 import 'package:wordpice/features/auth/presentation/screens/auth_screen.dart';
 import 'package:wordpice/features/auth/presentation/screens/privacy_policy_screen.dart';
-import 'package:wordpice/features/auth/presentation/widgets/auth_action_button.dart';
-import 'package:wordpice/features/auth/presentation/widgets/auth_form_card.dart';
-import 'package:wordpice/features/auth/presentation/widgets/auth_styles.dart';
-import 'package:wordpice/features/auth/presentation/widgets/auth_text_widgets.dart';
+import 'package:wordpice/features/auth/presentation/widgets/buttons/auth_action_button.dart';
+import 'package:wordpice/features/auth/presentation/widgets/cards/auth_form_card.dart';
+import 'package:wordpice/features/auth/presentation/widgets/sections/auth_text.dart';
+import 'package:wordpice/features/auth/presentation/widgets/styles/auth_styles.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -193,7 +193,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 vertical: 2,
                               ),
                               child: AuthPolicyText(
-                                'Нажимая на кнопку “Зарегистрироваться”, я\nсоглашаюсь с условиями Политики\nконфиденциальности',
+                                'Нажимая на кнопку “Зарегистрироваться”,\nя соглашаюсь с условиями\nПолитики конфиденциальности',
                               ),
                             ),
                           ),

@@ -1,10 +1,12 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:wordpice/app/navigation/app_tab_navigator.dart';
-import 'package:wordpice/core/widgets/app_shell.dart';
-import 'package:wordpice/features/parking/presentation/widgets/parking_confirmation_modal.dart';
+import 'package:wordpice/core/widgets/buttons/app_action_menu_button.dart';
+import 'package:wordpice/core/widgets/layout/app_constrained_scroll_view.dart';
+import 'package:wordpice/core/widgets/layout/app_shell.dart';
+import 'package:wordpice/features/parking/presentation/widgets/modals/parking_confirmation_modal.dart';
+import 'package:wordpice/features/parking/presentation/widgets/styles/parking_styles.dart';
 
-/// Экран "Парковка" (UI-only).
 class ParkingScreen extends StatefulWidget {
   const ParkingScreen({super.key});
 
@@ -13,17 +15,38 @@ class ParkingScreen extends StatefulWidget {
 }
 
 class _ParkingScreenState extends State<ParkingScreen> {
-  static const int _tabIndex = 5; // Парковка
+  static const int _tabIndex = 5;
+  static const double _contentWidth = 324;
+  static const List<int> _places = <int>[
+    21,
+    22,
+    23,
+    24,
+    25,
+    16,
+    17,
+    18,
+    19,
+    20,
+    11,
+    12,
+    13,
+    14,
+    15,
+    6,
+    7,
+    8,
+    9,
+    10,
+    1,
+    2,
+    3,
+    4,
+    5,
+  ];
+
   int _selectedBottomIndex = _tabIndex;
   int? _selectedPlace;
-
-  static const List<int> _places = <int>[
-    21, 22, 23, 24, 25,
-    16, 17, 18, 19, 20,
-    11, 12, 13, 14, 15,
-    6, 7, 8, 9, 10,
-    1, 2, 3, 4, 5,
-  ];
 
   void _onBottomChanged(int index) {
     if (index == _tabIndex) return;
@@ -48,65 +71,81 @@ class _ParkingScreenState extends State<ParkingScreen> {
     return AppShell(
       selectedBottomIndex: _selectedBottomIndex,
       onBottomChanged: _onBottomChanged,
-      body: Center(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(16, 28, 16, 24),
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 324),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                const SizedBox(
-                  width: double.infinity,
-                  child: Text(
-                    'Парковочные места',
-                    style: TextStyle(
-                      fontSize: 19,
-                      fontWeight: FontWeight.w600,
-                    ),
-                    textAlign: TextAlign.left,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Wrap(
-                  alignment: WrapAlignment.center,
-                  spacing: 12,
-                  runSpacing: 12,
-                  children: _places
-                      .map(
-                        (number) => _ParkingPlace(
-                          number: number,
-                          selected: _selectedPlace == number,
-                          onTap: () => _onSelectPlace(number),
-                        ),
-                      )
-                      .toList(),
-                ),
-                const SizedBox(height: 26),
-                SizedBox(
-                  width: 190,
-                  height: 48,
-                  child: OutlinedButton(
-                    onPressed: _selectedPlace == null ? null : _onBookPressed,
-                    style: OutlinedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    child: const Text(
-                      'Забронировать',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+      body: AppConstrainedScrollView(
+        maxWidth: _contentWidth,
+        padding: const EdgeInsets.fromLTRB(16, 28, 16, 24),
+        centerVertically: true,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const _ParkingHeader(),
+            _ParkingPlacesGrid(
+              places: _places,
+              selectedPlace: _selectedPlace,
+              onSelectPlace: _onSelectPlace,
             ),
-          ),
+            const SizedBox(height: 26),
+            AppActionMenuButton(
+              width: 190,
+              height: 48,
+              text: 'Забронировать',
+              textStyle: ParkingStyles.buttonText,
+              onPressed: _selectedPlace == null ? null : _onBookPressed,
+            ),
+          ],
         ),
       ),
+    );
+  }
+}
+
+class _ParkingHeader extends StatelessWidget {
+  const _ParkingHeader();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Column(
+      children: [
+        SizedBox(
+          width: double.infinity,
+          child: Text(
+            'Парковочные места',
+            style: ParkingStyles.title,
+            textAlign: TextAlign.left,
+          ),
+        ),
+        SizedBox(height: 16),
+      ],
+    );
+  }
+}
+
+class _ParkingPlacesGrid extends StatelessWidget {
+  const _ParkingPlacesGrid({
+    required this.places,
+    required this.selectedPlace,
+    required this.onSelectPlace,
+  });
+
+  final List<int> places;
+  final int? selectedPlace;
+  final ValueChanged<int> onSelectPlace;
+
+  @override
+  Widget build(BuildContext context) {
+    return Wrap(
+      alignment: WrapAlignment.center,
+      spacing: 12,
+      runSpacing: 12,
+      children: places
+          .map(
+            (number) => _ParkingPlace(
+              number: number,
+              selected: selectedPlace == number,
+              onTap: () => onSelectPlace(number),
+            ),
+          )
+          .toList(),
     );
   }
 }
@@ -129,20 +168,11 @@ class _ParkingPlace extends StatelessWidget {
       borderRadius: BorderRadius.circular(10),
       child: Container(
         width: 52,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          color: selected ? const Color(0xFFECECEC) : Colors.transparent,
-        ),
+        decoration: ParkingStyles.placeDecoration(selected: selected),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
-              '№$number',
-              style: const TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.w400,
-              ),
-            ),
+            Text('№$number', style: ParkingStyles.placeNumber),
             const SizedBox(height: 2),
             SvgPicture.asset(
               'assets/icons/nav_parking.svg',
@@ -159,9 +189,3 @@ class _ParkingPlace extends StatelessWidget {
     );
   }
 }
-
-
-
-
-
-

@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'app_colors.dart';
 import 'app_text_styles.dart';
 
-/// Что добавлено:
-/// - Единые декорации для полей ввода, чтобы не писать цвета/радиусы на каждом экране.
+/// Единые декорации для полей ввода.
 class AppInputDecorations {
   AppInputDecorations._();
 

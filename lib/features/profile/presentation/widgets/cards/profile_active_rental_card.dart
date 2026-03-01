@@ -1,0 +1,190 @@
+import 'package:flutter/material.dart';
+import 'package:wordpice/core/theme/app_colors.dart';
+import 'package:wordpice/core/widgets/buttons/app_outlined_icon_button.dart';
+import 'package:wordpice/features/passes/presentation/screens/employee_pass_screen.dart';
+import 'package:wordpice/features/profile/presentation/models/rental_history_item.dart';
+import 'package:wordpice/features/profile/presentation/widgets/cards/profile_rental_card_layout.dart';
+import 'package:wordpice/features/profile/presentation/widgets/styles/profile_card_styles.dart';
+
+class ProfileActiveRentalCard extends StatefulWidget {
+  const ProfileActiveRentalCard({super.key, required this.item});
+
+  final RentalHistoryItem item;
+
+  @override
+  State<ProfileActiveRentalCard> createState() =>
+      _ProfileActiveRentalCardState();
+}
+
+class _ProfileActiveRentalCardState extends State<ProfileActiveRentalCard> {
+  static const int _loopMultiplier = 1000;
+  static const List<String> _actions = [
+    'Пригласить сотрудника',
+    'Перенести бронь',
+    'Отменить бронь',
+  ];
+
+  late final PageController _actionController;
+
+  @override
+  void initState() {
+    super.initState();
+    _actionController = PageController(
+      initialPage: _actions.length * _loopMultiplier,
+      viewportFraction: 1,
+    );
+  }
+
+  @override
+  void dispose() {
+    _actionController.dispose();
+    super.dispose();
+  }
+
+  void _showPrevAction() {
+    _actionController.previousPage(
+      duration: const Duration(milliseconds: 250),
+      curve: Curves.easeOut,
+    );
+  }
+
+  void _showNextAction() {
+    _actionController.nextPage(
+      duration: const Duration(milliseconds: 250),
+      curve: Curves.easeOut,
+    );
+  }
+
+  void _onActionPressed(int actionIndex) {
+    if (actionIndex != 0) return;
+    Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (_) => const EmployeePassScreen()));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final item = widget.item;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        ProfileRentalCardDateLabel(item.dateLabel),
+        ProfileRentalCardFrame(
+          child: ProfileRentalCardContent(
+            title: item.title,
+            room: item.room,
+            capacity: item.capacity,
+            timeText: item.timeSlots.isEmpty ? null : item.timeSlots.first,
+          ),
+        ),
+        const SizedBox(height: 10),
+        _ActiveRentalActions(
+          controller: _actionController,
+          onPrevious: _showPrevAction,
+          onNext: _showNextAction,
+          onActionPressed: _onActionPressed,
+        ),
+      ],
+    );
+  }
+}
+
+class _ActiveRentalActions extends StatelessWidget {
+  const _ActiveRentalActions({
+    required this.controller,
+    required this.onPrevious,
+    required this.onNext,
+    required this.onActionPressed,
+  });
+
+  final PageController controller;
+  final VoidCallback onPrevious;
+  final VoidCallback onNext;
+  final ValueChanged<int> onActionPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        _ActionArrowButton(
+          icon: Icons.chevron_left_rounded,
+          onPressed: onPrevious,
+        ),
+        const SizedBox(width: 12),
+        SizedBox(
+          width: 190,
+          height: 30,
+          child: PageView.builder(
+            controller: controller,
+            itemCount:
+                _ProfileActiveRentalCardState._actions.length *
+                _ProfileActiveRentalCardState._loopMultiplier *
+                2,
+            itemBuilder: (_, index) {
+              final actionIndex =
+                  index % _ProfileActiveRentalCardState._actions.length;
+              return _ActionChip(
+                label: _ProfileActiveRentalCardState._actions[actionIndex],
+                onTap: () => onActionPressed(actionIndex),
+              );
+            },
+          ),
+        ),
+        const SizedBox(width: 12),
+        _ActionArrowButton(
+          icon: Icons.chevron_right_rounded,
+          onPressed: onNext,
+        ),
+      ],
+    );
+  }
+}
+
+class _ActionArrowButton extends StatelessWidget {
+  const _ActionArrowButton({required this.icon, required this.onPressed});
+
+  final IconData icon;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return AppOutlinedIconButton(
+      icon: icon,
+      size: 30,
+      iconSize: 18,
+      radius: 10,
+      borderColor: AppColors.border,
+      iconColor: AppColors.textPrimary,
+      onPressed: onPressed,
+    );
+  }
+}
+
+class _ActionChip extends StatelessWidget {
+  const _ActionChip({required this.label, required this.onTap});
+
+  final String label;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(5),
+        child: Container(
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: Colors.transparent,
+            border: Border.all(color: AppColors.border, width: 1),
+            borderRadius: BorderRadius.circular(5),
+          ),
+          child: Text(label, style: ProfileCardStyles.body),
+        ),
+      ),
+    );
+  }
+}

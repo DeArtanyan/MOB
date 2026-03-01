@@ -32,7 +32,7 @@ class _SegmentCarouselState extends State<SegmentCarousel> {
     final initialPage = safeLength * _loopMultiplier + initialIndex;
     _controller = PageController(
       initialPage: initialPage,
-      viewportFraction: 1.0,
+      viewportFraction: 1,
     );
   }
 
@@ -64,7 +64,7 @@ class _SegmentCarouselState extends State<SegmentCarousel> {
 
     const double kHeight = 38;
     const double kArrowSize = 34;
-    const double kRadius = 14;
+    const double kRadius = 10;
 
     return Center(
       child: Row(
@@ -103,7 +103,7 @@ class _SegmentCarouselState extends State<SegmentCarousel> {
                         style: const TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w400,
-                          height: 1.0,
+                          height: 1,
                           color: Colors.black87,
                         ),
                       ),

@@ -149,7 +149,7 @@ class _AnimatedText extends StatelessWidget {
           children: List.generate(total, (index) {
             final start = index / total;
             final end = (index + 1) / total;
-            final t = ((controller.value - start) / (end - start)).clamp(0.0, 1.0);
+            final t = ((controller.value - start) / (end - start)).clamp(0, 1).toDouble();
             final opacity = Curves.easeOut.transform(t);
             final dy = (1 - opacity) * 6;
 

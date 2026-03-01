@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:wordpice/app/navigation/app_tab_navigator.dart';
-import 'package:wordpice/core/widgets/app_shell.dart';
+import 'package:wordpice/core/widgets/layout/app_constrained_scroll_view.dart';
+import 'package:wordpice/core/widgets/layout/app_shell.dart';
 import 'package:wordpice/features/reviews/data/mock/reviews_mock_data.dart';
 import 'package:wordpice/features/reviews/presentation/models/review_item.dart';
-import 'package:wordpice/features/reviews/presentation/widgets/reviews_filter_bar.dart';
-import 'package:wordpice/features/reviews/presentation/widgets/reviews_list_panel.dart';
-import 'package:wordpice/features/reviews/presentation/widgets/reviews_submission_form.dart';
+import 'package:wordpice/features/reviews/presentation/widgets/forms/reviews_submission_form.dart';
+import 'package:wordpice/features/reviews/presentation/widgets/sections/reviews_filter_section.dart';
+import 'package:wordpice/features/reviews/presentation/widgets/sections/reviews_list_section.dart';
 
 class ReviewsScreen extends StatefulWidget {
   const ReviewsScreen({super.key});
@@ -16,6 +17,7 @@ class ReviewsScreen extends StatefulWidget {
 
 class _ReviewsScreenState extends State<ReviewsScreen> {
   static const int _tabIndex = 4;
+  static const double _contentWidth = 360;
   static const List<int> _ratingFilters = [0, 5, 4, 3, 2, 1];
 
   int _selectedBottomIndex = _tabIndex;
@@ -23,7 +25,9 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
   int _rating = 0;
 
   final TextEditingController _reviewController = TextEditingController();
-  final PageController _reviewsPageController = PageController();
+  final PageController _reviewsPageController = PageController(
+    viewportFraction: 0.9,
+  );
 
   int get _selectedFilterRating => _ratingFilters[_selectedFilterIndex];
 
@@ -65,17 +69,18 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
     return AppShell(
       selectedBottomIndex: _selectedBottomIndex,
       onBottomChanged: _onBottomChanged,
-      body: SingleChildScrollView(
+      body: AppConstrainedScrollView(
+        maxWidth: _contentWidth,
         padding: const EdgeInsets.fromLTRB(20, 18, 20, 28),
         child: Column(
           children: [
-            ReviewsFilterBar(
+            ReviewsFilterSection(
               rating: _selectedFilterRating,
               onPrevious: () => _changeFilter(-1),
               onNext: () => _changeFilter(1),
             ),
             const SizedBox(height: 6),
-            ReviewsListPanel(
+            ReviewsListSection(
               reviews: reviews,
               controller: _reviewsPageController,
             ),

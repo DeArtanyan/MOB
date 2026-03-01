@@ -12,8 +12,6 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // ИЗМЕНЕНО: добавили "сборку" зависимостей и AppScope.
-    // Сейчас используются моковые реализации (backend отсутствует).
     final deps = AppDependencies.mock();
 
     return AppScope(
@@ -27,9 +25,7 @@ class App extends StatelessWidget {
           GlobalWidgetsLocalizations.delegate,
           GlobalCupertinoLocalizations.delegate,
         ],
-        supportedLocales: const [
-          Locale('ru', 'RU'),
-        ],
+        supportedLocales: const [Locale('ru', 'RU')],
         home: const SplashScreen(),
         routes: {
           '/profile': (_) => const ProfileScreen(),

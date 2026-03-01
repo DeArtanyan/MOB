@@ -2,23 +2,23 @@ import 'package:flutter/material.dart';
 import 'app_colors.dart';
 
 /// Текстовые стили приложения.
-/// 
+///
 /// Что изменено:
-/// - title26 теперь использует Montserrat Alternates Regular 26
-/// - Остальные стили оставлены, чтобы не ломать существующий код
+/// - `title26` использует Montserrat Alternates Regular 26
+/// - остальные стили оставлены без изменений, чтобы не ломать существующий код
 class AppTextStyles {
   AppTextStyles._();
 
-  /// Название шрифта должно совпадать с pubspec.yaml
+  /// Название шрифта должно совпадать с `pubspec.yaml`.
   static const String _titleFontFamily = 'MontserratAlternates';
 
-  /// Заголовок 26 (например: "Авторизация")
+  /// Заголовок 26 (например: "Авторизация").
   /// Figma: Montserrat Alternates Regular, 26
   static const TextStyle title26 = TextStyle(
     fontFamily: _titleFontFamily,
     fontSize: 26,
     fontWeight: FontWeight.w400, // Regular
-    height: 1.2,
+    height: 1,
     letterSpacing: 0,
     color: AppColors.textPrimary,
   );

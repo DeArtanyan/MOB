@@ -1,11 +1,11 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:wordpice/app/navigation/app_tab_navigator.dart';
-import 'package:wordpice/core/widgets/app_shell.dart';
+import 'package:wordpice/core/widgets/layout/app_shell.dart';
 import 'package:wordpice/features/rentals/data/mock/office_rental_mock_data.dart';
 import 'package:wordpice/features/rentals/presentation/utils/rental_date_text_helper.dart';
-import 'package:wordpice/features/rentals/presentation/widgets/office_rental_card.dart';
-import 'package:wordpice/features/rentals/presentation/widgets/rental_date_filter.dart';
-import 'package:wordpice/features/rentals/presentation/widgets/rental_price_range_filter.dart';
+import 'package:wordpice/features/rentals/presentation/widgets/cards/office_rental_card.dart';
+import 'package:wordpice/features/rentals/presentation/widgets/sections/rental_filter_controls_section.dart';
+import 'package:wordpice/features/rentals/presentation/widgets/states/rental_empty_rooms_state.dart';
 
 class OfficeRentalScreen extends StatefulWidget {
   const OfficeRentalScreen({super.key});
@@ -16,12 +16,15 @@ class OfficeRentalScreen extends StatefulWidget {
 
 class _OfficeRentalScreenState extends State<OfficeRentalScreen> {
   static const int _tabIndex = 0;
-  final int _selectedBottomIndex = _tabIndex;
-  DateTime? _selectedDate;
-
   static const int _minPrice = 10000;
   static const int _maxPrice = 30000;
-  RangeValues _priceRange = RangeValues(_minPrice.toDouble(), _maxPrice.toDouble());
+
+  final int _selectedBottomIndex = _tabIndex;
+  DateTime? _selectedDate;
+  RangeValues _priceRange = RangeValues(
+    _minPrice.toDouble(),
+    _maxPrice.toDouble(),
+  );
 
   void _onBottomChanged(int index) {
     AppTabNavigator.goToTab(context, index);
@@ -66,28 +69,22 @@ class _OfficeRentalScreenState extends State<OfficeRentalScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            RentalDateFilter(
-              leftPadding: 10,
-              text: _dateText,
-              onTap: _pickDate,
-            ),
-            const SizedBox(height: 20),
-            RentalPriceRangeFilter(
-              values: _priceRange,
-              min: _minPrice.toDouble(),
-              max: _maxPrice.toDouble(),
-              formatLabel: _formatPrice,
-              onChanged: (values) => setState(() => _priceRange = values),
+            RentalFilterControlsSection(
+              dateText: _dateText,
+              onPickDate: _pickDate,
+              priceRange: _priceRange,
+              minPrice: _minPrice.toDouble(),
+              maxPrice: _maxPrice.toDouble(),
+              onPriceChanged: (values) => setState(() => _priceRange = values),
+              formatPrice: _formatPrice,
+              dateLeftPadding: 10,
             ),
             const SizedBox(height: 20),
             if (filtered.isEmpty) ...[
               const SizedBox(height: 220),
               const Padding(
                 padding: EdgeInsets.only(left: 10),
-                child: Text(
-                  'Нет свободных помещений',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w400),
-                ),
+                child: RentalEmptyRoomsState(),
               ),
             ] else ...[
               for (final item in filtered) ...[
@@ -101,7 +98,10 @@ class _OfficeRentalScreenState extends State<OfficeRentalScreen> {
                           padding: const EdgeInsets.only(left: 4, bottom: 6),
                           child: Text(
                             item.dateText,
-                            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w400,
+                            ),
                           ),
                         ),
                         OfficeRentalCard(item: item),
@@ -118,4 +118,3 @@ class _OfficeRentalScreenState extends State<OfficeRentalScreen> {
     );
   }
 }
-

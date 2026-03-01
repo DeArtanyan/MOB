@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:wordpice/core/theme/app_colors.dart';
 import 'package:wordpice/core/theme/app_text_styles.dart';
-import 'package:wordpice/core/widgets/app_back_button.dart';
+import 'package:wordpice/core/widgets/buttons/app_back_button.dart';
 import 'forgot_password_email_sent_screen.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
@@ -46,46 +46,42 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                    const SizedBox(height: 32),
-                    const Center(
-                      child: Text(
-                        'Забыли пароль?',
-                        textAlign: TextAlign.center,
-                        style: AppTextStyles.title26,
-                      ),
-                    ),
-                    const SizedBox(height: 32),
-                    const Center(
-                      child: Text(
-                        'Введите адрес эл. почты от аккаунта,\nмы отправим Вам временный пароль\nдля входа в аккаунт',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.black54,
-                          height: 1.4,
+                      const SizedBox(height: 32),
+                      const Center(
+                        child: Text(
+                          'Забыли пароль?',
+                          textAlign: TextAlign.center,
+                          style: AppTextStyles.title26,
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 26),
-                    const Text('Эл.почта*', style: AppTextStyles.label12Grey),
-                    const SizedBox(height: 8),
-                    TextField(
-                      controller: _emailController,
-                      keyboardType: TextInputType.emailAddress,
-                      decoration: const InputDecoration(
-                        hintText: 'Введите электронную почту',
-                      ),
-                    ),
-                    const SizedBox(height: 22),
-                    Center(
-                      child: SizedBox(
-                        width: 200,
-                        child: OutlinedButton(
-                        onPressed: _goToEmailSent,
-                        child: const Text('Отправить'),
+                      const SizedBox(height: 32),
+                      const Center(
+                        child: Text(
+                          'Введите адрес эл. почты от аккаунта,\nмы отправим вам временный пароль\nдля входа в аккаунт',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 14, color: Colors.black54),
                         ),
                       ),
-                    ),
+                      const SizedBox(height: 26),
+                      const Text('Эл.почта*', style: AppTextStyles.label12Grey),
+                      const SizedBox(height: 8),
+                      TextField(
+                        controller: _emailController,
+                        keyboardType: TextInputType.emailAddress,
+                        decoration: const InputDecoration(
+                          hintText: 'Введите электронную почту',
+                        ),
+                      ),
+                      const SizedBox(height: 22),
+                      Center(
+                        child: SizedBox(
+                          width: 200,
+                          child: OutlinedButton(
+                            onPressed: _goToEmailSent,
+                            child: const Text('Отправить'),
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),

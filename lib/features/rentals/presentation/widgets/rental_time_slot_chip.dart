@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:wordpice/features/rentals/presentation/widgets/styles/rental_widget_styles.dart';
 
 class RentalTimeSlotChip extends StatelessWidget {
   const RentalTimeSlotChip({super.key, required this.text, this.onTap});
@@ -15,15 +16,9 @@ class RentalTimeSlotChip extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
         child: Container(
           height: 35,
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.black87, width: 1),
-            borderRadius: BorderRadius.circular(8),
-          ),
+          decoration: RentalWidgetStyles.outlinedBox(8),
           alignment: Alignment.center,
-          child: Text(
-            text,
-            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
-          ),
+          child: Text(text, style: RentalWidgetStyles.chipText),
         ),
       ),
     );

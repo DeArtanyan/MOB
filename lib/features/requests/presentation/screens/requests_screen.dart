@@ -1,26 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:wordpice/app/navigation/app_tab_navigator.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:wordpice/core/widgets/app_shell.dart';
-import 'package:wordpice/features/requests/presentation/widgets/request_confirmation_modal.dart';
-import 'package:wordpice/features/requests/presentation/widgets/request_form_comment_field.dart';
-import 'package:wordpice/features/requests/presentation/widgets/request_form_dropdown_menu.dart';
-import 'package:wordpice/features/requests/presentation/widgets/request_form_field_label.dart';
-import 'package:wordpice/features/requests/presentation/widgets/request_form_input_field.dart';
-import 'package:wordpice/features/requests/presentation/widgets/request_form_submit_button.dart';
+import 'package:wordpice/app/navigation/app_tab_navigator.dart';
+import 'package:wordpice/core/widgets/layout/app_constrained_scroll_view.dart';
+import 'package:wordpice/core/widgets/layout/app_shell.dart';
+import 'package:wordpice/features/requests/presentation/widgets/forms/request_form_comment_field.dart';
+import 'package:wordpice/features/requests/presentation/widgets/forms/request_form_dropdown_menu.dart';
+import 'package:wordpice/features/requests/presentation/widgets/forms/request_form_field_label.dart';
+import 'package:wordpice/features/requests/presentation/widgets/forms/request_form_input_field.dart';
+import 'package:wordpice/features/requests/presentation/widgets/forms/request_form_submit_button.dart';
+import 'package:wordpice/features/requests/presentation/widgets/modals/request_confirmation_modal.dart';
+import 'package:wordpice/features/requests/presentation/widgets/styles/request_form_styles.dart';
 
 const _kScreenPadding = EdgeInsets.fromLTRB(36, 16, 36, 24);
-const _kTitleStyle = TextStyle(fontSize: 44 / 2, fontWeight: FontWeight.w600);
 const _kSectionGap = SizedBox(height: 18);
 const _kLabelGap = SizedBox(height: 8);
-const _kTopMenuRadius = BorderRadius.only(
-  topLeft: Radius.circular(12),
-  topRight: Radius.circular(12),
-);
 
 enum _RequestMenu { requestType, time, roomType, cabinet }
 
-/// Экран "Заявки" (UI-only).
 class RequestsScreen extends StatefulWidget {
   const RequestsScreen({super.key});
 
@@ -29,7 +25,20 @@ class RequestsScreen extends StatefulWidget {
 }
 
 class _RequestsScreenState extends State<RequestsScreen> {
-  static const int _tabIndex = 1; // Заявки
+  static const int _tabIndex = 1;
+  static const double _contentWidth = 360;
+  static const List<String> _requestTypes = ['Клининг', 'Техобслуживание'];
+  static const List<String> _roomTypes = [
+    'Переговорная комната',
+    'Офис',
+    'Комната коворкинга',
+  ];
+  static const List<String> _cabinetOptions = [
+    'Кабинет №1',
+    'Кабинет №2',
+    'Кабинет №3',
+  ];
+
   int _selectedBottomIndex = _tabIndex;
   DateTime? _selectedDate;
   String? _selectedRequestType;
@@ -65,17 +74,6 @@ class _RequestsScreenState extends State<RequestsScreen> {
     final endText = end.toString().padLeft(2, '0');
     return '$startText:00 - $endText:00';
   });
-  List<String> get _requestTypes => const ['Клининг', 'Техобслуживание'];
-  List<String> get _roomTypes => const [
-    'Переговорная комната',
-    'Офис',
-    'Комната коворкинга',
-  ];
-  List<String> get _cabinetOptions => const [
-    'Кабинет №1',
-    'Кабинет №2',
-    'Кабинет №3',
-  ];
 
   String get _dateText {
     final value = _selectedDate;
@@ -129,18 +127,6 @@ class _RequestsScreenState extends State<RequestsScreen> {
     });
   }
 
-  String get _modalDateText {
-    final value = _selectedDate;
-    if (value == null) return 'Не выбрано';
-    final day = value.day.toString().padLeft(2, '0');
-    final month = value.month.toString().padLeft(2, '0');
-    return '$day.$month.${value.year}';
-  }
-
-  String get _modalTimeText => _selectedTime ?? 'Не выбрано';
-  String get _modalRequestTypeText => _selectedRequestType ?? 'Не выбрано';
-  String get _modalRoomTypeText => _selectedRoomType ?? 'Не выбрано';
-  String get _modalCabinetText => _selectedCabinet ?? 'Не выбрано';
   bool get _canCreateRequest =>
       _selectedDate != null &&
       _selectedRequestType != null &&
@@ -149,13 +135,17 @@ class _RequestsScreenState extends State<RequestsScreen> {
       _selectedCabinet != null;
 
   Future<void> _showCreateRequestModal() {
+    final selectedDate = _selectedDate!;
+    final day = selectedDate.day.toString().padLeft(2, '0');
+    final month = selectedDate.month.toString().padLeft(2, '0');
+
     return RequestConfirmationModal.show(
       context,
-      date: _modalDateText,
-      time: _modalTimeText,
-      requestType: _modalRequestTypeText,
-      roomType: _modalRoomTypeText,
-      cabinet: _modalCabinetText,
+      date: '$day.$month.${selectedDate.year}',
+      time: _selectedTime!,
+      requestType: _selectedRequestType!,
+      roomType: _selectedRoomType!,
+      cabinet: _selectedCabinet!,
     );
   }
 
@@ -164,121 +154,51 @@ class _RequestsScreenState extends State<RequestsScreen> {
     return AppShell(
       selectedBottomIndex: _selectedBottomIndex,
       onBottomChanged: _onBottomChanged,
-      body: SingleChildScrollView(
+      body: AppConstrainedScrollView(
+        maxWidth: _contentWidth,
         padding: _kScreenPadding,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Заявки', style: _kTitleStyle),
-            _kSectionGap,
-            const RequestFormFieldLabel('Дата*'),
-            _kLabelGap,
-            RequestFormInputField(
-              hint: _dateText,
-              trailing: SvgPicture.asset(
-                'assets/icons/calendar.svg',
-                width: 24,
-                height: 24,
-                colorFilter: const ColorFilter.mode(
-                  Colors.black87,
-                  BlendMode.srcIn,
-                ),
-              ),
-              onTap: _pickDate,
-              showTrailingFrame: false,
-            ),
-            _kSectionGap,
-            const RequestFormFieldLabel('Тип заявки*'),
-            _kLabelGap,
-            RequestFormInputField(
-              hint: _requestTypeText,
-              trailing: Icon(
-                _isRequestTypeMenuOpen
-                    ? Icons.keyboard_arrow_up_rounded
-                    : Icons.keyboard_arrow_down_rounded,
-                size: 26,
-              ),
+            const Text('Заявки', style: RequestFormStyles.title),
+            _RequestDateSection(dateText: _dateText, onTap: _pickDate),
+            _RequestDropdownSection(
+              label: 'Тип заявки*',
+              value: _requestTypeText,
+              isOpen: _isRequestTypeMenuOpen,
               onTap: () => _toggleMenu(_RequestMenu.requestType),
-              borderRadius: _isRequestTypeMenuOpen
-                  ? _kTopMenuRadius
-                  : BorderRadius.circular(12),
+              items: _requestTypes,
+              onSelect: _selectRequestType,
+              menuHeight: 74,
             ),
-            if (_isRequestTypeMenuOpen)
-              RequestFormDropdownMenu(
-                items: _requestTypes,
-                onSelect: _selectRequestType,
-                height: 74,
-              ),
-            _kSectionGap,
-            const RequestFormFieldLabel('Время*'),
-            _kLabelGap,
-            RequestFormInputField(
-              hint: _timeText,
-              trailing: Icon(
-                _isTimeMenuOpen
-                    ? Icons.keyboard_arrow_up_rounded
-                    : Icons.keyboard_arrow_down_rounded,
-                size: 26,
-              ),
+            _RequestDropdownSection(
+              label: 'Время*',
+              value: _timeText,
+              isOpen: _isTimeMenuOpen,
               onTap: () => _toggleMenu(_RequestMenu.time),
-              borderRadius: _isTimeMenuOpen
-                  ? _kTopMenuRadius
-                  : BorderRadius.circular(12),
+              items: _timeSlots,
+              onSelect: _selectTime,
+              menuHeight: 86,
             ),
-            if (_isTimeMenuOpen)
-              RequestFormDropdownMenu(
-                items: _timeSlots,
-                onSelect: _selectTime,
-                height: 86,
-              ),
-            _kSectionGap,
-            const RequestFormFieldLabel('Тип помещения*'),
-            _kLabelGap,
-            RequestFormInputField(
-              hint: _roomTypeText,
-              trailing: Icon(
-                _isRoomTypeMenuOpen
-                    ? Icons.keyboard_arrow_up_rounded
-                    : Icons.keyboard_arrow_down_rounded,
-                size: 26,
-              ),
+            _RequestDropdownSection(
+              label: 'Тип помещения*',
+              value: _roomTypeText,
+              isOpen: _isRoomTypeMenuOpen,
               onTap: () => _toggleMenu(_RequestMenu.roomType),
-              borderRadius: _isRoomTypeMenuOpen
-                  ? _kTopMenuRadius
-                  : BorderRadius.circular(12),
+              items: _roomTypes,
+              onSelect: _selectRoomType,
+              menuHeight: 108,
             ),
-            if (_isRoomTypeMenuOpen)
-              RequestFormDropdownMenu(
-                items: _roomTypes,
-                onSelect: _selectRoomType,
-                height: 108,
-              ),
-            _kSectionGap,
-            const RequestFormFieldLabel('Кабинет №*'),
-            _kLabelGap,
-            RequestFormInputField(
-              hint: _cabinetText,
-              trailing: Icon(
-                _isCabinetMenuOpen
-                    ? Icons.keyboard_arrow_up_rounded
-                    : Icons.keyboard_arrow_down_rounded,
-                size: 26,
-              ),
+            _RequestDropdownSection(
+              label: 'Кабинет №*',
+              value: _cabinetText,
+              isOpen: _isCabinetMenuOpen,
               onTap: () => _toggleMenu(_RequestMenu.cabinet),
-              borderRadius: _isCabinetMenuOpen
-                  ? _kTopMenuRadius
-                  : BorderRadius.circular(12),
+              items: _cabinetOptions,
+              onSelect: _selectCabinet,
+              menuHeight: 108,
             ),
-            if (_isCabinetMenuOpen)
-              RequestFormDropdownMenu(
-                items: _cabinetOptions,
-                onSelect: _selectCabinet,
-                height: 108,
-              ),
-            _kSectionGap,
-            const RequestFormFieldLabel('Комментарий (необязательно)'),
-            _kLabelGap,
-            const RequestFormCommentField(),
+            const _RequestCommentSection(),
             const SizedBox(height: 20),
             Center(
               child: RequestFormSubmitButton(
@@ -289,6 +209,107 @@ class _RequestsScreenState extends State<RequestsScreen> {
           ],
         ),
       ),
+    );
+  }
+}
+
+class _RequestDateSection extends StatelessWidget {
+  const _RequestDateSection({required this.dateText, required this.onTap});
+
+  final String dateText;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _kSectionGap,
+        const RequestFormFieldLabel('Дата*'),
+        _kLabelGap,
+        RequestFormInputField(
+          hint: dateText,
+          trailing: SvgPicture.asset(
+            'assets/icons/calendar.svg',
+            width: 24,
+            height: 24,
+            colorFilter: const ColorFilter.mode(
+              Colors.black87,
+              BlendMode.srcIn,
+            ),
+          ),
+          onTap: onTap,
+          showTrailingFrame: false,
+        ),
+      ],
+    );
+  }
+}
+
+class _RequestDropdownSection extends StatelessWidget {
+  const _RequestDropdownSection({
+    required this.label,
+    required this.value,
+    required this.isOpen,
+    required this.onTap,
+    required this.items,
+    required this.onSelect,
+    required this.menuHeight,
+  });
+
+  final String label;
+  final String value;
+  final bool isOpen;
+  final VoidCallback onTap;
+  final List<String> items;
+  final ValueChanged<String> onSelect;
+  final double menuHeight;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _kSectionGap,
+        RequestFormFieldLabel(label),
+        _kLabelGap,
+        RequestFormInputField(
+          hint: value,
+          trailing: Icon(
+            isOpen
+                ? Icons.keyboard_arrow_up_rounded
+                : Icons.keyboard_arrow_down_rounded,
+            size: 26,
+          ),
+          onTap: onTap,
+          borderRadius: isOpen
+              ? RequestFormStyles.dropdownOpenRadius
+              : RequestFormStyles.fieldBorderRadius,
+        ),
+        if (isOpen)
+          RequestFormDropdownMenu(
+            items: items,
+            onSelect: onSelect,
+            height: menuHeight,
+          ),
+      ],
+    );
+  }
+}
+
+class _RequestCommentSection extends StatelessWidget {
+  const _RequestCommentSection();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _kSectionGap,
+        RequestFormFieldLabel('Комментарий (необязательно)'),
+        _kLabelGap,
+        RequestFormCommentField(),
+      ],
     );
   }
 }

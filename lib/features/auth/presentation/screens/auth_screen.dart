@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:wordpice/core/theme/app_input_decorations.dart';
-import 'package:wordpice/core/widgets/app_logo_top_left.dart';
+import 'package:wordpice/core/widgets/layout/app_logo_top_left.dart';
 import 'package:wordpice/features/auth/presentation/screens/account_confirmation_screen.dart';
 import 'package:wordpice/features/auth/presentation/screens/forgot_password_screen.dart';
 import 'package:wordpice/features/auth/presentation/screens/register_screen.dart';
-import 'package:wordpice/features/auth/presentation/widgets/auth_action_button.dart';
-import 'package:wordpice/features/auth/presentation/widgets/auth_form_card.dart';
-import 'package:wordpice/features/auth/presentation/widgets/auth_styles.dart';
-import 'package:wordpice/features/auth/presentation/widgets/auth_text_widgets.dart';
+import 'package:wordpice/features/auth/presentation/widgets/buttons/auth_action_button.dart';
+import 'package:wordpice/features/auth/presentation/widgets/cards/auth_form_card.dart';
+import 'package:wordpice/features/auth/presentation/widgets/sections/auth_text.dart';
+import 'package:wordpice/features/auth/presentation/widgets/styles/auth_styles.dart';
 import 'package:wordpice/features/profile/presentation/screens/profile_screen.dart';
 
 class AuthScreen extends StatefulWidget {

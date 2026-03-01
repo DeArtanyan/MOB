@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:wordpice/features/auth/presentation/widgets/auth_text_widgets.dart';
-import 'package:wordpice/features/auth/presentation/widgets/privacy_policy_header.dart';
+import 'package:wordpice/features/auth/presentation/widgets/sections/auth_text.dart';
+import 'package:wordpice/features/auth/presentation/widgets/sections/privacy_policy_header.dart';
 
 class PrivacyPolicyScreen extends StatelessWidget {
   const PrivacyPolicyScreen({super.key});

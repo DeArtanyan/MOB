@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:wordpice/features/archive/presentation/screens/archive_screen.dart';
 import 'package:wordpice/features/parking/presentation/screens/parking_screen.dart';
 import 'package:wordpice/features/passes/presentation/screens/passes_screen.dart';
@@ -27,7 +27,7 @@ class AppTabNavigator {
       case 6:
         return const ArchiveScreen();
       default:
-        return const _PlaceholderScreen(title: 'Раздел (UI-only)');
+        return const _PlaceholderScreen(title: 'Раздел');
     }
   }
 
@@ -46,9 +46,6 @@ class _PlaceholderScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(child: Text(title)),
-    );
+    return Scaffold(body: Center(child: Text(title)));
   }
 }
-

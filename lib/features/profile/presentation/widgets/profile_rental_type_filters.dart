@@ -17,7 +17,7 @@ class _ProfileRentalTypeFiltersState extends State<ProfileRentalTypeFilters> {
       final isSelected = _selectedIndex == index;
 
       return SizedBox(
-        width: 140,
+        width: 130,
         height: 34,
         child: OutlinedButton(
           onPressed: () => setState(() => _selectedIndex = index),
@@ -25,7 +25,7 @@ class _ProfileRentalTypeFiltersState extends State<ProfileRentalTypeFilters> {
             backgroundColor: isSelected ? AppColors.controlGrey : Colors.transparent,
             side: const BorderSide(color: AppColors.border, width: 1),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(6),
             ),
             padding: EdgeInsets.zero,
           ),

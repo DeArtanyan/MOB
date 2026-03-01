@@ -1,4 +1,4 @@
-﻿class RentalDateTextHelper {
+class RentalDateTextHelper {
   RentalDateTextHelper._();
 
   static String formatDayMonth(DateTime? selectedDate) {
