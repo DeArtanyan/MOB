@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:wordpice/core/theme/app_colors.dart';
-import 'package:wordpice/features/profile/presentation/widgets/styles/edit_profile_styles.dart';
 import 'package:wordpice/features/profile/presentation/widgets/profile_identity_avatar.dart';
+import 'package:wordpice/features/profile/presentation/widgets/styles/edit_profile_styles.dart';
 
 class EditProfileField {
   const EditProfileField({required this.label, required this.controller});
@@ -49,20 +49,23 @@ class EditProfileEditorCard extends StatelessWidget {
   const EditProfileEditorCard({
     super.key,
     required this.fields,
+    required this.onChangePasswordTap,
     required this.onDeleteTap,
   });
 
   static const String _sectionTitle = 'ОСНОВНОЕ';
+  static const String _changePasswordLabel = 'Сменить пароль';
   static const String _deleteLabel = 'Удалить аккаунт';
 
   final List<EditProfileField> fields;
+  final VoidCallback onChangePasswordTap;
   final VoidCallback onDeleteTap;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      height: 410,
+      height: 458,
       decoration: const BoxDecoration(
         color: AppColors.controlGrey,
         borderRadius: EditProfileStyles.cardRadius,
@@ -83,27 +86,52 @@ class EditProfileEditorCard extends StatelessWidget {
             ],
             const SizedBox(height: 24),
             Center(
-              child: SizedBox(
-                width: EditProfileStyles.deleteButtonWidth,
-                height: EditProfileStyles.deleteButtonHeight,
-                child: OutlinedButton(
-                  onPressed: onDeleteTap,
-                  style: OutlinedButton.styleFrom(
-                    side: const BorderSide(color: Colors.black87, width: 1),
-                    padding: EdgeInsets.zero,
-                    alignment: Alignment.center,
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: EditProfileStyles.deleteButtonRadius,
-                    ),
-                  ),
-                  child: const Text(
-                    _deleteLabel,
-                    style: EditProfileStyles.deleteButtonTextStyle,
-                  ),
-                ),
+              child: _ActionButton(
+                label: _changePasswordLabel,
+                onPressed: onChangePasswordTap,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Center(
+              child: _ActionButton(
+                label: _deleteLabel,
+                onPressed: onDeleteTap,
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ActionButton extends StatelessWidget {
+  const _ActionButton({
+    required this.label,
+    required this.onPressed,
+  });
+
+  final String label;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: EditProfileStyles.deleteButtonWidth,
+      height: EditProfileStyles.deleteButtonHeight,
+      child: OutlinedButton(
+        onPressed: onPressed,
+        style: OutlinedButton.styleFrom(
+          side: const BorderSide(color: Colors.black87, width: 1),
+          padding: EdgeInsets.zero,
+          alignment: Alignment.center,
+          shape: const RoundedRectangleBorder(
+            borderRadius: EditProfileStyles.deleteButtonRadius,
+          ),
+        ),
+        child: Text(
+          label,
+          style: EditProfileStyles.deleteButtonTextStyle,
         ),
       ),
     );

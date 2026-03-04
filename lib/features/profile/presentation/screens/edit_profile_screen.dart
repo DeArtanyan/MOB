@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:wordpice/app/navigation/app_tab_navigator.dart';
 import 'package:wordpice/core/widgets/layout/app_constrained_scroll_view.dart';
 import 'package:wordpice/core/widgets/layout/app_shell.dart';
-import 'package:wordpice/features/profile/presentation/widgets/delete_account_modal.dart';
+import 'package:wordpice/features/profile/presentation/screens/change_password_screen.dart';
 import 'package:wordpice/features/profile/presentation/widgets/cards/edit_profile_cards.dart';
+import 'package:wordpice/features/profile/presentation/widgets/delete_account_modal.dart';
 import 'package:wordpice/features/profile/presentation/widgets/styles/edit_profile_styles.dart';
 
 class EditProfileScreen extends StatefulWidget {
@@ -53,6 +54,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     Navigator.of(context).pop();
   }
 
+  void _changePassword() {
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => const ChangePasswordScreen()),
+    );
+  }
+
   Future<void> _showDeleteAccountDialog() => DeleteAccountModal.show(context);
 
   @override
@@ -77,6 +84,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             const SizedBox(height: 30),
             _EditProfileEditorSection(
               fields: _editorFields,
+              onChangePasswordTap: _changePassword,
               onDeleteTap: _showDeleteAccountDialog,
             ),
             const SizedBox(height: 14),
@@ -94,17 +102,23 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 class _EditProfileEditorSection extends StatelessWidget {
   const _EditProfileEditorSection({
     required this.fields,
+    required this.onChangePasswordTap,
     required this.onDeleteTap,
   });
 
   final List<EditProfileField> fields;
+  final VoidCallback onChangePasswordTap;
   final VoidCallback onDeleteTap;
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       width: EditProfileStyles.editorWidth,
-      child: EditProfileEditorCard(fields: fields, onDeleteTap: onDeleteTap),
+      child: EditProfileEditorCard(
+        fields: fields,
+        onChangePasswordTap: onChangePasswordTap,
+        onDeleteTap: onDeleteTap,
+      ),
     );
   }
 }

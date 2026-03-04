@@ -35,7 +35,7 @@ class ReviewCard extends StatelessWidget {
                         color: Colors.black54,
                       ),
                     ),
-                    const SizedBox(height: 6),
+                    const SizedBox(height: 2),
                     Row(
                       children: [
                         Row(
