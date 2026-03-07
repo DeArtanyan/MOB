@@ -1,34 +1,33 @@
 import 'package:flutter/material.dart';
+import 'package:wordpice/core/theme/app_colors.dart';
 
 class AppConfirmationDialog {
   AppConfirmationDialog._();
 
   static const double _defaultMaxWidth = 300;
   static const double _defaultButtonHeight = 44;
+  static const double _defaultButtonWidth = 200;
   static const EdgeInsets _defaultInsetPadding = EdgeInsets.symmetric(
     horizontal: 34,
   );
-  static const EdgeInsets _defaultContentPadding = EdgeInsets.fromLTRB(
-    16,
-    22,
-    16,
-    18,
-  );
+  static const EdgeInsets _defaultContentPadding = EdgeInsets.fromLTRB(16, 22, 16, 18,);
   static const TextStyle _titleStyle = TextStyle(
     fontSize: 18,
     fontWeight: FontWeight.w500,
     color: Colors.black87,
   );
   static const TextStyle _messageStyle = TextStyle(
-    fontSize: 15,
+    fontSize: 14,
     fontWeight: FontWeight.w400,
     color: Colors.black54,
   );
   static const TextStyle _detailStyle = TextStyle(
-    fontSize: 12,
+    fontSize: 14,
     fontWeight: FontWeight.w400,
     color: Colors.black87,
   );
+  static const Color _defaultConfirmButtonColor = Color(0x407C8FA0);
+  static const Color _defaultCancelButtonColor = Color(0x807C8FA0);
 
   static Future<T?> show<T>(
     BuildContext context, {
@@ -41,6 +40,7 @@ class AppConfirmationDialog {
     T? cancelResult,
     bool barrierDismissible = true,
     double maxWidth = _defaultMaxWidth,
+    double buttonWidth = _defaultButtonWidth,
     double buttonHeight = _defaultButtonHeight,
     Color? backgroundColor,
     Color? confirmBackgroundColor,
@@ -56,7 +56,7 @@ class AppConfirmationDialog {
       barrierDismissible: barrierDismissible,
       builder: (dialogContext) {
         return Dialog(
-          backgroundColor: backgroundColor,
+          backgroundColor: backgroundColor ?? AppColors.modalBackground,
           insetPadding: insetPadding,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           child: ConstrainedBox(
@@ -92,16 +92,20 @@ class AppConfirmationDialog {
                   const SizedBox(height: 18),
                   _DialogButton(
                     label: confirmLabel,
+                    width: buttonWidth,
                     height: buttonHeight,
-                    backgroundColor: confirmBackgroundColor,
+                    backgroundColor:
+                        confirmBackgroundColor ?? _defaultConfirmButtonColor,
                     onPressed: () =>
                         Navigator.of(dialogContext).pop(confirmResult),
                   ),
                   const SizedBox(height: 12),
                   _DialogButton(
                     label: cancelLabel,
+                    width: buttonWidth,
                     height: buttonHeight,
-                    backgroundColor: cancelBackgroundColor,
+                    backgroundColor:
+                        cancelBackgroundColor ?? _defaultCancelButtonColor,
                     onPressed: () =>
                         Navigator.of(dialogContext).pop(cancelResult),
                   ),
@@ -118,25 +122,47 @@ class AppConfirmationDialog {
 class _DialogButton extends StatelessWidget {
   const _DialogButton({
     required this.label,
+    required this.width,
     required this.height,
     required this.onPressed,
-    this.backgroundColor,
+    required this.backgroundColor,
   });
 
   final String label;
+  final double width;
   final double height;
   final VoidCallback onPressed;
-  final Color? backgroundColor;
+  final Color backgroundColor;
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: double.infinity,
+      width: width,
       height: height,
-      child: OutlinedButton(
-        onPressed: onPressed,
-        style: OutlinedButton.styleFrom(backgroundColor: backgroundColor),
-        child: Text(label),
+      child: Container(
+        decoration: BoxDecoration(
+          color: backgroundColor,
+          borderRadius: BorderRadius.circular(6),
+          border: Border.all(color: Colors.black87, width: 1),
+        ),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            borderRadius: BorderRadius.circular(6),
+            onTap: onPressed,
+            child: Center(
+              child: Text(
+                label,
+                maxLines: 1,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w400,
+                  color: Colors.black87,
+                ),
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }

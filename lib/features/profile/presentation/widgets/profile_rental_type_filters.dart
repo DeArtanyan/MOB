@@ -18,25 +18,57 @@ class _ProfileRentalTypeFiltersState extends State<ProfileRentalTypeFilters> {
 
       return SizedBox(
         width: 130,
-        height: 34,
-        child: OutlinedButton(
-          onPressed: () => setState(() => _selectedIndex = index),
-          style: OutlinedButton.styleFrom(
-            backgroundColor: isSelected ? AppColors.controlGrey : Colors.transparent,
-            side: const BorderSide(color: AppColors.border, width: 1),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(6),
+        height: 40,
+        child: Stack(
+          children: [
+            if (isSelected)
+              Positioned(
+                left: 5,
+                right: 5,
+                top: 34,
+                child: Container(
+                  height: 2,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(6),
+                    color: const Color(0x01000000),
+                    boxShadow: const [
+                      BoxShadow(
+                        color: Color(0x66000000),
+                        offset: Offset(1, 2),
+                        blurRadius: 4,
+                        spreadRadius: 1,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            Align(
+              alignment: Alignment.topCenter,
+              child: SizedBox(
+                height: 34,
+                width: 130,
+                child: OutlinedButton(
+                  onPressed: () => setState(() => _selectedIndex = index),
+                  style: OutlinedButton.styleFrom(
+                    backgroundColor: AppColors.formSurface,
+                    side: const BorderSide(color: AppColors.border, width: 1),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    padding: EdgeInsets.zero,
+                  ),
+                  child: Text(
+                    text,
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
+                ),
+              ),
             ),
-            padding: EdgeInsets.zero,
-          ),
-          child: Text(
-            text,
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w400,
-              color: AppColors.textPrimary,
-            ),
-          ),
+          ],
         ),
       );
     }

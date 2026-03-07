@@ -59,7 +59,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: AppColors.screenBackground,
       body: Column(
         children: [
           SafeArea(
@@ -73,7 +73,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           ),
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(32, 22, 32, 24),
+              padding: const EdgeInsets.fromLTRB(16, 22, 16, 24),
               child: _NotificationsBody(
                 areAllRead: _areAllRead,
                 readStates: _readStates,

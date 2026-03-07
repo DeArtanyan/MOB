@@ -59,11 +59,21 @@ flutter:
   assets:
     - assets/fonts/
     - assets/icons/
+    - assets/images/
+    - assets/images/passes/
 
   fonts:
     - family: MontserratAlternates
       fonts:
         - asset: assets/fonts/MontserratAlternates-Regular.ttf
+          weight: 400
+    - family: Inter
+      fonts:
+        - asset: assets/fonts/Inter-Regular.ttf
+          weight: 400
+    - family: Unbounded
+      fonts:
+        - asset: assets/fonts/Unbounded-Regular.ttf
           weight: 400
 
   # The following line ensures that the Material Icons font is

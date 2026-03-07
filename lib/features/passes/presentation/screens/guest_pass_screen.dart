@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:wordpice/app/navigation/app_tab_navigator.dart';
+import 'package:wordpice/core/theme/app_colors.dart';
 import 'package:wordpice/core/widgets/layout/app_constrained_scroll_view.dart';
 import 'package:wordpice/core/widgets/layout/app_shell.dart';
 import 'package:wordpice/features/passes/presentation/widgets/forms/pass_form_widgets.dart';
@@ -15,7 +16,7 @@ class GuestPassScreen extends StatefulWidget {
 
 class _GuestPassScreenState extends State<GuestPassScreen> {
   static const int _tabIndex = 2;
-  static const double _contentWidth = 320;
+  static const double _contentWidth = double.infinity;
 
   final int _selectedBottomIndex = _tabIndex;
   final TextEditingController _emailController = TextEditingController();
@@ -55,6 +56,7 @@ class _GuestPassScreenState extends State<GuestPassScreen> {
       onBottomChanged: _onBottomChanged,
       body: AppConstrainedScrollView(
         maxWidth: _contentWidth,
+        padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
         centerVertically: true,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -74,23 +76,41 @@ class _GuestPassScreenState extends State<GuestPassScreen> {
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 18),
-            const SizedBox(
+            Container(
               width: double.infinity,
-              child: PassFieldLabel('Эл.почта*'),
-            ),
-            const SizedBox(height: 8),
-            PassEditableInputField(
-              controller: _emailController,
-              hint: 'Введите электронную почту',
-              keyboardType: TextInputType.emailAddress,
+              padding: const EdgeInsets.fromLTRB(14, 26, 14, 26),
+              decoration: BoxDecoration(
+                color: AppColors.formBlockBackground,
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Column(
+                children: [
+                  const SizedBox(
+                    width: double.infinity,
+                    child: PassFieldLabel('Эл.почта*'),
+                  ),
+                  const SizedBox(height: 8),
+                  PassEditableInputField(
+                    controller: _emailController,
+                    hint: 'Введите электронную почту',
+                    keyboardType: TextInputType.emailAddress,
+                  ),
+                ],
+              ),
             ),
             const SizedBox(height: 20),
             PassSubmitButton(
               text: 'Купить пропуск',
               onPressed: _canBuyPass ? _showPurchaseModal : null,
             ),
-            const SizedBox(height: 28),
-            const PassQrPreview(),
+            
+            Transform.translate(
+              offset: const Offset(0, 30),
+              child: Image.asset(
+                'assets/images/passes/guest.png',
+                width: 310,
+              ),
+            ),
           ],
         ),
       ),

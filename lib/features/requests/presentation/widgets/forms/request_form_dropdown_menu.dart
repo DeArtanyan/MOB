@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:wordpice/core/theme/app_colors.dart';
 import 'package:wordpice/features/requests/presentation/widgets/styles/request_form_styles.dart';
 
 class RequestFormDropdownMenu extends StatelessWidget {
@@ -18,6 +19,7 @@ class RequestFormDropdownMenu extends StatelessWidget {
     return Container(
       height: height,
       decoration: const BoxDecoration(
+        color: AppColors.formSurface,
         border: RequestFormStyles.dropdownMenuBorder,
         borderRadius: RequestFormStyles.dropdownMenuRadius,
       ),

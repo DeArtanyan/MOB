@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:wordpice/app/navigation/app_tab_navigator.dart';
+import 'package:wordpice/core/theme/app_colors.dart';
 import 'package:wordpice/core/widgets/buttons/app_action_menu_button.dart';
 import 'package:wordpice/core/widgets/layout/app_constrained_scroll_view.dart';
 import 'package:wordpice/core/widgets/layout/app_shell.dart';
@@ -16,7 +17,7 @@ class ParkingScreen extends StatefulWidget {
 
 class _ParkingScreenState extends State<ParkingScreen> {
   static const int _tabIndex = 5;
-  static const double _contentWidth = 324;
+  static const double _contentWidth = double.infinity;
   static const List<int> _places = <int>[
     21,
     22,
@@ -73,16 +74,24 @@ class _ParkingScreenState extends State<ParkingScreen> {
       onBottomChanged: _onBottomChanged,
       body: AppConstrainedScrollView(
         maxWidth: _contentWidth,
-        padding: const EdgeInsets.fromLTRB(16, 28, 16, 24),
+        padding: const EdgeInsets.fromLTRB(24, 28, 24, 24),
         centerVertically: true,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             const _ParkingHeader(),
-            _ParkingPlacesGrid(
-              places: _places,
-              selectedPlace: _selectedPlace,
-              onSelectPlace: _onSelectPlace,
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.fromLTRB(10, 26, 10, 26),
+              decoration: BoxDecoration(
+                color: AppColors.formBlockBackground,
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: _ParkingPlacesGrid(
+                places: _places,
+                selectedPlace: _selectedPlace,
+                onSelectPlace: _onSelectPlace,
+              ),
             ),
             const SizedBox(height: 26),
             AppActionMenuButton(
@@ -90,6 +99,7 @@ class _ParkingScreenState extends State<ParkingScreen> {
               height: 48,
               text: 'Забронировать',
               textStyle: ParkingStyles.buttonText,
+              backgroundColor: AppColors.formSurface,
               onPressed: _selectedPlace == null ? null : _onBookPressed,
             ),
           ],
@@ -136,7 +146,7 @@ class _ParkingPlacesGrid extends StatelessWidget {
     return Wrap(
       alignment: WrapAlignment.center,
       spacing: 12,
-      runSpacing: 12,
+      runSpacing: 24,
       children: places
           .map(
             (number) => _ParkingPlace(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:wordpice/core/theme/app_colors.dart';
 import 'package:wordpice/features/archive/presentation/models/archive_item.dart';
 import 'package:wordpice/features/archive/presentation/widgets/styles/archive_styles.dart';
 
@@ -10,26 +11,32 @@ class ArchiveCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        Center(
-          child: Container(
-            constraints: const BoxConstraints(maxWidth: 332),
-            width: double.infinity,
-            padding: const EdgeInsets.fromLTRB(14, 8, 12, 8),
-            decoration: ArchiveStyles.outlinedBox(12),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(6),
-                  child: Container(
-                    width: 48,
-                    height: 48,
-                    decoration: ArchiveStyles.outlinedBox(
-                      8,
+    return Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 332),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.fromLTRB(14, 8, 12, 8),
+              decoration: ArchiveStyles.outlinedBox(
+                12,
+                color: AppColors.formSurface,
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 80,
+                    height: 80,
+                    decoration: BoxDecoration(
                       color: const Color(0xFFBDBDBD),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(
+                        color: AppColors.bottomNavBackground,
+                        width: 1.5,
+                      ),
                     ),
                     child: const Icon(
                       Icons.image_outlined,
@@ -37,48 +44,48 @@ class ArchiveCard extends StatelessWidget {
                       color: Colors.white,
                     ),
                   ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: SizedBox(
-                    height: 90,
-                    child: Stack(
-                      children: [
-                        const Align(
-                          alignment: Alignment.topRight,
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [_ArchivedBadgeIcon()],
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: SizedBox(
+                      height: 90,
+                      child: Stack(
+                        children: [
+                          const Align(
+                            alignment: Alignment.topRight,
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [_ArchivedBadgeIcon()],
+                            ),
                           ),
-                        ),
-                        Center(
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(item.title, style: ArchiveStyles.cardText),
-                              const SizedBox(height: 3),
-                              Text(item.room, style: ArchiveStyles.cardText),
-                              const SizedBox(height: 3),
-                              Text(
-                                'Вместимость: ${item.capacity} человек',
-                                style: ArchiveStyles.cardText,
-                              ),
-                            ],
+                          Center(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(item.title, style: ArchiveStyles.cardText),
+                                const SizedBox(height: 3),
+                                Text(item.room, style: ArchiveStyles.cardText),
+                                const SizedBox(height: 3),
+                                Text(
+                                  'Вместимость: ${item.capacity} человек',
+                                  style: ArchiveStyles.cardText,
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
+            const SizedBox(height: 10),
+            Text('${item.price}р', style: ArchiveStyles.priceText),
+          ],
         ),
-        const SizedBox(height: 10),
-        Text('${item.price}р', style: ArchiveStyles.priceText),
-      ],
+      ),
     );
   }
 }

@@ -6,7 +6,7 @@ class ProfileCardDecorations {
 
   static const double outlineRadiusValue = 8;
   static const BorderSide outlineBorderSide = BorderSide(
-    color: AppColors.border,
+    color: AppColors.bottomNavBackground,
     width: 1,
   );
   static const BorderRadius outlineRadius = BorderRadius.all(

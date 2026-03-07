@@ -18,9 +18,7 @@ class DeleteAccountModal {
       message: 'Вы действительно хотите удалить\nпрофиль?',
       confirmLabel: 'Удалить',
       cancelLabel: 'Отмена',
-      backgroundColor: AppColors.background,
-      confirmBackgroundColor: AppColors.controlGrey,
-      cancelBackgroundColor: AppColors.background,
+      backgroundColor: AppColors.modalBackground,
       messageStyle: _messageStyle,
       contentPadding: const EdgeInsets.fromLTRB(20, 24, 20, 20),
     );

@@ -9,6 +9,7 @@ class AppActionMenuButton extends StatelessWidget {
     this.height = 52,
     this.borderRadius = const BorderRadius.all(Radius.circular(12)),
     this.textStyle = const TextStyle(fontSize: 18, fontWeight: FontWeight.w400),
+    this.backgroundColor,
   });
 
   final String text;
@@ -17,6 +18,7 @@ class AppActionMenuButton extends StatelessWidget {
   final double height;
   final BorderRadius borderRadius;
   final TextStyle textStyle;
+  final Color? backgroundColor;
 
   @override
   Widget build(BuildContext context) {
@@ -26,6 +28,7 @@ class AppActionMenuButton extends StatelessWidget {
       child: OutlinedButton(
         onPressed: onPressed,
         style: OutlinedButton.styleFrom(
+          backgroundColor: backgroundColor,
           shape: RoundedRectangleBorder(borderRadius: borderRadius),
         ),
         child: Text(text, style: textStyle),

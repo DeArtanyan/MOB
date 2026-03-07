@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:wordpice/core/theme/app_colors.dart';
 import 'package:wordpice/core/widgets/states/app_empty_state_text.dart';
 
 class QrModal {
@@ -80,7 +81,7 @@ class QrModal {
                   width: 320,
                   padding: const EdgeInsets.fromLTRB(16, 14, 16, 16),
                   decoration: BoxDecoration(
-                    color: Colors.grey.shade300,
+                    color: AppColors.modalBackground,
                     borderRadius: BorderRadius.circular(18),
                     border: Border.all(color: Colors.black87),
                   ),

@@ -11,7 +11,8 @@ class ProfileSurfaceCard extends StatelessWidget {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: AppColors.controlGrey,
+        color: AppColors.profileSurface,
+        border: Border.all(color: AppColors.bottomNavBackground, width: 1),
         borderRadius: BorderRadius.circular(18),
       ),
       child: child,

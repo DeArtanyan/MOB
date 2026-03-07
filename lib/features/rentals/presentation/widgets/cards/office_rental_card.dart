@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:wordpice/core/theme/app_colors.dart';
 import 'package:wordpice/core/widgets/buttons/favorite_heart_toggle.dart';
 import 'package:wordpice/features/rentals/presentation/models/office_rental_item.dart';
 import 'package:wordpice/features/rentals/presentation/utils/rental_time_slots_helper.dart';
@@ -109,24 +110,28 @@ class _OfficeRentalCardState extends State<OfficeRentalCard> {
             constraints: const BoxConstraints(maxWidth: 332),
             width: double.infinity,
             padding: const EdgeInsets.fromLTRB(14, 10, 12, 10),
-            decoration: RentalWidgetStyles.outlinedBox(12),
+            decoration: RentalWidgetStyles.outlinedBox(
+              12,
+              color: AppColors.formSurface,
+            ),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(14),
-                  child: Container(
-                    width: 48,
-                    height: 48,
-                    decoration: RentalWidgetStyles.outlinedBox(
-                      8,
-                      color: const Color(0xFFBDBDBD),
+                Container(
+                  width: 80,
+                  height: 80,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFBDBDBD),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      color: AppColors.bottomNavBackground,
+                      width: 1.5,
                     ),
-                    child: const Icon(
-                      Icons.image_outlined,
-                      size: 28,
-                      color: Colors.white,
-                    ),
+                  ),
+                  child: const Icon(
+                    Icons.image_outlined,
+                    size: 28,
+                    color: Colors.white,
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -192,7 +197,10 @@ class _OfficeRentalCardState extends State<OfficeRentalCard> {
               width: 286,
               height: 36,
               alignment: Alignment.center,
-              decoration: RentalWidgetStyles.outlinedBox(8),
+              decoration: RentalWidgetStyles.outlinedBox(
+                8,
+                color: AppColors.formSurface,
+              ),
               child: const Text(
                 'Свободного времени нет',
                 textAlign: TextAlign.center,
@@ -211,7 +219,10 @@ class _OfficeRentalCardState extends State<OfficeRentalCard> {
                   width: 286,
                   height: 36,
                   padding: const EdgeInsets.symmetric(horizontal: 12),
-                  decoration: RentalWidgetStyles.outlinedBox(8),
+                  decoration: RentalWidgetStyles.outlinedBox(
+                    8,
+                    color: AppColors.formSurface,
+                  ),
                   alignment: Alignment.center,
                   child: Text(
                     'Доступное время с ${_freeTimeSlots.first}',

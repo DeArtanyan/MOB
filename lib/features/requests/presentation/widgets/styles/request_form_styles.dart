@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:wordpice/core/theme/app_colors.dart';
+import 'package:wordpice/core/theme/app_text_styles.dart';
 
 class RequestFormStyles {
   RequestFormStyles._();
 
-  static const title = TextStyle(fontSize: 22, fontWeight: FontWeight.w600);
+  static const title = AppTextStyles.unboundedRegular22;
   static const fieldLabel = TextStyle(
     fontSize: 16,
     fontWeight: FontWeight.w400,
@@ -32,6 +34,7 @@ class RequestFormStyles {
 
   static BoxDecoration outlinedField({BorderRadius? radius}) {
     return BoxDecoration(
+      color: AppColors.formSurface,
       border: Border.all(color: Colors.black87, width: 1),
       borderRadius: radius ?? fieldBorderRadius,
     );

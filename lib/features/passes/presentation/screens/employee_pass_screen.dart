@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:wordpice/app/navigation/app_tab_navigator.dart';
+import 'package:wordpice/core/theme/app_colors.dart';
 import 'package:wordpice/core/widgets/layout/app_constrained_scroll_view.dart';
 import 'package:wordpice/core/widgets/layout/app_shell.dart';
 import 'package:wordpice/features/passes/presentation/widgets/forms/pass_form_widgets.dart';
@@ -16,7 +17,7 @@ class EmployeePassScreen extends StatefulWidget {
 
 class _EmployeePassScreenState extends State<EmployeePassScreen> {
   static const int _tabIndex = 2;
-  static const double _contentWidth = 320;
+  static const double _contentWidth = double.infinity;
 
   final int _selectedBottomIndex = _tabIndex;
   final TextEditingController _emailController = TextEditingController();
@@ -87,22 +88,35 @@ class _EmployeePassScreenState extends State<EmployeePassScreen> {
       onBottomChanged: _onBottomChanged,
       body: AppConstrainedScrollView(
         maxWidth: _contentWidth,
+        padding: const EdgeInsets.fromLTRB(24, 20, 24, 24),
         centerVertically: true,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             const _EmployeePassHeader(),
-            _EmployeePassFieldsSection(
-              emailController: _emailController,
-              companyController: _companyController,
-              positionController: _positionController,
-            ),
-            const SizedBox(height: 18),
-            PassParkingSelector(
-              selectedParkingPlace: _selectedParkingPlace,
-              isOpen: _isParkingMenuOpen,
-              onToggle: _toggleParkingMenu,
-              onSelect: _selectParkingPlace,
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.fromLTRB(14, 20, 14, 20),
+              decoration: BoxDecoration(
+                color: AppColors.formBlockBackground,
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Column(
+                children: [
+                  _EmployeePassFieldsSection(
+                    emailController: _emailController,
+                    companyController: _companyController,
+                    positionController: _positionController,
+                  ),
+                  const SizedBox(height: 18),
+                  PassParkingSelector(
+                    selectedParkingPlace: _selectedParkingPlace,
+                    isOpen: _isParkingMenuOpen,
+                    onToggle: _toggleParkingMenu,
+                    onSelect: _selectParkingPlace,
+                  ),
+                ],
+              ),
             ),
             const SizedBox(height: 26),
             PassSubmitButton(
@@ -203,4 +217,3 @@ class _EmployeePassField extends StatelessWidget {
     );
   }
 }
-

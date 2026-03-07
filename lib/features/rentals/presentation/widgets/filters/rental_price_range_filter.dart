@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:wordpice/core/theme/app_colors.dart';
 
 class RentalPriceRangeFilter extends StatefulWidget {
   const RentalPriceRangeFilter({
@@ -139,7 +140,7 @@ class _RentalPriceRangeFilterState extends State<RentalPriceRangeFilter> {
         decoration: InputDecoration(
           isDense: true,
           filled: true,
-          fillColor: Colors.transparent,
+          fillColor: AppColors.formSurface,
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
             borderSide: const BorderSide(color: Colors.black87, width: 1),
@@ -175,7 +176,7 @@ class _RentalPriceRangeFilterState extends State<RentalPriceRangeFilter> {
           child: SliderTheme(
             data: SliderTheme.of(context).copyWith(
               trackHeight: 6,
-              activeTrackColor: const Color(0xFFD5DDE4),
+              activeTrackColor: const Color(0xFF7C8FA0),
               inactiveTrackColor: const Color(0xFFD5DDE4),
               thumbColor: const Color(0xFF7E94A8),
               rangeThumbShape: const RoundRangeSliderThumbShape(

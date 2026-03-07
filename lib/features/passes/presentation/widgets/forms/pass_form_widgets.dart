@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:wordpice/core/theme/app_colors.dart';
 import 'package:wordpice/features/passes/presentation/widgets/styles/pass_form_styles.dart';
 
 class PassFieldLabel extends StatelessWidget {
@@ -101,6 +102,7 @@ class PassSubmitButton extends StatelessWidget {
       child: OutlinedButton(
         onPressed: onPressed,
         style: OutlinedButton.styleFrom(
+          backgroundColor: AppColors.formSurface,
           shape: const RoundedRectangleBorder(
             borderRadius: PassFormStyles.fieldRadius,
           ),

@@ -20,11 +20,14 @@ class EditProfilePreviewCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
+      padding: EditProfileStyles.previewCardPadding,
       decoration: const BoxDecoration(
-        color: AppColors.controlGrey,
+        color: AppColors.profileSurface,
+        border: Border.fromBorderSide(
+          BorderSide(color: AppColors.bottomNavBackground, width: 1),
+        ),
         borderRadius: EditProfileStyles.cardRadius,
       ),
-      padding: EditProfileStyles.previewCardPadding,
       child: Row(
         children: [
           const ProfileIdentityAvatar(size: 58),
@@ -66,16 +69,19 @@ class EditProfileEditorCard extends StatelessWidget {
     return Container(
       width: double.infinity,
       height: 458,
+      padding: EditProfileStyles.editorCardPadding,
       decoration: const BoxDecoration(
-        color: AppColors.controlGrey,
+        color: AppColors.profileSurface,
+        border: Border.fromBorderSide(
+          BorderSide(color: AppColors.bottomNavBackground, width: 1),
+        ),
         borderRadius: EditProfileStyles.cardRadius,
       ),
-      padding: EditProfileStyles.editorCardPadding,
       child: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 8),
+            const SizedBox(height: 16),
             const Text(
               _sectionTitle,
               style: EditProfileStyles.sectionTitleStyle,
@@ -122,6 +128,7 @@ class _ActionButton extends StatelessWidget {
       child: OutlinedButton(
         onPressed: onPressed,
         style: OutlinedButton.styleFrom(
+          backgroundColor: AppColors.formSurface,
           side: const BorderSide(color: Colors.black87, width: 1),
           padding: EdgeInsets.zero,
           alignment: Alignment.center,
@@ -129,10 +136,7 @@ class _ActionButton extends StatelessWidget {
             borderRadius: EditProfileStyles.deleteButtonRadius,
           ),
         ),
-        child: Text(
-          label,
-          style: EditProfileStyles.deleteButtonTextStyle,
-        ),
+        child: Text(label, style: EditProfileStyles.deleteButtonTextStyle),
       ),
     );
   }

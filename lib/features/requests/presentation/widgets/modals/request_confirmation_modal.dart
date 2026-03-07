@@ -9,14 +9,13 @@ class RequestConfirmationModal {
     required String date,
     required String time,
     required String requestType,
-    required String roomType,
-    required String cabinet,
+    required String booking,
   }) async {
     await AppConfirmationDialog.show<void>(
       context,
       title: 'Подтверждение',
       message: 'Пожалуйста, проверьте правильность\nуказанных данных',
-      details: ['$date, $time', requestType, roomType, cabinet],
+      details: ['$date, $time', booking, requestType],
       confirmLabel: 'Подтвердить',
       cancelLabel: 'Отмена',
     );

@@ -25,7 +25,12 @@ class AuthLabelText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(text, style: AppTextStyles.label12Grey);
+    return Text(
+      text,
+      style: AppTextStyles.label12Grey.copyWith(
+        fontFamily: AuthStyles.interFontFamily,
+      ),
+    );
   }
 }
 
@@ -37,7 +42,13 @@ class AuthBodyText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(text, textAlign: textAlign, style: AppTextStyles.body14);
+    return Text(
+      text,
+      textAlign: textAlign,
+      style: AppTextStyles.body14.copyWith(
+        fontFamily: AuthStyles.interFontFamily,
+      ),
+    );
   }
 }
 
@@ -48,7 +59,12 @@ class AuthHeaderText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(text, style: AppTextStyles.header20);
+    return Text(
+      text,
+      style: AppTextStyles.header20.copyWith(
+        fontFamily: AuthStyles.interFontFamily,
+      ),
+    );
   }
 }
 
@@ -72,7 +88,11 @@ class AuthPolicyBodyText extends StatelessWidget {
   const AuthPolicyBodyText(this.text, {super.key});
 
   final String text;
-  static const _style = TextStyle(fontSize: 14, color: Colors.black87);
+  static const _style = TextStyle(
+    fontFamily: AuthStyles.interFontFamily,
+    fontSize: 14,
+    color: Colors.black87,
+  );
 
   @override
   Widget build(BuildContext context) {

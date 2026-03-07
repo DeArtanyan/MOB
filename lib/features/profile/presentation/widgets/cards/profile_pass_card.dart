@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:wordpice/core/theme/app_colors.dart';
 import 'package:wordpice/features/profile/presentation/models/profile_pass_item.dart';
-import 'package:wordpice/features/profile/presentation/widgets/cards/profile_surface_card.dart';
 import 'package:wordpice/features/profile/presentation/widgets/styles/profile_card_decorations.dart';
 import 'package:wordpice/features/profile/presentation/widgets/styles/profile_card_styles.dart';
 
@@ -19,7 +18,13 @@ class ProfilePassCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ProfileSurfaceCard(
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: const Color(0xB3FFFFFF),
+        border: Border.all(color: AppColors.bottomNavBackground, width: 1),
+        borderRadius: BorderRadius.circular(18),
+      ),
       child: Padding(
         padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
         child: Row(
@@ -57,12 +62,12 @@ class _PassQrIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 58,
-      height: 58,
+      width: 70,
+      height: 70,
       decoration: ProfileCardDecorations.outlinedCard(
         color: AppColors.background,
       ),
-      child: const Icon(Icons.qr_code_2, size: 30),
+      child: const Icon(Icons.qr_code_2, size: 40),
     );
   }
 }
@@ -92,6 +97,7 @@ class _ActivePassContent extends StatelessWidget {
           child: OutlinedButton(
             onPressed: onShowPressed,
             style: OutlinedButton.styleFrom(
+              backgroundColor: AppColors.screenBackground,
               padding: const EdgeInsets.symmetric(horizontal: 24),
               side: ProfileCardDecorations.outlineBorderSide,
               shape: const RoundedRectangleBorder(

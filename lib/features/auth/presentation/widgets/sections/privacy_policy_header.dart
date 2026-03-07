@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:wordpice/features/auth/presentation/widgets/sections/auth_text.dart';
+import 'package:wordpice/core/theme/app_colors.dart';
 
 class PrivacyPolicyHeader extends StatelessWidget {
   const PrivacyPolicyHeader({super.key, required this.onBack});
@@ -11,7 +11,13 @@ class PrivacyPolicyHeader extends StatelessWidget {
     return Container(
       height: 80,
       width: double.infinity,
-      color: Colors.white,
+      decoration: const BoxDecoration(
+        color: AppColors.controlGrey,
+        borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(14),
+          bottomRight: Radius.circular(14),
+        ),
+      ),
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Row(
         children: [
@@ -27,8 +33,18 @@ class PrivacyPolicyHeader extends StatelessWidget {
               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
             ),
           ),
-          const SizedBox(width: 16),
-          const AuthHeaderText('Политика конфиденциальности'),
+          const SizedBox(width: 10),
+          const Expanded(
+            child: Text(
+              'Политика конфиденциальности',
+              style: TextStyle(
+                fontFamily: 'MontserratAlternates',
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+              ),
+
+            ),
+          ),
         ],
       ),
     );

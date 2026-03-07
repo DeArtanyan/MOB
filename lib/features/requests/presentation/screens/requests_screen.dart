@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:wordpice/app/navigation/app_tab_navigator.dart';
+import 'package:wordpice/core/theme/app_colors.dart';
+import 'package:wordpice/features/requests/data/mock/request_booking_mock_data.dart';
 import 'package:wordpice/core/widgets/layout/app_constrained_scroll_view.dart';
 import 'package:wordpice/core/widgets/layout/app_shell.dart';
 import 'package:wordpice/features/requests/presentation/widgets/forms/request_form_comment_field.dart';
@@ -11,11 +13,12 @@ import 'package:wordpice/features/requests/presentation/widgets/forms/request_fo
 import 'package:wordpice/features/requests/presentation/widgets/modals/request_confirmation_modal.dart';
 import 'package:wordpice/features/requests/presentation/widgets/styles/request_form_styles.dart';
 
-const _kScreenPadding = EdgeInsets.fromLTRB(36, 16, 36, 24);
+const _kScreenPadding = EdgeInsets.fromLTRB(24, 16, 24, 24);
 const _kSectionGap = SizedBox(height: 18);
 const _kLabelGap = SizedBox(height: 8);
+const _kFieldsBlockPadding = EdgeInsets.fromLTRB(14, 12, 14, 24);
 
-enum _RequestMenu { requestType, time, roomType, cabinet }
+enum _RequestMenu { booking, time, requestType }
 
 class RequestsScreen extends StatefulWidget {
   const RequestsScreen({super.key});
@@ -26,25 +29,14 @@ class RequestsScreen extends StatefulWidget {
 
 class _RequestsScreenState extends State<RequestsScreen> {
   static const int _tabIndex = 1;
-  static const double _contentWidth = 360;
+  static const double _contentWidth = double.infinity;
   static const List<String> _requestTypes = ['Клининг', 'Техобслуживание'];
-  static const List<String> _roomTypes = [
-    'Переговорная комната',
-    'Офис',
-    'Комната коворкинга',
-  ];
-  static const List<String> _cabinetOptions = [
-    'Кабинет №1',
-    'Кабинет №2',
-    'Кабинет №3',
-  ];
 
   int _selectedBottomIndex = _tabIndex;
   DateTime? _selectedDate;
+  String? _selectedBooking;
   String? _selectedRequestType;
   String? _selectedTime;
-  String? _selectedRoomType;
-  String? _selectedCabinet;
   _RequestMenu? _openMenu;
 
   void _onBottomChanged(int index) {
@@ -83,19 +75,24 @@ class _RequestsScreenState extends State<RequestsScreen> {
     return '$day.$month.${value.year}';
   }
 
+  String get _bookingText => _selectedBooking ?? 'Выберите бронирование';
   String get _timeText => _selectedTime ?? 'Выберите желаемое время';
   String get _requestTypeText => _selectedRequestType ?? 'Выберите тип заявки';
-  String get _roomTypeText => _selectedRoomType ?? 'Выберите помещение';
-  String get _cabinetText => _selectedCabinet ?? 'Выберите номер кабинета';
 
-  bool get _isRequestTypeMenuOpen => _openMenu == _RequestMenu.requestType;
+  bool get _isBookingMenuOpen => _openMenu == _RequestMenu.booking;
   bool get _isTimeMenuOpen => _openMenu == _RequestMenu.time;
-  bool get _isRoomTypeMenuOpen => _openMenu == _RequestMenu.roomType;
-  bool get _isCabinetMenuOpen => _openMenu == _RequestMenu.cabinet;
+  bool get _isRequestTypeMenuOpen => _openMenu == _RequestMenu.requestType;
 
   void _toggleMenu(_RequestMenu menu) {
     setState(() {
       _openMenu = _openMenu == menu ? null : menu;
+    });
+  }
+
+  void _selectBooking(String booking) {
+    setState(() {
+      _selectedBooking = booking;
+      _openMenu = null;
     });
   }
 
@@ -113,26 +110,11 @@ class _RequestsScreenState extends State<RequestsScreen> {
     });
   }
 
-  void _selectRoomType(String type) {
-    setState(() {
-      _selectedRoomType = type;
-      _openMenu = null;
-    });
-  }
-
-  void _selectCabinet(String cabinet) {
-    setState(() {
-      _selectedCabinet = cabinet;
-      _openMenu = null;
-    });
-  }
-
   bool get _canCreateRequest =>
       _selectedDate != null &&
+      _selectedBooking != null &&
       _selectedRequestType != null &&
-      _selectedTime != null &&
-      _selectedRoomType != null &&
-      _selectedCabinet != null;
+      _selectedTime != null;
 
   Future<void> _showCreateRequestModal() {
     final selectedDate = _selectedDate!;
@@ -144,8 +126,7 @@ class _RequestsScreenState extends State<RequestsScreen> {
       date: '$day.$month.${selectedDate.year}',
       time: _selectedTime!,
       requestType: _selectedRequestType!,
-      roomType: _selectedRoomType!,
-      cabinet: _selectedCabinet!,
+      booking: _selectedBooking!,
     );
   }
 
@@ -161,44 +142,49 @@ class _RequestsScreenState extends State<RequestsScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text('Заявки', style: RequestFormStyles.title),
-            _RequestDateSection(dateText: _dateText, onTap: _pickDate),
-            _RequestDropdownSection(
-              label: 'Тип заявки*',
-              value: _requestTypeText,
-              isOpen: _isRequestTypeMenuOpen,
-              onTap: () => _toggleMenu(_RequestMenu.requestType),
-              items: _requestTypes,
-              onSelect: _selectRequestType,
-              menuHeight: 74,
+            const SizedBox(height: 14),
+            Container(
+              width: double.infinity,
+              padding: _kFieldsBlockPadding,
+              decoration: BoxDecoration(
+                color: AppColors.formBlockBackground,
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _RequestDropdownSection(
+                    label: 'Список бронирований*',
+                    value: _bookingText,
+                    isOpen: _isBookingMenuOpen,
+                    onTap: () => _toggleMenu(_RequestMenu.booking),
+                    items: requestBookingMockData,
+                    onSelect: _selectBooking,
+                    menuHeight: 108,
+                  ),
+                  _RequestDateSection(dateText: _dateText, onTap: _pickDate),
+                  _RequestDropdownSection(
+                    label: 'Время*',
+                    value: _timeText,
+                    isOpen: _isTimeMenuOpen,
+                    onTap: () => _toggleMenu(_RequestMenu.time),
+                    items: _timeSlots,
+                    onSelect: _selectTime,
+                    menuHeight: 86,
+                  ),
+                  _RequestDropdownSection(
+                    label: 'Тип заявки*',
+                    value: _requestTypeText,
+                    isOpen: _isRequestTypeMenuOpen,
+                    onTap: () => _toggleMenu(_RequestMenu.requestType),
+                    items: _requestTypes,
+                    onSelect: _selectRequestType,
+                    menuHeight: 74,
+                  ),
+                  const _RequestCommentSection(),
+                ],
+              ),
             ),
-            _RequestDropdownSection(
-              label: 'Время*',
-              value: _timeText,
-              isOpen: _isTimeMenuOpen,
-              onTap: () => _toggleMenu(_RequestMenu.time),
-              items: _timeSlots,
-              onSelect: _selectTime,
-              menuHeight: 86,
-            ),
-            _RequestDropdownSection(
-              label: 'Тип помещения*',
-              value: _roomTypeText,
-              isOpen: _isRoomTypeMenuOpen,
-              onTap: () => _toggleMenu(_RequestMenu.roomType),
-              items: _roomTypes,
-              onSelect: _selectRoomType,
-              menuHeight: 108,
-            ),
-            _RequestDropdownSection(
-              label: 'Кабинет №*',
-              value: _cabinetText,
-              isOpen: _isCabinetMenuOpen,
-              onTap: () => _toggleMenu(_RequestMenu.cabinet),
-              items: _cabinetOptions,
-              onSelect: _selectCabinet,
-              menuHeight: 108,
-            ),
-            const _RequestCommentSection(),
             const SizedBox(height: 20),
             Center(
               child: RequestFormSubmitButton(

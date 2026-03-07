@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:wordpice/app/navigation/app_tab_navigator.dart';
+import 'package:wordpice/core/theme/app_colors.dart';
+import 'package:wordpice/core/theme/app_text_styles.dart';
 import 'package:wordpice/core/widgets/buttons/app_action_menu_button.dart';
 import 'package:wordpice/core/widgets/layout/app_constrained_scroll_view.dart';
 import 'package:wordpice/core/widgets/layout/app_shell.dart';
@@ -7,7 +9,7 @@ import 'package:wordpice/features/rentals/presentation/screens/coworking_rental_
 import 'package:wordpice/features/rentals/presentation/screens/meeting_room_rental_screen.dart';
 import 'package:wordpice/features/rentals/presentation/screens/office_rental_screen.dart';
 
-const _kTitleStyle = TextStyle(fontSize: 22, fontWeight: FontWeight.w600);
+const _kTitleStyle = AppTextStyles.unboundedRegular22;
 const _kActionTextStyle = TextStyle(fontSize: 18, fontWeight: FontWeight.w400);
 
 class RentalsScreen extends StatefulWidget {
@@ -52,6 +54,7 @@ class _RentalsScreenState extends State<RentalsScreen> {
             AppActionMenuButton(
               text: 'Аренда переговорной',
               textStyle: _kActionTextStyle,
+              backgroundColor: AppColors.formSurface,
               onPressed: () => Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -63,6 +66,7 @@ class _RentalsScreenState extends State<RentalsScreen> {
             AppActionMenuButton(
               text: 'Аренда офиса',
               textStyle: _kActionTextStyle,
+              backgroundColor: AppColors.formSurface,
               onPressed: () => Navigator.push(
                 context,
                 MaterialPageRoute(builder: (_) => const OfficeRentalScreen()),
@@ -72,6 +76,7 @@ class _RentalsScreenState extends State<RentalsScreen> {
             AppActionMenuButton(
               text: 'Аренда коворкинга',
               textStyle: _kActionTextStyle,
+              backgroundColor: AppColors.formSurface,
               onPressed: () => Navigator.push(
                 context,
                 MaterialPageRoute(

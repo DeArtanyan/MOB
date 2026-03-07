@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:wordpice/core/theme/app_colors.dart';
 
 class OfficeTimePickerModal extends StatefulWidget {
   const OfficeTimePickerModal({super.key, required this.availableTime});
@@ -74,6 +75,7 @@ class _OfficeTimePickerModalState extends State<OfficeTimePickerModal> {
     final canSubmit = _fromHour != null && _toHour != null;
 
     return Dialog(
+      backgroundColor: AppColors.modalBackground,
       insetPadding: const EdgeInsets.symmetric(horizontal: 20),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
@@ -95,7 +97,7 @@ class _OfficeTimePickerModalState extends State<OfficeTimePickerModal> {
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
                       color: selected
-                          ? const Color(0xFFD9D9D9)
+                          ? const Color(0x407C8FA0)
                           : Colors.transparent,
                       borderRadius: BorderRadius.circular(4),
                     ),
@@ -114,12 +116,13 @@ class _OfficeTimePickerModalState extends State<OfficeTimePickerModal> {
             SizedBox(
               width: 190,
               height: 34,
-              child: OutlinedButton(
-                style: OutlinedButton.styleFrom(
-                  padding: EdgeInsets.zero,
-                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  visualDensity: VisualDensity.compact,
-                ),
+                child: OutlinedButton(
+                  style: OutlinedButton.styleFrom(
+                    backgroundColor: AppColors.formSurface,
+                    padding: EdgeInsets.zero,
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    visualDensity: VisualDensity.compact,
+                  ),
                 onPressed: canSubmit
                     ? () => Navigator.of(context).pop(
                         '${_formatHour(_fromHour!)} - ${_formatHour(_toHour!)}',

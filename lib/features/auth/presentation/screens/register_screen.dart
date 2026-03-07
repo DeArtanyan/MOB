@@ -74,7 +74,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Center(child: AuthTitleText('Регистрация')),
-                        const SizedBox(height: 10),
+                        const SizedBox(height: 26),
                         const AuthLabelText('Имя*'),
                         const SizedBox(height: 4),
                         TextField(
@@ -198,19 +198,23 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             ),
                           ),
                         ),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: 12),
                         Center(
                           child: AuthActionButton(
                             label: 'Зарегистрироваться',
                             onPressed: _goToAccountConfirmation,
                           ),
                         ),
-                        const SizedBox(height: 4),
-                        const Center(child: AuthBodyText('Уже есть аккаунт?')),
+                        const SizedBox(height: 10),
                         Center(
                           child: TextButton(
                             onPressed: _goToAuth,
-                            child: const AuthBodyText('Авторизация'),
+                            style: TextButton.styleFrom(
+                              padding: EdgeInsets.zero,
+                              minimumSize: Size.zero,
+                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            ),
+                            child: const AuthBodyText('Уже есть аккаунт? Авторизация',),
                           ),
                         ),
                       ],

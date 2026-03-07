@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:wordpice/core/theme/app_input_decorations.dart';
-import 'package:wordpice/core/widgets/buttons/app_back_button.dart';
 import 'package:wordpice/features/auth/presentation/widgets/buttons/auth_action_button.dart';
 import 'package:wordpice/features/auth/presentation/widgets/cards/auth_form_card.dart';
 import 'package:wordpice/features/auth/presentation/widgets/sections/auth_text.dart';
 import 'package:wordpice/features/auth/presentation/widgets/styles/auth_styles.dart';
 import 'package:wordpice/features/profile/presentation/screens/profile_screen.dart';
+import 'package:wordpice/features/splash/presentation/widgets/splash_logo.dart';
 
 class AccountConfirmationScreen extends StatefulWidget {
   const AccountConfirmationScreen({super.key});
@@ -100,50 +100,72 @@ class _AccountConfirmationScreenState extends State<AccountConfirmationScreen> {
       body: SafeArea(
         child: Stack(
           children: [
-            AppBackButton(onTap: _goBack),
-            Center(
-              child: SingleChildScrollView(
-                padding: AuthStyles.screenHorizontalPadding,
-                child: AuthFormCard(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: 32),
-                      const Center(
-                        child: AuthTitleText('Подтверждение\nаккаунта'),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SplashLogo(),
+                  const SizedBox(height: 44),
+                  IconButton(
+                    iconSize: 16,
+                    padding: EdgeInsets.zero,
+                    onPressed: _goBack,
+                    icon: const Icon(Icons.arrow_back_ios_new),
+                    style: IconButton.styleFrom(
+                      side: const BorderSide(color: Colors.black87),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
                       ),
-                      const SizedBox(height: 16),
-                      const Center(
-                        child: AuthHelperText(
-                          'Введите код, отправленный вам на почту',
-                          small: true,
-                        ),
+                      minimumSize: const Size(28, 28),
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: AuthStyles.screenPadding,
+              child: Align(
+                alignment: Alignment.center,
+                child: SingleChildScrollView(
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: AuthFormCard(
+                      padding: AuthStyles.formPaddingCompact,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Center(
+                            child: AuthTitleText('Подтверждение\nаккаунта'),
+                          ),
+                          const SizedBox(height: 30),
+                          const AuthLabelText('Эл.почта*'),
+                          const SizedBox(height: 4),
+                          TextField(
+                            controller: _emailController,
+                            keyboardType: TextInputType.emailAddress,
+                            decoration: AppInputDecorations.authField(
+                              hintText: 'Введите электронную почту',
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                          const AuthBodyText('Код'),
+                          const SizedBox(height: 10),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: List.generate(_codeLength, _codeBox),
+                          ),
+                          const SizedBox(height: 22),
+                          Center(
+                            child: AuthActionButton(
+                              label: 'Подтвердить',
+                              onPressed: _submit,
+                            ),
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: 20),
-                      const AuthLabelText('Эл.почта*'),
-                      const SizedBox(height: 4),
-                      TextField(
-                        controller: _emailController,
-                        keyboardType: TextInputType.emailAddress,
-                        decoration: AppInputDecorations.authField(
-                          hintText: 'Введите электронную почту',
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                      const AuthBodyText('Код'),
-                      const SizedBox(height: 10),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: List.generate(_codeLength, _codeBox),
-                      ),
-                      const SizedBox(height: 22),
-                      Center(
-                        child: AuthActionButton(
-                          label: 'Отправить',
-                          onPressed: _submit,
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
                 ),
               ),

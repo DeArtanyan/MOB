@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:wordpice/core/theme/app_colors.dart';
 
 class ReviewsStyles {
   ReviewsStyles._();
@@ -31,5 +32,5 @@ class ReviewsStyles {
   static const inputHint = TextStyle(color: Colors.black54);
 
   static const starActive = Color(0xFFFFFFAA);
-  static const starInactive = Color(0xFFD0D0D0);
+  static const starInactive = AppColors.profileSurface;
 }

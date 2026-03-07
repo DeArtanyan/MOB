@@ -12,92 +12,105 @@ class NotificationCard extends StatelessWidget {
     required this.onReadChanged,
   });
 
+  static const double _cardWidth = 300;
+  static const double _blockWidth = 352;
+
   final NotificationItem item;
   final bool isRead;
   final ValueChanged<bool> onReadChanged;
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
+    return Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: _blockWidth),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(
-              child: Stack(
-                children: [
-                  Container(
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SizedBox(
+                  width: _cardWidth,
+                  child: Container(
                     width: double.infinity,
                     padding: const EdgeInsets.all(12),
                     decoration: NotificationStyles.cardDecoration(),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    child: Stack(
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.only(right: 18),
-                          child: Text(
-                            item.title,
-                            style: NotificationStyles.cardTopicText,
-                          ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(right: 18),
+                              child: Text(
+                                item.title,
+                                style: NotificationStyles.cardTopicText,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(item.message, style: NotificationStyles.messageText),
+                            Align(
+                              alignment: Alignment.centerRight,
+                              child: Text(
+                                item.dateTimeText,
+                                style: NotificationStyles.dateText,
+                              ),
+                            ),
+                          ],
                         ),
-                        const SizedBox(height: 4),
-                        Text(item.message, style: NotificationStyles.messageText),
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: Text(
-                            item.dateTimeText,
-                            style: NotificationStyles.dateText,
+                        Positioned(
+                          top: 2,
+                          right: 2,
+                          child: AnimatedOpacity(
+                            duration: const Duration(milliseconds: 180),
+                            opacity: isRead ? 0 : 1,
+                            child: Container(
+                              width: 10,
+                              height: 10,
+                              decoration: const BoxDecoration(
+                                color: Color(0xFFFF5A67),
+                                shape: BoxShape.circle,
+                              ),
+                            ),
                           ),
                         ),
                       ],
                     ),
                   ),
-                  Positioned(
-                    top: 14,
-                    right: 14,
-                    child: AnimatedOpacity(
-                      duration: const Duration(milliseconds: 180),
-                      opacity: isRead ? 0 : 1,
-                      child: Container(
-                        width: 10,
-                        height: 10,
-                        decoration: const BoxDecoration(
-                          color: Color(0xFFFF5A67),
-                          shape: BoxShape.circle,
-                        ),
+                ),
+                const SizedBox(width: 8),
+                InkWell(
+                  onTap: () {},
+                  borderRadius: BorderRadius.circular(8),
+                  child: Padding(
+                    padding: const EdgeInsets.all(2),
+                    child: SvgPicture.asset(
+                      'assets/icons/delete.svg',
+                      width: 40,
+                      height: 40,
+                      colorFilter: const ColorFilter.mode(
+                        Colors.black54,
+                        BlendMode.srcIn,
                       ),
                     ),
                   ),
-                ],
-              ),
-            ),
-            const SizedBox(width: 12),
-            InkWell(
-              onTap: () {},
-              borderRadius: BorderRadius.circular(8),
-              child: Padding(
-                padding: const EdgeInsets.all(2),
-                child: SvgPicture.asset(
-                  'assets/icons/delete.svg',
-                  width: 40,
-                  height: 40,
-                  colorFilter: const ColorFilter.mode(
-                    Colors.black54,
-                    BlendMode.srcIn,
-                  ),
                 ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            SizedBox(
+              width: _cardWidth,
+              child: NotificationReadAction(
+                label: 'Прочитать уведомление',
+                value: isRead,
+                onChanged: onReadChanged,
               ),
             ),
           ],
         ),
-        const SizedBox(height: 12),
-        NotificationReadAction(
-          label: 'Прочитать уведомление',
-          value: isRead,
-          onChanged: onReadChanged,
-        ),
-      ],
+      ),
     );
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:wordpice/core/theme/app_colors.dart';
 
 class RequestFormCommentField extends StatelessWidget {
   const RequestFormCommentField({super.key});
@@ -13,6 +14,8 @@ class RequestFormCommentField extends StatelessWidget {
         textAlignVertical: TextAlignVertical.top,
         decoration: InputDecoration(
           hintText: 'Введите комментарий',
+          filled: true,
+          fillColor: AppColors.formSurface,
           contentPadding: const EdgeInsets.fromLTRB(14, 14, 14, 14),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),

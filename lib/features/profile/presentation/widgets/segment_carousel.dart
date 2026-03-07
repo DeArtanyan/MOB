@@ -94,7 +94,7 @@ class _SegmentCarouselState extends State<SegmentCarousel> {
                     return Container(
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
-                        color: AppColors.background,
+                        color: AppColors.formSurface,
                         borderRadius: BorderRadius.circular(kRadius),
                         border: Border.all(color: AppColors.border, width: 1),
                       ),

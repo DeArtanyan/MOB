@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:wordpice/core/theme/app_colors.dart';
 import 'package:wordpice/core/widgets/buttons/favorite_heart_toggle.dart';
 import 'package:wordpice/features/profile/presentation/widgets/styles/profile_card_decorations.dart';
 import 'package:wordpice/features/profile/presentation/widgets/styles/profile_card_styles.dart';
@@ -15,7 +16,14 @@ class ProfileRentalCardFrame extends StatelessWidget {
         constraints: const BoxConstraints(maxWidth: 332),
         width: double.infinity,
         padding: const EdgeInsets.fromLTRB(14, 10, 12, 10),
-        decoration: ProfileCardDecorations.outlinedCard(),
+        decoration: BoxDecoration(
+          color: AppColors.formSurface,
+          border: Border.all(
+            color: AppColors.bottomNavBackground,
+            width: 1.5,
+          ),
+          borderRadius: ProfileCardDecorations.outlineRadius,
+        ),
         child: child,
       ),
     );
@@ -92,16 +100,13 @@ class _RentalThumbnail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(14),
-      child: Container(
-        width: 48,
-        height: 48,
-        decoration: ProfileCardDecorations.outlinedCard(
-          color: const Color(0xFFBDBDBD),
-        ).copyWith(border: null),
-        child: const Icon(Icons.image_outlined, size: 28, color: Colors.white),
+    return Container(
+      width: 80,
+      height: 80,
+      decoration: ProfileCardDecorations.outlinedCard(
+        color: const Color(0xFFBDBDBD),
       ),
+      child: const Icon(Icons.image_outlined, size: 28, color: Colors.white),
     );
   }
 }

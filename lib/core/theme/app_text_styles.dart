@@ -1,23 +1,16 @@
 import 'package:flutter/material.dart';
 import 'app_colors.dart';
 
-/// Текстовые стили приложения.
-///
-/// Что изменено:
-/// - `title26` использует Montserrat Alternates Regular 26
-/// - остальные стили оставлены без изменений, чтобы не ломать существующий код
 class AppTextStyles {
   AppTextStyles._();
 
-  /// Название шрифта должно совпадать с `pubspec.yaml`.
   static const String _titleFontFamily = 'MontserratAlternates';
+  static const String unboundedFontFamily = 'Unbounded';
 
-  /// Заголовок 26 (например: "Авторизация").
-  /// Figma: Montserrat Alternates Regular, 26
   static const TextStyle title26 = TextStyle(
     fontFamily: _titleFontFamily,
-    fontSize: 26,
-    fontWeight: FontWeight.w400, // Regular
+    fontSize: 28,
+    fontWeight: FontWeight.w400, 
     height: 1,
     letterSpacing: 0,
     color: AppColors.textPrimary,
@@ -30,19 +23,43 @@ class AppTextStyles {
   );
 
   static const TextStyle label12Grey = TextStyle(
-    fontSize: 12,
+    fontFamily: 'Inter',
+    fontSize: 14,
     fontWeight: FontWeight.w400,
     color: AppColors.textSecondary,
   );
 
   static const TextStyle hint12Grey = TextStyle(
+    fontFamily: 'Inter',
     fontSize: 12,
     fontWeight: FontWeight.w400,
     color: AppColors.textSecondary,
   );
 
   static const TextStyle body14 = TextStyle(
+    fontFamily: 'Inter',
     fontSize: 14,
+    fontWeight: FontWeight.w400,
+    color: AppColors.textPrimary,
+  );
+
+  static const TextStyle unboundedRegular22 = TextStyle(
+    fontFamily: unboundedFontFamily,
+    fontSize: 20,
+    fontWeight: FontWeight.w400,
+    color: AppColors.textPrimary,
+  );
+
+  static const TextStyle unboundedRegular24 = TextStyle(
+    fontFamily: unboundedFontFamily,
+    fontSize: 20,
+    fontWeight: FontWeight.w400,
+    color: AppColors.textPrimary,
+  );
+
+  static const TextStyle unboundedRegular18 = TextStyle(
+    fontFamily: unboundedFontFamily,
+    fontSize: 18,
     fontWeight: FontWeight.w400,
     color: AppColors.textPrimary,
   );

@@ -178,7 +178,7 @@ class _ActionChip extends StatelessWidget {
         child: Container(
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: Colors.transparent,
+            color: AppColors.formSurface,
             border: Border.all(color: AppColors.border, width: 1),
             borderRadius: BorderRadius.circular(5),
           ),

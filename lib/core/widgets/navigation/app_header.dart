@@ -3,7 +3,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:wordpice/core/theme/app_colors.dart';
 import 'package:wordpice/features/splash/presentation/widgets/splash_logo.dart';
 
-/// Общий хедер приложения.
 class AppHeader extends StatelessWidget {
   final VoidCallback onLogout;
   final VoidCallback onNotifications;
@@ -69,8 +68,8 @@ class AppHeader extends StatelessWidget {
                   children: [
                     SvgPicture.asset(
                       'assets/icons/notification.svg',
-                      width: 28,
-                      height: 28,
+                      width: 30,
+                      height: 30,
                       colorFilter: const ColorFilter.mode(AppColors.textPrimary, BlendMode.srcIn),
                     ),
                     if (notificationCount > 0)
@@ -82,14 +81,14 @@ class AppHeader extends StatelessWidget {
                           height: 18,
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
-                            color: AppColors.background,
+                            color: AppColors.controlGrey,
                             shape: BoxShape.circle,
                             border: Border.all(color: AppColors.border, width: 1),
                           ),
                           child: Text(
                             '$notificationCount',
                             style: const TextStyle(
-                              fontSize: 10,
+                              fontSize: 11,
                               fontWeight: FontWeight.w600,
                               color: AppColors.textPrimary,
                             ),
@@ -106,6 +105,3 @@ class AppHeader extends StatelessWidget {
     );
   }
 }
-
-
-

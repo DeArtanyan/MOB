@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:wordpice/core/theme/app_colors.dart';
 import 'package:wordpice/features/reviews/presentation/widgets/forms/rating_stars_input.dart';
 import 'package:wordpice/features/reviews/presentation/widgets/styles/reviews_styles.dart';
 
@@ -35,6 +36,7 @@ class ReviewsSubmissionForm extends StatelessWidget {
         const SizedBox(height: 8),
         Container(
           decoration: BoxDecoration(
+            color: AppColors.background,
             border: Border.all(color: Colors.black87, width: 1),
             borderRadius: BorderRadius.circular(18),
           ),
@@ -56,6 +58,7 @@ class ReviewsSubmissionForm extends StatelessWidget {
           child: OutlinedButton(
             onPressed: onSubmit,
             style: OutlinedButton.styleFrom(
+              backgroundColor: AppColors.formSurface,
               padding: EdgeInsets.zero,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),

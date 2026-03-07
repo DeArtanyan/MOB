@@ -25,7 +25,9 @@ class ProfileRequestCard extends StatelessWidget {
         Container(
           width: double.infinity,
           padding: const EdgeInsets.all(13),
-          decoration: ProfileCardDecorations.outlinedCard(),
+          decoration: ProfileCardDecorations.outlinedCard(
+            color: AppColors.formSurface,
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

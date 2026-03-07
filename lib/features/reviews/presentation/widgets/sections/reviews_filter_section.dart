@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:wordpice/core/theme/app_colors.dart';
 import 'package:wordpice/core/widgets/buttons/app_outlined_icon_button.dart';
 import 'package:wordpice/features/reviews/presentation/widgets/styles/reviews_styles.dart';
 
@@ -27,6 +28,7 @@ class ReviewsFilterSection extends StatelessWidget {
               height: 40,
               alignment: Alignment.center,
               decoration: BoxDecoration(
+                color: AppColors.formSurface,
                 border: Border.all(color: Colors.black87, width: 1),
                 borderRadius: BorderRadius.circular(8),
               ),

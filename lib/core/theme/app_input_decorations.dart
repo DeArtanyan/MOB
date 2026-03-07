@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'app_colors.dart';
 import 'app_text_styles.dart';
 
-/// Единые декорации для полей ввода.
 class AppInputDecorations {
   AppInputDecorations._();
 
@@ -14,6 +13,8 @@ class AppInputDecorations {
 
     return InputDecoration(
       hintText: hintText,
+      filled: true,
+      fillColor: AppColors.formSurface,
       hintStyle: AppTextStyles.body14.copyWith(color: AppColors.textSecondary),
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       suffixIcon: suffixIcon,

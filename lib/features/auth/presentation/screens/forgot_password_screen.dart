@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:wordpice/core/theme/app_colors.dart';
+import 'package:wordpice/core/theme/app_input_decorations.dart';
 import 'package:wordpice/core/theme/app_text_styles.dart';
-import 'package:wordpice/core/widgets/buttons/app_back_button.dart';
+import 'package:wordpice/features/auth/presentation/widgets/buttons/auth_action_button.dart';
+import 'package:wordpice/features/auth/presentation/widgets/cards/auth_form_card.dart';
+import 'package:wordpice/features/auth/presentation/widgets/sections/auth_text.dart';
+import 'package:wordpice/features/auth/presentation/widgets/styles/auth_styles.dart';
+import 'package:wordpice/features/splash/presentation/widgets/splash_logo.dart';
 import 'forgot_password_email_sent_screen.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
@@ -26,63 +30,95 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     );
   }
 
+  void _goBack() {
+    if (Navigator.of(context).canPop()) {
+      Navigator.of(context).pop();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
         child: Stack(
           children: [
-            const AppBackButton(),
-            Center(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
-                child: Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.fromLTRB(20, 24, 20, 20),
-                  decoration: BoxDecoration(
-                    color: AppColors.controlGrey,
-                    borderRadius: BorderRadius.circular(16),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SplashLogo(),
+                  const SizedBox(height: 44),
+                  IconButton(
+                    iconSize: 16,
+                    padding: EdgeInsets.zero,
+                    onPressed: _goBack,
+                    icon: const Icon(Icons.arrow_back_ios_new),
+                    style: IconButton.styleFrom(
+                      side: const BorderSide(color: Colors.black87),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      minimumSize: const Size(28, 28),
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    ),
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: 32),
-                      const Center(
-                        child: Text(
-                          'Забыли пароль?',
-                          textAlign: TextAlign.center,
-                          style: AppTextStyles.title26,
-                        ),
-                      ),
-                      const SizedBox(height: 32),
-                      const Center(
-                        child: Text(
-                          'Введите адрес эл. почты от аккаунта,\nмы отправим вам временный пароль\nдля входа в аккаунт',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(fontSize: 14, color: Colors.black54),
-                        ),
-                      ),
-                      const SizedBox(height: 26),
-                      const Text('Эл.почта*', style: AppTextStyles.label12Grey),
-                      const SizedBox(height: 8),
-                      TextField(
-                        controller: _emailController,
-                        keyboardType: TextInputType.emailAddress,
-                        decoration: const InputDecoration(
-                          hintText: 'Введите электронную почту',
-                        ),
-                      ),
-                      const SizedBox(height: 22),
-                      Center(
-                        child: SizedBox(
-                          width: 200,
-                          child: OutlinedButton(
-                            onPressed: _goToEmailSent,
-                            child: const Text('Отправить'),
+                ],
+              ),
+            ),
+            Padding(
+              padding: AuthStyles.screenPadding,
+              child: Align(
+                alignment: Alignment.center,
+                child: SingleChildScrollView(
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: AuthFormCard(
+                      padding: AuthStyles.formPaddingCompact,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Center(
+                            child: Text(
+                              'Забыли пароль?',
+                              textAlign: TextAlign.center,
+                              style: AppTextStyles.title26,
+                            ),
                           ),
-                        ),
+                          const SizedBox(height: 32),
+                          const Center(
+                            child: AuthHelperText(
+                              'Введите адрес эл. почты от аккаунта,\nмы отправим Вам временный пароль\nдля входа в аккаунт',
+                            ),
+                          ),
+                          const SizedBox(height: 26),
+                          Text(
+                            'Эл.почта*',
+                            style: AppTextStyles.label12Grey.copyWith(
+                              fontFamily: AuthStyles.interFontFamily,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          TextField(
+                            controller: _emailController,
+                            keyboardType: TextInputType.emailAddress,
+                            decoration: AppInputDecorations.authField(
+                              hintText: 'Введите электронную почту',
+                            ),
+                          ),
+                          const SizedBox(height: 22),
+                          Center(
+                            child: SizedBox(
+                              width: 200,
+                              child: AuthActionButton(
+                                label: 'Отправить',
+                                onPressed: _goToEmailSent,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
+                    ),
                   ),
                 ),
               ),

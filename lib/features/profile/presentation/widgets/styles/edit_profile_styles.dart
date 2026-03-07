@@ -8,7 +8,7 @@ class EditProfileStyles {
 
   static const double saveButtonWidth = 200;
   static const double saveButtonHeight = 44;
-  static const double deleteButtonWidth = 150;
+  static const double deleteButtonWidth = 170;
   static const double deleteButtonHeight = 40;
 
   static const previewCardPadding = EdgeInsets.fromLTRB(14, 10, 14, 10);

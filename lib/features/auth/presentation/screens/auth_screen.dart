@@ -68,9 +68,9 @@ class _AuthScreenState extends State<AuthScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const SizedBox(height: 32),
+                      
                       const Center(child: AuthTitleText('Авторизация')),
-                      const SizedBox(height: 24),
+                      const SizedBox(height: 26),
                       const AuthLabelText('Эл.почта*'),
                       const SizedBox(height: 8),
                       TextField(
@@ -102,21 +102,7 @@ class _AuthScreenState extends State<AuthScreen> {
                           ),
                         ),
                       ),
-                      const SizedBox(height: 26),
-                      Center(
-                        child: AuthActionButton(
-                          label: 'Войти',
-                          onPressed: _openProfile,
-                        ),
-                      ),
                       const SizedBox(height: 10),
-                      Center(
-                        child: AuthActionButton(
-                          label: 'Подтвердить аккаунт',
-                          onPressed: _openAccountConfirmation,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -129,6 +115,20 @@ class _AuthScreenState extends State<AuthScreen> {
                             child: const AuthBodyText('Зарегистрироваться'),
                           ),
                         ],
+                      ),
+                      const SizedBox(height: 16),
+                      Center(
+                        child: AuthActionButton(
+                          label: 'Войти',
+                          onPressed: _openProfile,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      Center(
+                        child: AuthActionButton(
+                          label: 'Подтвердить аккаунт',
+                          onPressed: _openAccountConfirmation,
+                        ),
                       ),
                     ],
                   ),

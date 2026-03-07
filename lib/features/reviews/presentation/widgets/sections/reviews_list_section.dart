@@ -21,7 +21,7 @@ class ReviewsListSection extends StatelessWidget {
       width: double.infinity,
       height: 280,
       decoration: BoxDecoration(
-        color: AppColors.controlGrey,
+        color: AppColors.formSurface,
         borderRadius: BorderRadius.circular(12),
       ),
       child: reviews.isEmpty

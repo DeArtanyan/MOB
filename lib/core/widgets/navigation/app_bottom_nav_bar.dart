@@ -51,7 +51,6 @@ class _AppBottomNavBarState extends State<AppBottomNavBar> {
   @override
   void didUpdateWidget(covariant AppBottomNavBar oldWidget) {
     super.didUpdateWidget(oldWidget);
-    // Не автоскроллим подвал при выборе пункта: меняем только выделение.
   }
 
   @override
@@ -77,10 +76,10 @@ class _AppBottomNavBarState extends State<AppBottomNavBar> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 100,
+      height: 116,
       padding: const EdgeInsets.fromLTRB(12, 12, 12, 16),
       decoration: BoxDecoration(
-        color: AppColors.controlGrey,
+        color: AppColors.bottomNavBackground,
         borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(18),
           topRight: Radius.circular(18),
@@ -92,7 +91,7 @@ class _AppBottomNavBarState extends State<AppBottomNavBar> {
           const SizedBox(width: 10),
           Expanded(
             child: SizedBox(
-              height: 64,
+              height: 80,
               child: PageView.builder(
                 controller: _controller,
                 padEnds: false,
@@ -176,13 +175,28 @@ class _NavItem extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SvgPicture.asset(
-              iconAsset,
-              width: 33,
-              height: 33,
-              colorFilter: const ColorFilter.mode(Colors.black87, BlendMode.srcIn),
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 180),
+              curve: Curves.easeOut,
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: isSelected
+                    ? const Color(0x40FFFFFF)
+                    : Colors.transparent,
+              ),
+              alignment: Alignment.center,
+              child: SvgPicture.asset(
+                iconAsset,
+                width: 33,
+                height: 33,
+                colorFilter: const ColorFilter.mode(
+                  Colors.black87,
+                  BlendMode.srcIn,
+                ),
+              ),
             ),
-            const SizedBox(height: 6),
             Text(
               label,
               maxLines: 1,

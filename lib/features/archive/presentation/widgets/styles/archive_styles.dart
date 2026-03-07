@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:wordpice/core/theme/app_colors.dart';
 
 class ArchiveStyles {
   ArchiveStyles._();
@@ -15,7 +16,7 @@ class ArchiveStyles {
   static BoxDecoration outlinedBox(double radius, {Color? color}) {
     return BoxDecoration(
       color: color,
-      border: Border.all(color: Colors.black87, width: 1),
+      border: Border.all(color: AppColors.bottomNavBackground, width: 1.5),
       borderRadius: BorderRadius.circular(radius),
     );
   }

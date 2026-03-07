@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:wordpice/core/theme/app_text_styles.dart';
 
 class ParkingStyles {
   ParkingStyles._();
 
-  static const title = TextStyle(fontSize: 19, fontWeight: FontWeight.w600);
+  static const title = AppTextStyles.unboundedRegular22;
   static const placeNumber = TextStyle(
     fontSize: 15,
     fontWeight: FontWeight.w400,

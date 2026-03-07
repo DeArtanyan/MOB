@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:wordpice/core/theme/app_colors.dart';
+import 'package:wordpice/core/theme/app_text_styles.dart';
 
 class NotificationStyles {
   NotificationStyles._();
@@ -24,11 +25,7 @@ class NotificationStyles {
     fontWeight: FontWeight.w400,
     color: Colors.black54,
   );
-  static const titleText = TextStyle(
-    fontSize: 22,
-    fontWeight: FontWeight.w600,
-    color: Colors.black87,
-  );
+  static const titleText = AppTextStyles.unboundedRegular22;
   static const emptyStateText = TextStyle(
     fontSize: 30,
     fontWeight: FontWeight.w400,
@@ -37,7 +34,12 @@ class NotificationStyles {
 
   static BoxDecoration cardDecoration() {
     return BoxDecoration(
-      border: Border.all(color: AppColors.border, width: 1),
+      gradient: const LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: [Color(0xFFB2C1CB), Color(0xFF7C8FA0)],
+      ),
+      border: Border.all(color: AppColors.bottomNavBackground, width: 1),
       borderRadius: BorderRadius.circular(12),
     );
   }
